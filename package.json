@@ -10,7 +10,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^8.3.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^10.0.5",
     "@supabase/supabase-js": "^2.45.0",
