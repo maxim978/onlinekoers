@@ -1,29 +1,35 @@
 ---
-// Redirect if already authenticated
-const cookie = Astro.cookies.get('admin_auth');
-if (cookie?.value === 'true') {
-  return Astro.redirect('/admin');
-}
+import { supabase } from '@/lib/supabase';
 
-let error = '';
-
+// Handle POST (form submit)
 if (Astro.request.method === 'POST') {
-  const formData = await Astro.request.formData();
-  const password = String(formData.get('password') || '');
-  const adminPassword = import.meta.env.ADMIN_PASSWORD;
+  const form = await Astro.request.formData();
+  const email = form.get('email')?.toString() ?? '';
+  const password = form.get('password')?.toString() ?? '';
 
-  if (password === adminPassword) {
-    Astro.cookies.set('admin_auth', 'true', {
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 8, // 8 hours
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (!error && data.session) {
+    // Set session cookie and redirect to dashboard
+    Astro.cookies.set('sb-access-token', data.session.access_token, {
       path: '/',
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 8, // 8 hours
+      sameSite: 'lax',
     });
-    return Astro.redirect('/admin');
-  } else {
-    error = 'Ongeldig wachtwoord.';
+    Astro.cookies.set('sb-refresh-token', data.session.refresh_token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax',
+    });
+    return Astro.redirect('/admin/dashboard');
   }
 }
+
+const loginError = Astro.request.method === 'POST' ? 'Onjuiste inloggegevens.' : null;
 ---
 
 <!DOCTYPE html>
@@ -31,93 +37,52 @@ if (Astro.request.method === 'POST') {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex" />
-    <title>Admin Login | OnlineKoers</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
-    <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #f8fafc;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem;
-      }
-      .card {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 1rem;
-        padding: 2.5rem;
-        width: 100%;
-        max-width: 400px;
-      }
-      .logo {
-        font-size: 1.5rem;
-        font-weight: 900;
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-      .logo span { color: #f97316; }
-      label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #cbd5e1;
-        margin-bottom: 0.5rem;
-      }
-      input[type="password"] {
-        width: 100%;
-        background: #0f172a;
-        border: 1px solid #475569;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        color: #f8fafc;
-        font-size: 0.95rem;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      input[type="password"]:focus { border-color: #f97316; }
-      button {
-        width: 100%;
-        background: #f97316;
-        color: #fff;
-        font-weight: 600;
-        font-size: 0.95rem;
-        padding: 0.875rem;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        margin-top: 1.25rem;
-        transition: opacity 0.2s;
-      }
-      button:hover { opacity: 0.9; }
-      .error {
-        background: rgba(239,68,68,0.1);
-        border: 1px solid rgba(239,68,68,0.3);
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        color: #f87171;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-      }
-    </style>
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Inloggen — The Previewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
-  <body>
-    <div class="card">
-      <div class="logo"><span>Online</span>Koers</div>
-      <h1 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem;text-align:center;color:#f8fafc;">Admin Login</h1>
+  <body class="min-h-screen bg-gray-50 flex items-center justify-center font-sans antialiased">
+    <div class="w-full max-w-sm">
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">The Previewer</h1>
+        <p class="text-gray-500 text-sm mb-8">Admin toegang</p>
 
-      {error && <div class="error">{error}</div>}
+        {loginError && (
+          <div class="mb-4 px-4 py-3 bg-red-50 text-red-700 text-sm rounded-lg">
+            {loginError}
+          </div>
+        )}
 
-      <form method="POST">
-        <label for="password">Wachtwoord</label>
-        <input type="password" id="password" name="password" required autofocus placeholder="••••••••" />
-        <button type="submit">Inloggen →</button>
-      </form>
+        <form method="POST" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="email">E-mailadres</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="admin@bedrijf.nl"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Wachtwoord</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-black text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-800 transition-colors"
+          >
+            Inloggen
+          </button>
+        </form>
+      </div>
     </div>
   </body>
 </html>

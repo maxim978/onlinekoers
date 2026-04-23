@@ -1,0 +1,174 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { requireAdmin } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase';
+import type { LeadWithStats } from '@/lib/supabase';
+
+// Auth guard
+const isAdmin = await requireAdmin(Astro.cookies);
+if (!isAdmin) return Astro.redirect('/admin/login');
+
+// Filters from query params
+const url = new URL(Astro.request.url);
+const q = url.searchParams.get('q') ?? '';
+const category = url.searchParams.get('category') ?? '';
+const dateFrom = url.searchParams.get('from') ?? '';
+
+// Build query
+let query = supabaseAdmin
+  .from('leads')
+  .select(`*, lead_stats(*)`)
+  .order('created_at', { ascending: false });
+
+if (q) query = query.ilike('company_name', `%${q}%`);
+if (category) query = query.eq('category', category);
+if (dateFrom) query = query.gte('created_at', dateFrom);
+
+const { data: rawLeads } = await query;
+const leads = rawLeads as LeadWithStats[] | null;
+
+// Distinct categories for filter dropdown
+const { data: categoryRows } = await supabaseAdmin
+  .from('leads')
+  .select('category')
+  .not('category', 'is', null)
+  .order('category');
+const categories = [...new Set(categoryRows?.map(r => r.category).filter(Boolean) ?? [])];
+
+// Aggregate stats
+const totalViews = leads?.reduce((sum, l) => sum + (l.lead_stats?.view_count ?? 0), 0) ?? 0;
+const totalClicks = leads?.reduce((sum, l) => sum + (l.lead_stats?.cta_click_count ?? 0) + (l.lead_stats?.contact_click_count ?? 0), 0) ?? 0;
+---
+
+<AdminLayout title="Dashboard">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
+    <p class="text-gray-500 text-sm">{leads?.length ?? 0} pagina's · {totalViews} views · {totalClicks} clicks</p>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    {[
+      { label: 'Pagina\'s', value: leads?.length ?? 0 },
+      { label: 'Totaal views', value: totalViews },
+      { label: 'Totaal clicks', value: totalClicks },
+      { label: 'Actief', value: leads?.filter(l => l.is_active).length ?? 0 },
+    ].map(({ label, value }) => (
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">{label}</p>
+        <p class="text-3xl font-bold text-gray-900">{value}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- Filters -->
+  <form method="GET" class="flex flex-wrap gap-3 mb-6 bg-white border border-gray-200 rounded-xl p-4">
+    <input
+      name="q"
+      value={q}
+      type="text"
+      placeholder="Zoek op naam..."
+      class="flex-1 min-w-48 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+    />
+    <select
+      name="category"
+      class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+    >
+      <option value="">Alle categorieën</option>
+      {categories.map(cat => (
+        <option value={cat} selected={cat === category}>{cat}</option>
+      ))}
+    </select>
+    <input
+      name="from"
+      value={dateFrom}
+      type="date"
+      class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+    />
+    <button
+      type="submit"
+      class="bg-black text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+    >
+      Filteren
+    </button>
+    {(q || category || dateFrom) && (
+      <a href="/admin/dashboard" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-900 self-center">
+        Wis filters
+      </a>
+    )}
+  </form>
+
+  <!-- Leads table -->
+  <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="text-left px-4 py-3 font-semibold text-gray-600">Bedrijf</th>
+          <th class="text-left px-4 py-3 font-semibold text-gray-600">Categorie</th>
+          <th class="text-left px-4 py-3 font-semibold text-gray-600">Stijl</th>
+          <th class="text-right px-4 py-3 font-semibold text-gray-600">Views</th>
+          <th class="text-right px-4 py-3 font-semibold text-gray-600">Uniek</th>
+          <th class="text-right px-4 py-3 font-semibold text-gray-600">Clicks</th>
+          <th class="text-right px-4 py-3 font-semibold text-gray-600">Gem. tijd</th>
+          <th class="text-left px-4 py-3 font-semibold text-gray-600">Datum</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {!leads || leads.length === 0 ? (
+          <tr>
+            <td colspan="9" class="text-center py-12 text-gray-400">
+              Geen leads gevonden. <a href="/admin/leads/new" class="underline">Voeg de eerste toe.</a>
+            </td>
+          </tr>
+        ) : leads.map((lead) => {
+          const stats = lead.lead_stats;
+          const totalLeadClicks = (stats?.cta_click_count ?? 0) + (stats?.contact_click_count ?? 0);
+          const avgSec = stats?.avg_duration_seconds ?? 0;
+          const avgMin = avgSec >= 60
+            ? `${Math.floor(avgSec / 60)}m ${Math.round(avgSec % 60)}s`
+            : `${Math.round(avgSec)}s`;
+
+          return (
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="font-semibold text-gray-900">{lead.company_name}</div>
+                <div class="text-xs text-gray-400">/preview/{lead.slug}</div>
+              </td>
+              <td class="px-4 py-3 text-gray-600">{lead.category ?? '—'}</td>
+              <td class="px-4 py-3">
+                <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                  {lead.style_instructions ?? 'default'}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right font-mono">{stats?.view_count ?? 0}</td>
+              <td class="px-4 py-3 text-right font-mono">{stats?.unique_view_count ?? 0}</td>
+              <td class="px-4 py-3 text-right font-mono">{totalLeadClicks}</td>
+              <td class="px-4 py-3 text-right font-mono text-xs">{avgSec > 0 ? avgMin : '—'}</td>
+              <td class="px-4 py-3 text-gray-400 text-xs">
+                {new Date(lead.created_at).toLocaleDateString('nl-NL')}
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2 justify-end">
+                  <a
+                    href={`/preview/${lead.slug}`}
+                    target="_blank"
+                    class="text-xs text-blue-600 hover:underline"
+                  >
+                    Bekijk
+                  </a>
+                  <a
+                    href={`/admin/leads/${lead.id}/edit`}
+                    class="text-xs text-gray-600 hover:underline"
+                  >
+                    Bewerk
+                  </a>
+                </div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

@@ -1,0 +1,47 @@
+---
+import type { Lead } from '@/lib/supabase';
+import type { StyleConfig } from '@/lib/styleEngine';
+
+interface Props {
+  lead: Lead;
+  style: StyleConfig;
+}
+
+const { lead, style: _style } = Astro.props;
+
+const cssVars = `
+  --color-primary: ${lead.primary_color};
+  --color-secondary: ${lead.secondary_color};
+  --color-accent: ${lead.accent_color};
+`.trim();
+---
+
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{lead.company_name} — Exclusief Voorstel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style define:vars={{ cssVars }}>
+      :root { font-size: 16px; }
+    </style>
+  </head>
+  <body style={cssVars} class="antialiased text-gray-900">
+    <slot />
+
+    <!-- Client-side tracker -->
+    <script
+      is:inline
+      src="/tracker.js"
+      data-lead-id={lead.id}
+      data-slug={lead.slug}
+      defer
+    ></script>
+  </body>
+</html>

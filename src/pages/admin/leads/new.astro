@@ -1,0 +1,155 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { requireAdmin } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase';
+
+const isAdmin = await requireAdmin(Astro.cookies);
+if (!isAdmin) return Astro.redirect('/admin/login');
+
+let error: string | null = null;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+
+  const slug = form.get('slug')?.toString().trim().toLowerCase().replace(/\s+/g, '-') ?? '';
+  const photos = form.get('photos')?.toString().split('\n').map(s => s.trim()).filter(Boolean) ?? [];
+
+  const payload = {
+    slug,
+    company_name: form.get('company_name')?.toString() ?? '',
+    category: form.get('category')?.toString() || null,
+    logo_url: form.get('logo_url')?.toString() || null,
+    photos,
+    primary_color: form.get('primary_color')?.toString() ?? '#1a1a1a',
+    secondary_color: form.get('secondary_color')?.toString() ?? '#ffffff',
+    accent_color: form.get('accent_color')?.toString() ?? '#d4a853',
+    headline: form.get('headline')?.toString() || null,
+    subheadline: form.get('subheadline')?.toString() || null,
+    description: form.get('description')?.toString() || null,
+    style_instructions: form.get('style_instructions')?.toString() || null,
+    contact_email: form.get('contact_email')?.toString() || null,
+    contact_phone: form.get('contact_phone')?.toString() || null,
+    website_url: form.get('website_url')?.toString() || null,
+    address: form.get('address')?.toString() || null,
+  };
+
+  const { error: insertError } = await supabaseAdmin.from('leads').insert(payload);
+  if (insertError) {
+    error = insertError.message;
+  } else {
+    return Astro.redirect('/admin/dashboard');
+  }
+}
+---
+
+<AdminLayout title="Nieuwe lead">
+  <div class="max-w-2xl">
+    <h1 class="text-2xl font-bold mb-6">Nieuwe lead aanmaken</h1>
+
+    {error && (
+      <div class="mb-4 px-4 py-3 bg-red-50 text-red-700 text-sm rounded-lg">{error}</div>
+    )}
+
+    <form method="POST" class="space-y-5 bg-white border border-gray-200 rounded-xl p-6">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Bedrijfsnaam *</label>
+          <input name="company_name" type="text" required class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
+          <input name="slug" type="text" required placeholder="van-der-berg-hoveniers" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black font-mono" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Categorie</label>
+          <input name="category" type="text" placeholder="Hoveniers / Keukens / ..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Stijl</label>
+          <select name="style_instructions" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black">
+            <option value="">default</option>
+            <option value="minimalistisch">minimalistisch</option>
+            <option value="industrieel">industrieel</option>
+            <option value="warm/luxe">warm/luxe</option>
+            <option value="modern">modern</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Tagline / Headline</label>
+        <input name="headline" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Subheadline</label>
+        <input name="subheadline" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Beschrijving</label>
+        <textarea name="description" rows="4" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Primaire kleur</label>
+          <input name="primary_color" type="color" value="#1a1a1a" class="w-full h-10 border border-gray-200 rounded-lg px-1 cursor-pointer" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Achtergrond kleur</label>
+          <input name="secondary_color" type="color" value="#ffffff" class="w-full h-10 border border-gray-200 rounded-lg px-1 cursor-pointer" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Accent kleur</label>
+          <input name="accent_color" type="color" value="#d4a853" class="w-full h-10 border border-gray-200 rounded-lg px-1 cursor-pointer" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+        <input name="logo_url" type="url" placeholder="https://..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Foto URL's (één per regel)</label>
+        <textarea name="photos" rows="4" placeholder="https://images.unsplash.com/..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black resize-none font-mono text-xs"></textarea>
+        <p class="text-xs text-gray-400 mt-1">Eerste foto = hero, overige = gallerij</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Telefoon</label>
+          <input name="contact_phone" type="tel" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+          <input name="contact_email" type="email" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+          <input name="website_url" type="url" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Adres</label>
+          <input name="address" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-black text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors">
+          Aanmaken
+        </button>
+        <a href="/admin/dashboard" class="px-6 py-2.5 text-sm text-gray-600 hover:text-gray-900">
+          Annuleren
+        </a>
+      </div>
+    </form>
+  </div>
+</AdminLayout>
