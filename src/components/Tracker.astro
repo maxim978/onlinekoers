@@ -1,0 +1,92 @@
+---
+export interface Props {
+  leadId: string;
+}
+
+const { leadId } = Astro.props;
+---
+
+<script define:vars={{ leadId }}>
+  (() => {
+    const SESSION_KEY = `ok_session_${leadId}`;
+    let sessionId = null;
+    let startTime = Date.now();
+    let maxScrollDepth = 0;
+    let clicks = {};
+    let finalized = false;
+
+    // ── Scroll tracking ──────────────────────────────────
+    function updateScrollDepth() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        const depth = Math.round((scrollTop / docHeight) * 100);
+        if (depth > maxScrollDepth) maxScrollDepth = depth;
+      }
+    }
+
+    window.addEventListener('scroll', updateScrollDepth, { passive: true });
+
+    // ── Click tracking ───────────────────────────────────
+    function trackClick(label) {
+      clicks[label] = (clicks[label] || 0) + 1;
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('[data-track]');
+      if (target) {
+        trackClick(target.dataset.track);
+      }
+    });
+
+    // ── Initial session creation ─────────────────────────
+    async function createSession() {
+      try {
+        const res = await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead_id: leadId,
+            user_agent: navigator.userAgent,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          sessionId = data.id;
+          sessionStorage.setItem(SESSION_KEY, sessionId);
+        }
+      } catch (err) {
+        // Tracking failure is non-fatal
+      }
+    }
+
+    // ── Finalize session on leave ────────────────────────
+    function finalizeSession() {
+      if (finalized || !sessionId) return;
+      finalized = true;
+
+      const duration = Math.round((Date.now() - startTime) / 1000);
+
+      // Use sendBeacon for reliability on page unload
+      navigator.sendBeacon(
+        '/api/track-finalize',
+        JSON.stringify({
+          id: sessionId,
+          duration_seconds: duration,
+          scroll_depth: maxScrollDepth,
+          clicks: clicks,
+        })
+      );
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') finalizeSession();
+    });
+
+    window.addEventListener('pagehide', finalizeSession);
+
+    // Start tracking
+    createSession();
+  })();
+</script>
