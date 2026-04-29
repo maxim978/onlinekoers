@@ -1,5 +1,5 @@
 ---
-import { supabase } from '../../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../../lib/supabase';
 
 // Auth check
 const authCookie = Astro.cookies.get('admin_auth');
@@ -14,13 +14,13 @@ if (!id) {
 }
 
 // Fetch lead
-const { data: lead } = await supabase.from('leads').select('*').eq('id', id).single();
+const { data: lead } = await supabaseAdmin.from('leads').select('*').eq('id', id).single();
 if (!lead) {
   return Astro.redirect('/admin');
 }
 
 // Fetch analytics
-const { data: analyticsRaw } = await supabase
+const { data: analyticsRaw } = await supabaseAdmin
   .from('analytics')
   .select('*')
   .eq('lead_id', id)

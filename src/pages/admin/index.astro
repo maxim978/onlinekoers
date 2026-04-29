@@ -1,5 +1,5 @@
 ---
-import { supabase } from '../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../lib/supabase';
 
 // Auth check
 const authCookie = Astro.cookies.get('admin_auth');
@@ -37,7 +37,7 @@ const { data: leadsData } = await q;
 const allLeads: any[] = leadsData ?? [];
 
 // Analytics per lead
-const { data: analyticsRaw } = await supabase
+const { data: analyticsRaw } = await supabaseAdmin
   .from('analytics')
   .select('lead_id, duration_seconds');
 
