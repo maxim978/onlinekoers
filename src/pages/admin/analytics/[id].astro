@@ -1,0 +1,281 @@
+---
+import { supabase } from '../../../lib/supabase';
+
+// Auth check
+const authCookie = Astro.cookies.get('admin_auth');
+if (authCookie?.value !== 'true') {
+  return Astro.redirect('/admin/login');
+}
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/admin');
+}
+
+// Fetch lead
+const { data: lead } = await supabase.from('leads').select('*').eq('id', id).single();
+if (!lead) {
+  return Astro.redirect('/admin');
+}
+
+// Fetch analytics
+const { data: analyticsRaw } = await supabase
+  .from('analytics')
+  .select('*')
+  .eq('lead_id', id)
+  .order('created_at', { ascending: false });
+
+const analytics = analyticsRaw ?? [];
+
+// Compute stats
+const totalViews = analytics.length;
+const uniqueDevices = new Set(analytics.map(a => a.user_agent).filter(Boolean)).size;
+
+const totalDuration = analytics.reduce((sum, a) => sum + (a.duration_seconds || 0), 0);
+const avgDuration = totalViews > 0 ? Math.round(totalDuration / totalViews) : 0;
+
+const totalScroll = analytics.reduce((sum, a) => sum + (a.scroll_depth || 0), 0);
+const avgScroll = totalViews > 0 ? Math.round(totalScroll / totalViews) : 0;
+
+// Aggregate clicks
+const clickCounts: Record<string, number> = {};
+analytics.forEach(a => {
+  if (a.clicks && typeof a.clicks === 'object') {
+    Object.entries(a.clicks).forEach(([key, val]) => {
+      clickCounts[key] = (clickCounts[key] || 0) + (val as number);
+    });
+  }
+});
+
+// Sort clicks by most popular
+const sortedClicks = Object.entries(clickCounts).sort((a, b) => b[1] - a[1]);
+
+function formatDuration(sec: number) {
+  if (sec < 60) return sec + 's';
+  return Math.floor(sec / 60) + 'm ' + (sec % 60) + 's';
+}
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleString('nl-NL', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+---
+
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Analytics: {lead.company_name} | OnlineKoers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+      a { color: inherit; text-decoration: none; }
+
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
+        background: #1e293b; border-right: 1px solid #334155;
+        display: flex; flex-direction: column; padding: 1.5rem; z-index: 40;
+      }
+      .main { margin-left: 240px; min-height: 100vh; padding: 2rem 2.5rem; }
+      .logo { font-size: 1.25rem; font-weight: 900; margin-bottom: 2rem; color: #f8fafc; }
+      .logo span { color: #f97316; }
+
+      .nav-item {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.625rem 0.875rem; border-radius: 0.5rem;
+        font-size: 0.875rem; font-weight: 500; color: #94a3b8;
+        transition: background 0.15s, color 0.15s; margin-bottom: 0.25rem;
+      }
+      .nav-item:hover, .nav-item.active { background: rgba(249,115,22,0.1); color: #f97316; }
+
+      .btn-ghost {
+        background: transparent; color: #94a3b8; border: 1px solid #475569;
+        font-weight: 500; font-size: 0.875rem; padding: 0.5rem 1.25rem;
+        border-radius: 0.5rem; cursor: pointer; transition: color 0.15s, border-color 0.15s;
+        font-family: 'Inter', sans-serif;
+      }
+      .btn-ghost:hover { color: #f8fafc; border-color: #64748b; }
+
+      .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
+      .stat-value { font-size: 2rem; font-weight: 800; color: #f8fafc; }
+      .stat-label { font-size: 0.8rem; color: #64748b; margin-top: 0.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+      .table-container { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; overflow: hidden; margin-top: 2rem; }
+      table { width: 100%; border-collapse: collapse; }
+      th {
+        padding: 0.875rem 1.25rem; text-align: left; font-size: 0.75rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;
+        background: #0f172a; border-bottom: 1px solid #334155;
+      }
+      td { padding: 1rem 1.25rem; font-size: 0.875rem; border-bottom: 1px solid #1e293b; color: #cbd5e1; vertical-align: middle; }
+      tr:last-child td { border-bottom: none; }
+      tr:hover td { background: rgba(255,255,255,0.02); }
+
+      @media (max-width: 1024px) {
+        .sidebar { display: none; }
+        .main { margin-left: 0; padding: 1.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <aside class="sidebar">
+      <div class="logo"><span>Online</span>Koers</div>
+      <nav style="flex:1">
+        <a href="/admin" class="nav-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href={`/admin/analytics/${id}`} class="nav-item active">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Statistieken
+        </a>
+        <a href="/" class="nav-item" target="_blank">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          Website
+        </a>
+      </nav>
+      <form method="POST" action="/admin" style="margin-top:auto">
+        <input type="hidden" name="_action" value="logout" />
+        <button type="submit" class="btn-ghost" style="width:100%">Uitloggen</button>
+      </form>
+    </aside>
+
+    <main class="main">
+
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem">
+        <a href="/admin" style="color:#94a3b8;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:#1e293b;border:1px solid #334155;transition:color 0.2s, border-color 0.2s;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </a>
+        <div>
+          <h1 style="font-size:1.75rem;font-weight:800;color:#f8fafc">Analytics: {lead.company_name}</h1>
+          <p style="color:#64748b;font-size:0.875rem;margin-top:0.25rem">
+            URL: <a href={`/preview/${lead.slug}`} target="_blank" style="color:#f97316;text-decoration:underline">/preview/{lead.slug}</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Totaal Overzicht -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2.5rem">
+        <div class="stat-card">
+          <div class="stat-value" style="color:#f97316">{totalViews}</div>
+          <div class="stat-label">Totaal Weergaven</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:#8b5cf6">{uniqueDevices}</div>
+          <div class="stat-label">Unieke Apparaten</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:#22c55e">{avgScroll}%</div>
+          <div class="stat-label">Gem. Scroll Diepte</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:#3b82f6">{formatDuration(avgDuration)}</div>
+          <div class="stat-label">Gem. Kijktijd</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:2rem">
+        
+        <!-- Klik Analyse -->
+        <div>
+          <h2 style="font-size:1.125rem;font-weight:700;color:#f8fafc;margin-bottom:1rem">Klik Verdeling</h2>
+          <div class="table-container" style="margin-top:0">
+            {sortedClicks.length === 0 ? (
+              <div style="padding:2rem;text-align:center;color:#64748b;font-size:0.875rem">Nog geen kliks geregistreerd.</div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Element / Knop</th>
+                    <th style="text-align:right">Aantal kliks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedClicks.map(([key, count]) => (
+                    <tr>
+                      <td style="font-weight:500;color:#e2e8f0">{key}</td>
+                      <td style="text-align:right;color:#94a3b8">{count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        <!-- Sessie Historie -->
+        <div>
+          <h2 style="font-size:1.125rem;font-weight:700;color:#f8fafc;margin-bottom:1rem">Recente Sessies</h2>
+          <div class="table-container" style="margin-top:0">
+            {analytics.length === 0 ? (
+              <div style="padding:2rem;text-align:center;color:#64748b;font-size:0.875rem">Nog geen sessies geregistreerd.</div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Datum</th>
+                    <th>Apparaat Info</th>
+                    <th>Scroll Diepte</th>
+                    <th>Duur</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analytics.map((a) => {
+                    // Extract basic device info from user_agent
+                    let device = 'Onbekend';
+                    if (a.user_agent) {
+                      if (a.user_agent.includes('Mobile')) device = 'Mobiel';
+                      else if (a.user_agent.includes('Tablet')) device = 'Tablet';
+                      else device = 'Desktop';
+                    }
+
+                    return (
+                      <tr>
+                        <td style="color:#94a3b8">{formatDate(a.created_at)}</td>
+                        <td>
+                          <div style="display:flex;align-items:center;gap:0.5rem">
+                            <span style="font-weight:500;color:#cbd5e1">{device}</span>
+                            <span style="font-size:0.75rem;color:#475569;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title={a.user_agent}>
+                              {a.user_agent}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div style="display:flex;align-items:center;gap:0.5rem">
+                            <div style="width:60px;height:6px;background:#334155;border-radius:3px;overflow:hidden">
+                              <div style={`width:${a.scroll_depth}%;height:100%;background:${a.scroll_depth > 75 ? '#22c55e' : '#fbbf24'}`}></div>
+                            </div>
+                            <span style="font-size:0.8rem;color:#94a3b8">{a.scroll_depth}%</span>
+                          </div>
+                        </td>
+                        <td style="color:#e2e8f0">{formatDuration(a.duration_seconds || 0)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </body>
+</html>

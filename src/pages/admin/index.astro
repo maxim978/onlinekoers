@@ -295,13 +295,22 @@ const statusBadge: Record<string, string> = {
                       </td>
                       <td>
                         {lead.status !== 'Concept' ? (
-                          <a href={`/preview/${lead.slug}`} target="_blank"
-                             style="color:#f97316;font-size:0.8rem;font-weight:500;display:inline-flex;align-items:center;gap:0.25rem">
-                            Bekijk
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                            </svg>
-                          </a>
+                          <div style="display:flex;align-items:center;gap:1rem">
+                            <a href={`/preview/${lead.slug}`} target="_blank"
+                               style="color:#f97316;font-size:0.8rem;font-weight:500;display:inline-flex;align-items:center;gap:0.25rem">
+                              Bekijk
+                              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                              </svg>
+                            </a>
+                            <a href={`/admin/analytics/${lead.id}`}
+                               style="color:#8b5cf6;font-size:0.8rem;font-weight:500;display:inline-flex;align-items:center;gap:0.25rem">
+                              Statistieken
+                              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                              </svg>
+                            </a>
+                          </div>
                         ) : (
                           <span style="color:#475569;font-size:0.8rem">Concept</span>
                         )}
