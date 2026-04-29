@@ -226,6 +226,24 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   }
   .btn-outline-dark:hover { border-color: var(--gold); color: var(--gold); }
 
+  /* Hero stats rij */
+  .hero-stats {
+    display: flex; gap: 2.5rem; flex-wrap: wrap;
+    margin-top: 2.5rem; padding-top: 2rem;
+    border-top: 1px solid rgba(22,18,14,.1);
+  }
+  .hero-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 700;
+    color: var(--ink); display: block; line-height: 1;
+    margin-bottom: .3rem;
+  }
+  .hero-stat-lbl {
+    font-size: .6rem; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
   /* Hero foto rechts */
   .hero-right {
     position: relative;
@@ -495,7 +513,6 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   /* ── Contact (SPLIT) ───────────────────────────── */
   #contact {
     display: grid; grid-template-columns: 1fr 1fr;
-    min-height: 62vh;
   }
   .c-left {
     background: var(--gold);
@@ -505,8 +522,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   }
   .c-left::before {
     content: '';
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: repeating-linear-gradient(
       -45deg, rgba(0,0,0,.04) 0, rgba(0,0,0,.04) 1px,
       transparent 1px, transparent 8px);
@@ -521,50 +537,85 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   .c-left-sub {
     font-size: .92rem; color: rgba(22,18,14,.65);
     line-height: 1.7; max-width: 340px;
-    margin-bottom: 2.25rem; position: relative; z-index: 1;
+    margin-bottom: 2rem; position: relative; z-index: 1;
   }
-  .c-left-lnk {
-    display: inline-flex; align-items: center; gap: .6rem;
-    font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--ink); text-decoration: none;
-    position: relative; z-index: 1;
-    transition: gap .2s;
+  .c-details { display: flex; flex-direction: column; gap: 1rem; position: relative; z-index: 1; }
+  .c-detail {
+    display: flex; align-items: center; gap: .75rem;
+    font-size: .85rem; color: rgba(22,18,14,.7);
   }
-  .c-left-lnk:hover { gap: 1rem; }
+  .c-detail svg { flex-shrink: 0; color: var(--ink); opacity: .6; }
 
+  /* Formulier rechts */
   .c-right {
-    background: var(--cream);
+    background: var(--cream2);
     padding: 6rem 4rem;
     display: flex; flex-direction: column; justify-content: center;
   }
-  .c-items { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2.5rem; }
-  .c-item { display: flex; align-items: flex-start; gap: 1rem; }
-  .c-icon {
-    width: 38px; height: 38px; border-radius: 6px;
-    background: var(--gold-10); border: 1px solid var(--gold-20);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    color: var(--gold);
+  .form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--ink); margin-bottom: .5rem;
   }
-  .c-sub { font-size: .68rem; color: var(--faint); margin-bottom: .15rem; }
-  .c-val { font-size: .9rem; font-weight: 600; color: var(--ink); }
-  .c-val a { text-decoration: none; color: inherit; transition: color .2s; }
-  .c-val a:hover { color: var(--gold); }
-  .checklist { list-style: none; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2.25rem; }
-  .checklist li {
-    display: flex; align-items: center; gap: .65rem;
+  .form-sub {
     font-size: .85rem; color: var(--muted);
+    margin-bottom: 2rem; line-height: 1.6;
   }
-  .chk { color: var(--gold); flex-shrink: 0; }
-
-  .btn-book-dark {
-    display: block; text-align: center;
-    font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-    background: var(--ink); color: var(--cream);
-    padding: 1.1rem 2rem; border-radius: 3px; text-decoration: none;
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: .4rem; }
+  .form-field.full { grid-column: 1 / -1; }
+  .form-field label {
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    background: var(--cream);
+    border: 1.5px solid rgba(22,18,14,.12);
+    border-radius: 4px;
+    padding: .8rem 1rem;
+    font-size: .9rem; font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    appearance: none;
+  }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,146,42,.12);
+  }
+  .form-field textarea { resize: vertical; min-height: 100px; }
+  .form-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C8922A' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+  .btn-submit {
+    grid-column: 1 / -1;
+    margin-top: .5rem;
+    font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    background: var(--gold); color: #fff;
+    border: none; cursor: pointer;
+    padding: 1.1rem 2rem; border-radius: 3px;
+    position: relative; overflow: hidden;
     transition: background .2s, transform .2s;
-    box-shadow: 0 4px 20px rgba(22,18,14,.2);
+    box-shadow: 0 4px 20px rgba(200,146,42,.3);
   }
-  .btn-book-dark:hover { background: var(--ink2); transform: translateY(-2px); }
+  .btn-submit:hover { background: #B5801E; transform: translateY(-2px); }
+  .form-success {
+    display: none;
+    text-align: center; padding: 2rem;
+    background: var(--cream);
+    border: 1.5px solid rgba(200,146,42,.3);
+    border-radius: 4px;
+  }
+  .form-success svg { color: var(--gold); margin-bottom: .75rem; }
+  .form-success p { font-size: .9rem; color: var(--muted); line-height: 1.6; }
 
   /* ── Footer ────────────────────────────────────── */
   footer {
@@ -652,6 +703,21 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
       <a href="#contact" class="btn-gold" data-track="hero_cta">Boek Mauro</a>
       <a href="#over" class="btn-outline-dark">Meer over hem</a>
     </div>
+
+    <div class="hero-stats r d4">
+      <div>
+        <span class="hero-stat-val">2 uur</span>
+        <span class="hero-stat-lbl">Live repertoire</span>
+      </div>
+      <div>
+        <span class="hero-stat-val">3+</span>
+        <span class="hero-stat-lbl">Vaste podia</span>
+      </div>
+      <div>
+        <span class="hero-stat-val">2026</span>
+        <span class="hero-stat-lbl">Eigen nummers</span>
+      </div>
+    </div>
   </div>
 
   <!-- RECHTS: grote foto -->
@@ -671,7 +737,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
 <!-- ── GOLD STRIP ───────────────────────────────────────────────────── -->
 <section id="strip">
   <p class="strip-text r">
-    "Van een spontane microfoongreep op een voetbaltoernooi tot vaste podia door heel de regio — Mauro Fryters brengt altijd de juiste sfeer."
+    "Van een spontane microfoongreep op een voetbaltoernooi tot vaste podia door heel de regio: Mauro Fryters brengt altijd de juiste sfeer."
   </p>
 </section>
 
@@ -724,7 +790,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
       <div class="s-num">01</div>
       <div>
         <div class="s-name">Nederlandstalig</div>
-        <p class="s-desc">Eigentijdse Nederlandse hits en bekende nummers — herkenbaar, meezingbaar en vol sfeer. Er is veel vraag naar en Mauro weet precies waarom: het werkt direct.</p>
+        <p class="s-desc">Eigentijdse Nederlandse hits en bekende nummers, herkenbaar, meezingbaar en vol sfeer. Er is veel vraag naar en Mauro weet precies waarom: het werkt direct.</p>
       </div>
     </div>
 
@@ -732,7 +798,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
       <div class="s-num">02</div>
       <div>
         <div class="s-name">Engelstalig & Frank Sinatra</div>
-        <p class="s-desc">Tijdloze standards uit de gouden era — van Fly Me to the Moon tot My Way. Nummers die elke avond stijlvol afsluiten en elk publiek raken.</p>
+        <p class="s-desc">Tijdloze standards uit de gouden era: van Fly Me to the Moon tot My Way. Nummers die elke avond stijlvol afsluiten en elk publiek raken.</p>
       </div>
     </div>
 
@@ -775,7 +841,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   <div id="qbg"><img src={imgStage} alt="Podium" loading="lazy" /></div>
   <div class="q-inner r">
     <div class="q-mark">"</div>
-    <p class="q-text">Ik doe het omdat ik het gewoon leuk vind — en dan merk je dat anderen dat ook voelen.</p>
+    <p class="q-text">Ik doe het omdat ik het gewoon leuk vind, en dan merk je dat anderen dat ook voelen.</p>
     <div class="q-stats">
       {[['2 uur','Repertoire'],['3+','Vaste podia'],['2026','Eigen nummers']].map(([v,l]) => (
         <div><span class="q-val">{v}</span><span class="q-lbl">{l}</span></div>
@@ -791,56 +857,70 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
     <p class="c-left-sub r d1">
       Beschikbaar voor privéfeesten, bruiloften, bedrijfsevenementen en horeca-optredens in de regio Amsterdam.
     </p>
-    <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
-       class="c-left-lnk r d2" data-track="contact_ig">
-      Stuur een bericht
-      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-      </svg>
-    </a>
+    <div class="c-details r d2">
+      <div class="c-detail">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+        </svg>
+        Zandvoort &amp; regio Amsterdam
+      </div>
+      <div class="c-detail">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        @mauro_fryters op Instagram
+      </div>
+    </div>
   </div>
 
   <div class="c-right">
-    <span class="lbl r" style="display:block; margin-bottom:2rem;">Contact & boeking</span>
-    <div class="c-items r d1">
-      <div class="c-item">
-        <div class="c-icon">
-          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
+    <p class="form-title r">Stuur een aanvraag</p>
+    <p class="form-sub r d1">Vul het formulier in en Mauro neemt zo snel mogelijk contact met je op.</p>
+
+    <form id="book-form" novalidate>
+      <div class="form-grid r d2">
+        <div class="form-field">
+          <label for="f-naam">Naam</label>
+          <input type="text" id="f-naam" name="naam" placeholder="Jouw naam" required />
         </div>
-        <div><div class="c-sub">Instagram</div>
-          <div class="c-val"><a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener">@mauro_fryters</a></div>
+        <div class="form-field">
+          <label for="f-email">E-mail</label>
+          <input type="email" id="f-email" name="email" placeholder="jouw@email.nl" required />
         </div>
+        <div class="form-field">
+          <label for="f-tel">Telefoon</label>
+          <input type="tel" id="f-tel" name="telefoon" placeholder="+31 6 ..." />
+        </div>
+        <div class="form-field">
+          <label for="f-type">Type evenement</label>
+          <select id="f-type" name="type">
+            <option value="">Kies een type...</option>
+            <option>Privéfeest</option>
+            <option>Bruiloft</option>
+            <option>Bedrijfsevenement</option>
+            <option>Horeca-optreden</option>
+            <option>Anders</option>
+          </select>
+        </div>
+        <div class="form-field full">
+          <label for="f-datum">Gewenste datum</label>
+          <input type="text" id="f-datum" name="datum" placeholder="bijv. 14 juni 2026" />
+        </div>
+        <div class="form-field full">
+          <label for="f-bericht">Bericht</label>
+          <textarea id="f-bericht" name="bericht" rows="4" placeholder="Vertel iets over het evenement, de locatie en het publiek..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit" data-track="form_submit">Aanvraag versturen</button>
       </div>
-      <div class="c-item">
-        <div class="c-icon">
-          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
-          </svg>
-        </div>
-        <div><div class="c-sub">Standplaats</div>
-          <div class="c-val">Zandvoort & regio Amsterdam</div>
-        </div>
-      </div>
+    </form>
+
+    <div class="form-success" id="form-success">
+      <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto .75rem;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+      </svg>
+      <p><strong>Aanvraag ontvangen!</strong><br/>Mauro neemt zo snel mogelijk contact met je op.</p>
     </div>
-
-    <ul class="checklist r d2">
-      {['Twee uur live muziek','Nederlandstalig én Engelstalig','Beschikbaar in de regio','Persoonlijk & professioneel'].map(t => (
-        <li>
-          <svg class="chk" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
-          </svg>
-          {t}
-        </li>
-      ))}
-    </ul>
-
-    <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
-       class="btn-book-dark r d3" data-track="contact_cta">
-      Neem contact op
-    </a>
   </div>
 </section>
 
@@ -862,10 +942,10 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
 
 <script>
   (function () {
-    // Nav solid on scroll
+    // Nav sticky + leesbaar bij scrollen
     const nav = document.getElementById('nav') as HTMLElement;
     window.addEventListener('scroll', () => {
-      nav?.classList.toggle('solid', window.scrollY > 70);
+      nav?.classList.toggle('scrolled', window.scrollY > 70);
     }, { passive: true });
 
     // Reveal on scroll
@@ -874,6 +954,18 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
       { threshold: 0.08 }
     );
     document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+    // Booking form submit
+    const bookForm = document.getElementById('book-form') as HTMLFormElement | null;
+    const formSuccess = document.getElementById('form-success') as HTMLElement | null;
+    bookForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = bookForm.querySelector('.btn-submit') as HTMLButtonElement | null;
+      if (btn) { btn.textContent = 'Versturen...'; btn.disabled = true; }
+      await new Promise(r => setTimeout(r, 700));
+      bookForm.style.display = 'none';
+      if (formSuccess) formSuccess.style.display = 'block';
+    });
 
     // Zwevende gouden deeltjes genereren
     const container = document.getElementById('particles');
