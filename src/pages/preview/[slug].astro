@@ -84,6 +84,14 @@ const svgIcons: Record<string, string> = {
     }
     .bounce-down { animation: bounce-down 1.5s infinite; }
 
+    @keyframes heroZoom {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+    .hero-img-zoom {
+      animation: heroZoom 25s ease-in-out infinite alternate;
+    }
+
     #site-nav { transition: top 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
     #site-nav.scrolled {
       top: 0 !important;
@@ -92,6 +100,8 @@ const svgIcons: Record<string, string> = {
       box-shadow: 0 1px 24px rgba(0,0,0,0.1);
     }
     #site-nav.scrolled .nav-link { color: #334155 !important; }
+    #site-nav.scrolled .nav-phone { color: #334155 !important; }
+    #site-nav.scrolled .nav-cta { background-color: var(--primaryColor) !important; color: white !important; border-color: var(--primaryColor) !important; }
     #site-nav.scrolled .nav-brand { color: var(--primaryColor) !important; }
     #site-nav.scrolled .nav-brand img { filter: none !important; }
 
@@ -145,15 +155,29 @@ const svgIcons: Record<string, string> = {
   <!-- STICKY NAV -->
   <nav id="site-nav" class="fixed left-0 right-0 z-50 transition-all duration-300" style="top:36px">
     <div class="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
-      <div class="nav-brand font-bold text-white text-xl tracking-tight">
+      <a href="#" class="nav-brand flex items-center flex-shrink-0 px-3 py-1.5 rounded-full transition-all duration-300" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
         {lead.logo_url
-          ? <img src={lead.logo_url} alt={lead.company_name} class="h-8 w-auto object-contain" style="filter:brightness(0) invert(1)" />
-          : lead.company_name
+          ? <img src={lead.logo_url} alt={lead.company_name} class="h-9 w-auto object-contain transition-all duration-300" style="filter:brightness(0) invert(1)" />
+          : <span class="font-bold text-white text-xl tracking-tight">{lead.company_name}</span>
         }
-      </div>
+      </a>
+      
       <div class="hidden md:flex items-center gap-8">
-        <a href="#contact" data-event="nav_cta" class="nav-link text-sm font-bold px-6 py-2.5 rounded-full transition-transform hover:-translate-y-0.5" style={`background-color: ${accentColor}; color: ${primaryColor}`}>
-          Direct Contact
+        <a href="#diensten" class="nav-link text-white/90 text-sm font-medium hover:text-white transition-colors drop-shadow-sm">Diensten</a>
+        <a href="#projecten" class="nav-link text-white/90 text-sm font-medium hover:text-white transition-colors drop-shadow-sm">Projecten</a>
+        <a href="#over-ons" class="nav-link text-white/90 text-sm font-medium hover:text-white transition-colors drop-shadow-sm">Over ons</a>
+        <a href="#contact" class="nav-link text-white/90 text-sm font-medium hover:text-white transition-colors drop-shadow-sm">Contact</a>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        {lead.contact_phone && (
+          <a href={`tel:${lead.contact_phone}`} class="nav-phone hidden lg:inline-flex items-center gap-2 text-white text-sm font-semibold transition-colors duration-300">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.15 15.15 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27c1.12.45 2.33.69 3.48.69a1 1 0 011 1V19a1 1 0 01-1 1C9.61 20 4 14.39 4 7.5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.16.24 2.36.68 3.48a1 1 0 01-.27 1.11l-2.29 2.2z"/></svg>
+            {lead.contact_phone}
+          </a>
+        )}
+        <a href="#contact" data-event="nav_cta" class="nav-cta text-sm font-bold px-6 py-2.5 rounded-full border border-white/50 text-white hover:bg-white hover:text-gray-900 transition-all duration-300">
+          Offerte / Contact
         </a>
       </div>
     </div>
@@ -161,10 +185,11 @@ const svgIcons: Record<string, string> = {
 
   <!-- HERO -->
   <section class="relative min-h-screen flex flex-col justify-end pb-32 px-8 md:px-14 overflow-hidden pt-36">
-    {heroImage
-      ? <img src={heroImage} alt={lead.company_name} class="absolute inset-0 w-full h-full object-cover filter brightness-90 contrast-125" />
-      : <div class="absolute inset-0 bg-slate-900"></div>
-    }
+    <div class="absolute inset-0 w-full h-full bg-slate-900 overflow-hidden">
+      {heroImage && (
+        <img src={heroImage} alt={lead.company_name} class="w-full h-full object-cover hero-img-zoom" style="filter: brightness(0.85);" />
+      )}
+    </div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
     <div class="relative z-10 max-w-5xl mx-auto w-full text-white">
