@@ -162,11 +162,12 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   .hero-eyebrow { margin-bottom: 1.5rem; }
   .hero-name {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(4.5rem, 9vw, 8rem);
+    font-size: clamp(4rem, 7.5vw, 6.5rem);
     font-weight: 900;
-    line-height: .92;
+    line-height: .95;
     color: var(--ink);
     letter-spacing: -.02em;
+    overflow: visible;
   }
   .hero-name .gold-line {
     display: block;
@@ -225,24 +226,6 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
     transition: border-color .2s, color .2s;
   }
   .btn-outline-dark:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* Hero stats rij */
-  .hero-stats {
-    display: flex; gap: 2.5rem; flex-wrap: wrap;
-    margin-top: 2.5rem; padding-top: 2rem;
-    border-top: 1px solid rgba(22,18,14,.1);
-  }
-  .hero-stat-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem; font-weight: 700;
-    color: var(--ink); display: block; line-height: 1;
-    margin-bottom: .3rem;
-  }
-  .hero-stat-lbl {
-    font-size: .6rem; font-weight: 600;
-    letter-spacing: .16em; text-transform: uppercase;
-    color: var(--muted);
-  }
 
   /* Hero foto rechts */
   .hero-right {
@@ -431,41 +414,100 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
 
   /* ── Optredens (DONKER) ────────────────────────── */
   #optredens {
-    background: var(--ink);
+    background: var(--ink2);
     padding: 7rem 3rem;
+    position: relative; overflow: hidden;
   }
-  .opt-inner { max-width: 1160px; margin: 0 auto; }
-  .opt-head { margin-bottom: 3.5rem; }
+  #optredens::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(200,146,42,.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .opt-inner { max-width: 1160px; margin: 0 auto; position: relative; z-index: 1; }
+  .opt-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.5rem;
+    margin-bottom: 3.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(245,239,230,.07);
+  }
   .opt-title {
     font-family: 'Playfair Display', serif;
     font-size: clamp(2.5rem, 4.5vw, 3.8rem);
-    font-weight: 700; color: var(--cream);
+    font-weight: 700; color: var(--cream); line-height: 1;
   }
-  .venue-row {
-    border-top: 1px solid rgba(245,239,230,.08);
-    padding: 1.75rem 0;
-    display: flex; align-items: center; gap: 1.5rem;
-    transition: padding .2s;
+  .opt-subtitle {
+    font-size: .82rem; color: rgba(245,239,230,.38);
+    letter-spacing: .04em; max-width: 260px; line-height: 1.6;
+    text-align: right;
   }
-  .venue-row:last-child { border-bottom: 1px solid rgba(245,239,230,.08); }
-  .venue-row:hover { padding-left: 1rem; }
-  .v-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--gold); flex-shrink: 0;
-    transition: box-shadow .3s;
+
+  /* Kaarten grid */
+  .venue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
-  .venue-row:hover .v-dot { box-shadow: 0 0 12px var(--gold); }
-  .v-name {
+  .venue-card {
+    position: relative; overflow: hidden;
+    background: rgba(245,239,230,.03);
+    border: 1px solid rgba(245,239,230,.07);
+    border-radius: 6px;
+    padding: 2.5rem 2rem 2rem;
+    cursor: default;
+    transition: border-color .35s, transform .35s, background .35s;
+  }
+  .venue-card:hover {
+    background: rgba(200,146,42,.06);
+    border-color: rgba(200,146,42,.35);
+    transform: translateY(-5px);
+  }
+  /* Groot achtergrondgetal */
+  .vc-num {
+    position: absolute;
+    bottom: -.5rem; right: 1rem;
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.3rem, 2.5vw, 2rem);
-    font-weight: 700; color: var(--cream); flex: 1;
+    font-size: 7rem; font-weight: 900; line-height: 1;
+    color: rgba(245,239,230,.03);
+    pointer-events: none;
+    transition: color .35s;
   }
-  .v-city { font-size: .85rem; color: rgba(245,239,230,.45); }
-  .v-tag {
-    font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--gold); border: 1px solid var(--gold-20);
-    padding: .28rem .75rem; border-radius: 2px; white-space: nowrap;
+  .venue-card:hover .vc-num { color: rgba(200,146,42,.07); }
+  .vc-tag {
+    display: inline-block; margin-bottom: 1.5rem;
+    font-size: .55rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold);
+    padding: .25rem .7rem;
+    border: 1px solid rgba(200,146,42,.3);
+    border-radius: 2px;
+    background: rgba(200,146,42,.08);
   }
+  .vc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    font-weight: 700; color: var(--cream);
+    line-height: 1.2; margin-bottom: 1rem;
+  }
+  .vc-meta {
+    display: flex; flex-direction: column; gap: .45rem;
+  }
+  .vc-row {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .78rem; color: rgba(245,239,230,.38);
+  }
+  .vc-row svg { flex-shrink: 0; color: rgba(200,146,42,.5); }
+  /* Gouden lijn onderin bij hover */
+  .venue-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .35s;
+  }
+  .venue-card:hover::after { transform: scaleX(1); }
 
   /* ── Quote (FOTO) ──────────────────────────────── */
   #quote {
@@ -638,6 +680,9 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
     #strip, #setlist, #over, #optredens, #quote { padding: 5rem 1.5rem; }
     .over-inner { grid-template-columns: 1fr; gap: 3rem; }
     .over-frame { display: none; }
+    .venue-grid { grid-template-columns: 1fr; }
+    .opt-head { flex-direction: column; gap: .75rem; }
+    .opt-subtitle { text-align: left; }
     #contact { grid-template-columns: 1fr; }
     .c-left, .c-right { padding: 4rem 1.5rem; }
     footer { padding: 1.5rem; }
@@ -702,21 +747,6 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
     <div class="hero-actions r d3">
       <a href="#contact" class="btn-gold" data-track="hero_cta">Boek Mauro</a>
       <a href="#over" class="btn-outline-dark">Meer over hem</a>
-    </div>
-
-    <div class="hero-stats r d4">
-      <div>
-        <span class="hero-stat-val">2 uur</span>
-        <span class="hero-stat-lbl">Live repertoire</span>
-      </div>
-      <div>
-        <span class="hero-stat-val">3+</span>
-        <span class="hero-stat-lbl">Vaste podia</span>
-      </div>
-      <div>
-        <span class="hero-stat-val">2026</span>
-        <span class="hero-stat-lbl">Eigen nummers</span>
-      </div>
     </div>
   </div>
 
@@ -783,7 +813,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   <div class="setlist-inner">
     <div class="setlist-head r">
       <span class="lbl">Repertoire</span>
-      <h2 class="setlist-title">Wat hij speelt</h2>
+      <h2 class="setlist-title">Wat hij zingt</h2>
     </div>
 
     <div class="setlist-item r">
@@ -817,22 +847,77 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
 <section id="optredens">
   <div class="opt-inner">
     <div class="opt-head r">
-      <span class="lbl" style="color:var(--gold-l); display:block; margin-bottom:.75rem;">Agenda</span>
-      <h2 class="opt-title">Optredens</h2>
+      <div>
+        <span class="lbl" style="color:var(--gold-l); display:block; margin-bottom:.75rem;">Agenda</span>
+        <h2 class="opt-title">Waar je<br/>Mauro vindt</h2>
+      </div>
+      <p class="opt-subtitle">Vaste podia, terugkerende optredens en seizoensgebonden evenementen in de regio.</p>
     </div>
 
-    {[
-      { naam:'Brasserie Legends', stad:'Aalsmeer',    tag:'Vaste plek' },
-      { naam:"Freddy's Bar",      stad:'Amsterdam',   tag:'Regulier'   },
-      { naam:'Meifestival',       stad:'Wijk aan Zee',tag:'Mei 2026'   },
-    ].map((v, i) => (
-      <div class={`venue-row r d${i+1}`}>
-        <div class="v-dot"></div>
-        <div class="v-name">{v.naam}</div>
-        <div class="v-city">{v.stad}</div>
-        <div class="v-tag">{v.tag}</div>
+    <div class="venue-grid">
+      <div class="venue-card r d1">
+        <div class="vc-num">01</div>
+        <span class="vc-tag">Vaste plek</span>
+        <div class="vc-name">Brasserie Legends</div>
+        <div class="vc-meta">
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+            </svg>
+            Aalsmeer
+          </div>
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+            </svg>
+            Doorlopend
+          </div>
+        </div>
       </div>
-    ))}
+
+      <div class="venue-card r d2">
+        <div class="vc-num">02</div>
+        <span class="vc-tag">Regulier</span>
+        <div class="vc-name">Freddy's Bar</div>
+        <div class="vc-meta">
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+            </svg>
+            Amsterdam
+          </div>
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+            </svg>
+            Meerdere keren per maand
+          </div>
+        </div>
+      </div>
+
+      <div class="venue-card r d3">
+        <div class="vc-num">03</div>
+        <span class="vc-tag" style="color:var(--gold-l); border-color:rgba(229,176,74,.4); background:rgba(229,176,74,.1);">Mei 2026</span>
+        <div class="vc-name">Meifestival</div>
+        <div class="vc-meta">
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+            </svg>
+            Wijk aan Zee
+          </div>
+          <div class="vc-row">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+            </svg>
+            Mei 2026 · Buitenpodium
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
