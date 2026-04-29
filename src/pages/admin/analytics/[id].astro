@@ -24,7 +24,7 @@ const { data: analyticsRaw } = await supabase
   .from('analytics')
   .select('*')
   .eq('lead_id', id)
-  .order('created_at', { ascending: false });
+  .order('timestamp', { ascending: false });
 
 const analytics = analyticsRaw ?? [];
 
@@ -247,7 +247,7 @@ function formatDate(dateString: string) {
 
                     return (
                       <tr>
-                        <td style="color:#94a3b8">{formatDate(a.created_at)}</td>
+                        <td style="color:#94a3b8">{formatDate(a.timestamp)}</td>
                         <td>
                           <div style="display:flex;align-items:center;gap:0.5rem">
                             <span style="font-weight:500;color:#cbd5e1">{device}</span>

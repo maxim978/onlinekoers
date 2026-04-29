@@ -33,9 +33,10 @@ const { leadId } = Astro.props;
     }
 
     document.addEventListener('click', (e) => {
-      const target = e.target.closest('[data-track]');
+      const target = e.target.closest('[data-track], [data-event]');
       if (target) {
-        trackClick(target.dataset.track);
+        const label = target.dataset.track || target.dataset.event;
+        trackClick(label);
       }
     });
 
