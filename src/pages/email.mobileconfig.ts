@@ -7,7 +7,7 @@ export const GET: APIRoute = ({ url }) => {
     return new Response('Email address is required', { status: 400 });
   }
 
-  const host = 'mail.onlinekoers.com';
+  const host = 'onlinekoers.com';
   const organization = 'OnlineKoers';
   
   // UUIDs need to be unique for each profile. We'll generate them based on the email address for consistency.
