@@ -117,7 +117,11 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
     grid-template-columns: 55% 45%;
     position: relative;
     background: var(--cream);
-    overflow: hidden;
+  }
+  /* Clip-wrapper voor decoratieve elementen, zodat tekst niet geclipped wordt */
+  .hero-clip {
+    position: absolute; inset: 0;
+    overflow: hidden; pointer-events: none; z-index: 0;
   }
 
   /* Decoratieve achtergrondcirkels */
@@ -183,7 +187,7 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   }
   @keyframes shimmer {
     0%   { background-position: 0% center; }
-    100% { background-position: 200% center; }
+    100% { background-position: 100% center; }
   }
   .hero-tagline {
     margin-top: 1.75rem;
@@ -719,12 +723,12 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
 <!-- ── HERO ─────────────────────────────────────────────────────────── -->
 <section id="hero">
 
-  <!-- Achtergrond decoraties -->
-  <div class="hero-bg-circle hbc-1"></div>
-  <div class="hero-bg-circle hbc-2"></div>
-
-  <!-- Zwevende gouden deeltjes -->
-  <div class="particles" id="particles"></div>
+  <!-- Achtergrond decoraties (apart geclipped zodat tekst niet wegvalt) -->
+  <div class="hero-clip">
+    <div class="hero-bg-circle hbc-1"></div>
+    <div class="hero-bg-circle hbc-2"></div>
+    <div class="particles" id="particles"></div>
+  </div>
 
   <!-- LINKS: tekst -->
   <div class="hero-left">
