@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin } from '../../lib/supabase';
 
 export const POST: APIRoute = async ({ request }) => {
   let body: unknown;
@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!id) return new Response(null, { status: 400 });
 
-  await supabase
+  await supabaseAdmin
     .from('analytics')
     .update({
       duration_seconds: Math.max(0, Math.round(duration_seconds)),

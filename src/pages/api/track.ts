@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin } from '../../lib/supabase';
 
 export const POST: APIRoute = async ({ request }) => {
   let body: unknown;
@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('analytics')
     .insert({
       lead_id,
