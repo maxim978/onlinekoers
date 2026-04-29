@@ -175,21 +175,10 @@ const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd
   }
   .hero-name .gold-line {
     display: block;
-    background: linear-gradient(135deg, var(--gold), var(--gold-l), var(--gold));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: shimmer 4s linear infinite;
+    color: var(--gold);
     font-style: italic;
     font-weight: 400;
-    font-size: .7em;
-    /* Extra ruimte rechts voor de schuine uitloop van cursief schrift */
-    padding-right: 0.25em;
-  }
-  @keyframes shimmer {
-    0%   { background-position: 0% center; }
-    100% { background-position: 100% center; }
+    font-size: .72em;
   }
   .hero-tagline {
     margin-top: 1.75rem;
