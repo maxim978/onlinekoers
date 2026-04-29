@@ -13,679 +13,758 @@ if (lead?.id) {
   try { await supabaseAdmin.rpc('increment_view_count', { lead_id_param: lead.id }); } catch (_) {}
 }
 
-// Tijdelijke stockfoto's — vervangen zodra Mauro eigen foto's aanlevert
-const imgHero      = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1920&q=85';
-const imgPortrait  = 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=85';
-const imgStage     = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1920&q=85';
+// Zet foto op: public/images/mauro-portrait.jpg
+const imgPortrait = '/images/mauro-portrait.jpg';
+const imgStage    = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1920&q=85';
 ---
 
 <Layout
   title="Mauro Fryters | Zanger"
   description="Mauro Fryters — zanger uit Zandvoort. Nederlandstalige pop en tijdloze klassiekers."
-  primaryColor="#D4A84B"
-  secondaryColor="#0D0C09"
-  ogImage={imgHero}
+  primaryColor="#C8922A"
+  secondaryColor="#F5EFE6"
+  ogImage={imgStage}
 >
 
 <style is:global>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Inter', sans-serif;
-    background: #0D0C09;
-    color: #F0E6CC;
+    background: #F5EFE6;
+    color: #16120E;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-
-  ::selection { background: #D4A84B; color: #0D0C09; }
+  ::selection { background: #C8922A; color: #fff; }
 </style>
 
 <style>
-  /* ── Tokens ────────────────────────────────────── */
   :root {
-    --gold:    #D4A84B;
-    --gold-20: rgba(212,168,75,.20);
-    --gold-08: rgba(212,168,75,.08);
-    --ink:     #0D0C09;
-    --ink2:    #191710;
-    --cream:   #F0E6CC;
-    --muted:   rgba(240,230,204,.55);
-    --faint:   rgba(240,230,204,.28);
+    --cream:   #F5EFE6;
+    --cream2:  #EDE5D8;
+    --ink:     #16120E;
+    --ink2:    #1F1A13;
+    --gold:    #C8922A;
+    --gold-l:  #E5B04A;
+    --gold-20: rgba(200,146,42,.2);
+    --gold-10: rgba(200,146,42,.1);
+    --muted:   rgba(22,18,14,.55);
+    --faint:   rgba(22,18,14,.25);
   }
+  .serif { font-family: 'Playfair Display', Georgia, serif; }
 
-  /* ── Typography ────────────────────────────────── */
-  .serif  { font-family: 'Playfair Display', Georgia, serif; }
-  .label  {
-    font-size: .65rem; font-weight: 600;
-    letter-spacing: .28em; text-transform: uppercase;
-    color: var(--gold);
+  /* ── Logo ─────────────────────────────────────── */
+  .logo-wrap {
+    display: flex; align-items: center; gap: .75rem;
+    text-decoration: none;
+  }
+  .logo-badge {
+    width: 44px; height: 44px; flex-shrink: 0;
+    transition: transform .3s;
+  }
+  .logo-wrap:hover .logo-badge { transform: rotate(8deg); }
+  .logo-text-wrap { display: flex; flex-direction: column; line-height: 1.1; }
+  .logo-first {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    letter-spacing: .06em;
+  }
+  .logo-last {
+    font-size: .55rem; font-weight: 600;
+    letter-spacing: .32em; text-transform: uppercase;
+    color: var(--gold); margin-top: 1px;
   }
 
   /* ── Nav ───────────────────────────────────────── */
   #nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    padding: 1.5rem 3rem;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    padding: 1.4rem 3rem;
     display: flex; align-items: center; justify-content: space-between;
-    transition: background .4s, backdrop-filter .4s, padding .4s;
+    transition: background .4s, box-shadow .4s, padding .3s;
   }
-  #nav.solid {
-    background: rgba(13,12,9,.95);
+  #nav.scrolled {
+    background: rgba(22,18,14,.95);
     backdrop-filter: blur(16px);
+    box-shadow: 0 1px 0 rgba(200,146,42,.15);
     padding-top: 1rem; padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(212,168,75,.12);
   }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.25rem; font-weight: 700;
-    color: var(--cream); letter-spacing: .04em;
+  #nav.scrolled .logo-first,
+  #nav.scrolled .nav-lnk { color: var(--cream) !important; }
+  #nav.scrolled .logo-last { color: var(--gold-l) !important; }
+  .nav-lnk {
+    font-size: .8rem; font-weight: 500;
+    color: var(--ink); text-decoration: none;
+    letter-spacing: .03em; transition: color .2s;
   }
-  .nav-logo span { color: var(--gold); }
+  .nav-lnk:hover { color: var(--gold); }
   .nav-links { display: flex; gap: 2.5rem; }
-  .nav-links a {
-    font-size: .8rem; font-weight: 500; color: var(--muted);
-    text-decoration: none; letter-spacing: .04em;
-    transition: color .2s;
-  }
-  .nav-links a:hover { color: var(--cream); }
   .nav-cta {
-    font-size: .75rem; font-weight: 600;
+    font-size: .72rem; font-weight: 700;
     letter-spacing: .14em; text-transform: uppercase;
-    color: var(--gold); text-decoration: none;
-    border: 1px solid rgba(212,168,75,.4);
-    padding: .6rem 1.4rem; border-radius: 2px;
-    transition: background .2s, color .2s;
+    color: var(--cream); background: var(--gold);
+    padding: .65rem 1.5rem; border-radius: 2px;
+    text-decoration: none;
+    transition: background .2s, transform .2s;
   }
-  .nav-cta:hover { background: var(--gold); color: var(--ink); }
+  .nav-cta:hover { background: #B5801E; transform: translateY(-1px); }
 
   /* ── Hero ──────────────────────────────────────── */
   #hero {
-    position: relative; min-height: 100svh;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 0 3rem 5rem;
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 55% 45%;
+    position: relative;
+    background: var(--cream);
     overflow: hidden;
   }
-  #hero-bg {
-    position: absolute; inset: 0;
-    background: var(--ink);
-    overflow: hidden;
-  }
-  #hero-bg img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center top;
-    opacity: .55;
-    transform: scale(1.06);
-    animation: slowZoom 24s ease-in-out infinite alternate;
-  }
-  #hero-bg::after {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      linear-gradient(to top,  rgba(13,12,9,1) 0%, rgba(13,12,9,.5) 40%, transparent 80%),
-      linear-gradient(to right, rgba(13,12,9,.6) 0%, transparent 55%);
-  }
-  @keyframes slowZoom { from { transform:scale(1.06); } to { transform:scale(1.14); } }
 
-  .hero-content { position: relative; z-index: 2; max-width: 1160px; width: 100%; }
-  .hero-eyebrow { margin-bottom: 1.25rem; }
+  /* Decoratieve achtergrondcirkels */
+  .hero-bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hbc-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,146,42,.12) 0%, transparent 70%);
+    top: -100px; left: -150px;
+  }
+  .hbc-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(200,146,42,.08) 0%, transparent 70%);
+    bottom: 50px; left: 200px;
+  }
 
+  /* Zwevende gouden stippen */
+  .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .p {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) scale(1);   opacity: 0; }
+    10%  { opacity: .6; }
+    90%  { opacity: .2; }
+    100% { transform: translateY(-80vh) scale(.5); opacity: 0; }
+  }
+
+  /* Hero tekst links */
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 3rem 5rem 3rem;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow { margin-bottom: 1.5rem; }
   .hero-name {
     font-family: 'Playfair Display', serif;
+    font-size: clamp(4.5rem, 9vw, 8rem);
     font-weight: 900;
-    line-height: .9;
-    color: var(--cream);
-    font-size: clamp(5.5rem, 14vw, 13rem);
+    line-height: .92;
+    color: var(--ink);
     letter-spacing: -.02em;
   }
-  .hero-name .thin {
+  .hero-name .gold-line {
     display: block;
-    font-weight: 400;
+    background: linear-gradient(135deg, var(--gold), var(--gold-l), var(--gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shimmer 4s linear infinite;
     font-style: italic;
-    color: var(--gold);
-    font-size: clamp(3rem, 8vw, 7.5rem);
-    margin-top: .1em;
+    font-weight: 400;
+    font-size: .7em;
   }
+  @keyframes shimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  .hero-tagline {
+    margin-top: 1.75rem;
+    font-size: 1rem; color: var(--muted); line-height: 1.7;
+    max-width: 400px;
+  }
+  .hero-divider {
+    width: 48px; height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    margin: 1.75rem 0;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 
-  .hero-meta {
-    margin-top: 2.5rem;
-    display: flex; align-items: center; gap: 2rem;
-    flex-wrap: wrap;
+  .btn-gold {
+    font-size: .78rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: var(--gold); color: #fff;
+    padding: 1rem 2.2rem; border-radius: 3px;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: transform .2s;
+    box-shadow: 0 4px 24px rgba(200,146,42,.35);
   }
-  .hero-tag {
-    font-size: .8rem; color: var(--muted); letter-spacing: .08em;
+  .btn-gold::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform .5s;
   }
-  .hero-sep { width: 40px; height: 1px; background: var(--gold); opacity: .45; }
+  .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,146,42,.4); }
+  .btn-gold:hover::after { transform: translateX(100%); }
 
-  .hero-actions { margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary {
-    font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
-    background: var(--gold); color: var(--ink); text-decoration: none;
-    padding: 1rem 2.5rem; border-radius: 2px;
-    transition: opacity .2s, transform .2s;
-  }
-  .btn-primary:hover { opacity: .88; transform: translateY(-2px); }
-  .btn-ghost {
-    font-size: .8rem; font-weight: 500; color: var(--muted); text-decoration: none;
-    padding: 1rem 2rem; border: 1px solid var(--faint); border-radius: 2px;
+  .btn-outline-dark {
+    font-size: .78rem; font-weight: 600;
+    color: var(--ink);
+    padding: 1rem 2rem; border-radius: 3px;
+    border: 1.5px solid rgba(22,18,14,.2);
+    text-decoration: none;
     transition: border-color .2s, color .2s;
   }
-  .btn-ghost:hover { border-color: var(--muted); color: var(--cream); }
+  .btn-outline-dark:hover { border-color: var(--gold); color: var(--gold); }
 
-  .hero-scroll {
-    position: absolute; bottom: 2rem; right: 3rem; z-index: 2;
-    display: flex; flex-direction: column; align-items: center; gap: .5rem;
-    color: var(--faint); font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
-  }
-  .scroll-line {
-    width: 1px; height: 3rem;
-    background: linear-gradient(to bottom, var(--gold), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-  @keyframes scrollPulse {
-    0%,100% { opacity: .4; transform: scaleY(1); }
-    50%      { opacity: 1;  transform: scaleY(1.1); }
-  }
-
-  /* ── Intro strip ───────────────────────────────── */
-  #intro {
-    background: var(--gold);
-    padding: 4rem 3rem;
-    text-align: center;
-  }
-  .intro-text {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
-    font-style: italic;
-    color: var(--ink);
-    max-width: 900px;
-    margin: 0 auto;
-    line-height: 1.4;
-  }
-
-  /* ── Over ──────────────────────────────────────── */
-  #over {
-    background: var(--ink2);
-    display: grid;
-    grid-template-columns: 5fr 4fr;
-    min-height: 90vh;
-  }
-  .over-photo {
+  /* Hero foto rechts */
+  .hero-right {
     position: relative;
     overflow: hidden;
   }
-  .over-photo img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center top;
-    filter: sepia(.25) contrast(1.05);
-    transition: transform .9s ease;
+  .hero-photo-container {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: flex-end; justify-content: center;
   }
-  .over-photo:hover img { transform: scale(1.03); }
-  .over-photo::after {
+  .hero-photo-container img {
+    height: 105%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  /* Fade links zodat foto in cream-achtergrond vloeit */
+  .hero-photo-container::before {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(to right, transparent 60%, var(--ink2) 100%);
+    background: linear-gradient(to right, var(--cream) 0%, transparent 30%);
+    z-index: 1;
+  }
+  /* Subtiele gouden gloed achter foto */
+  .hero-photo-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,146,42,.18) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
 
-  .over-text {
-    padding: 6rem 4rem 6rem 3.5rem;
-    display: flex; flex-direction: column; justify-content: center;
+  /* Hero scroll indicator */
+  .hero-scroll {
+    position: absolute; bottom: 2rem; left: 3rem; z-index: 2;
+    display: flex; align-items: center; gap: .75rem;
+    color: var(--muted); font-size: .65rem; letter-spacing: .18em; text-transform: uppercase;
   }
-  .over-quote {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
-    font-style: italic;
+  .scroll-bar {
+    width: 32px; height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    animation: scrollFade 2s ease-in-out infinite;
+  }
+  @keyframes scrollFade { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+
+  /* ── Label ─────────────────────────────────────── */
+  .lbl {
+    font-size: .65rem; font-weight: 700;
+    letter-spacing: .28em; text-transform: uppercase;
     color: var(--gold);
-    line-height: 1.35;
-    margin-bottom: 2.5rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--gold-20);
   }
-  .over-bio p {
+
+  /* ── Reveal ────────────────────────────────────── */
+  .r { opacity:0; transform:translateY(22px); transition: opacity .85s ease, transform .85s ease; }
+  .r.in { opacity:1; transform:none; }
+  .d1 { transition-delay:.1s; } .d2 { transition-delay:.2s; }
+  .d3 { transition-delay:.32s; } .d4 { transition-delay:.45s; }
+
+  /* ── Gold intro strip ──────────────────────────── */
+  #strip {
+    background: var(--gold);
+    padding: 3.5rem 3rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  #strip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, rgba(0,0,0,.03) 0, rgba(0,0,0,.03) 1px,
+      transparent 1px, transparent 8px);
+  }
+  .strip-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-style: italic;
+    color: var(--ink);
+    max-width: 820px;
+    margin: 0 auto;
+    line-height: 1.45;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Over Mauro (DONKER) ───────────────────────── */
+  #over {
+    background: var(--ink2);
+    padding: 7rem 3rem;
+  }
+  .over-inner {
+    max-width: 1160px; margin: 0 auto;
+    display: grid; grid-template-columns: 5fr 4fr;
+    gap: 6rem; align-items: center;
+  }
+  .over-kop {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 700; color: var(--cream);
+    line-height: 1.05; margin-bottom: 1.5rem;
+  }
+  .over-kop em { font-style: italic; font-weight: 400; color: var(--gold-l); }
+  .over-p {
     font-size: .95rem; line-height: 1.85;
-    color: var(--muted); margin-bottom: 1.25rem;
+    color: rgba(245,239,230,.55); margin-bottom: 1.1rem;
   }
-  .over-bio p:last-child { margin-bottom: 0; }
-  .over-link {
-    margin-top: 2.5rem;
+  .over-ig {
     display: inline-flex; align-items: center; gap: .6rem;
-    font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--gold); text-decoration: none;
+    font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold-l); text-decoration: none; margin-top: 1.5rem;
     transition: gap .2s;
   }
-  .over-link:hover { gap: 1rem; }
+  .over-ig:hover { gap: 1rem; }
 
-  /* ── Setlist ───────────────────────────────────── */
+  /* Fotoframe rechts in donkere sectie */
+  .over-frame {
+    position: relative;
+  }
+  .over-frame-img {
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5);
+  }
+  .over-frame-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    filter: sepia(.15) contrast(1.05);
+  }
+  /* Decoratieve goudlijn */
+  .over-frame::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem; right: -1.5rem;
+    bottom: -1.5rem; left: 1.5rem;
+    border: 1px solid rgba(200,146,42,.25);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  /* ── Setlist (LICHT) ───────────────────────────── */
   #setlist {
+    background: var(--cream2);
+    padding: 7rem 3rem;
+  }
+  .setlist-inner { max-width: 1160px; margin: 0 auto; }
+  .setlist-head { display: flex; align-items: baseline; gap: 2rem; margin-bottom: 3.5rem; }
+  .setlist-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+    font-weight: 700; color: var(--ink);
+  }
+  .setlist-item {
+    border-top: 1px solid rgba(22,18,14,.1);
+    padding: 2.25rem 0;
+    display: grid; grid-template-columns: 70px 1fr;
+    gap: 2rem; align-items: start;
+    cursor: default;
+    transition: padding .2s;
+  }
+  .setlist-item:last-child { border-bottom: 1px solid rgba(22,18,14,.1); }
+  .setlist-item:hover { padding-left: 1rem; }
+  .s-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; font-weight: 900;
+    color: rgba(22,18,14,.07);
+    line-height: 1; letter-spacing: -.02em;
+    margin-top: -.3rem;
+    transition: color .3s;
+  }
+  .setlist-item:hover .s-num { color: rgba(200,146,42,.25); }
+  .s-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+    font-weight: 700; color: var(--ink); margin-bottom: .5rem;
+  }
+  .s-desc { font-size: .88rem; color: var(--muted); line-height: 1.7; max-width: 540px; }
+  .s-badge {
+    display: inline-block; margin-top: .6rem;
+    font-size: .58rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--gold-20);
+    padding: .22rem .65rem; border-radius: 2px;
+    background: var(--gold-10);
+  }
+
+  /* ── Optredens (DONKER) ────────────────────────── */
+  #optredens {
     background: var(--ink);
     padding: 7rem 3rem;
   }
-  .setlist-head {
-    max-width: 1160px; margin: 0 auto 4rem;
-    display: flex; align-items: baseline; gap: 2rem;
-  }
-  .setlist-title {
+  .opt-inner { max-width: 1160px; margin: 0 auto; }
+  .opt-head { margin-bottom: 3.5rem; }
+  .opt-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2.5rem, 4.5vw, 3.8rem);
     font-weight: 700; color: var(--cream);
   }
-  .setlist-items { max-width: 1160px; margin: 0 auto; }
-
-  .setlist-item {
-    border-top: 1px solid rgba(240,230,204,.08);
-    padding: 2.5rem 0;
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 2rem;
-    align-items: start;
-    transition: background .2s;
-    cursor: default;
-  }
-  .setlist-item:last-child { border-bottom: 1px solid rgba(240,230,204,.08); }
-  .setlist-item:hover { background: var(--gold-08); margin: 0 -3rem; padding-left: 3rem; padding-right: 3rem; }
-  .setlist-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.5rem; font-weight: 900;
-    color: rgba(240,230,204,.07);
-    line-height: 1; letter-spacing: -.02em;
-    margin-top: -.4rem;
-    transition: color .2s;
-  }
-  .setlist-item:hover .setlist-num { color: rgba(212,168,75,.2); }
-  .setlist-body { padding-top: .4rem; }
-  .setlist-name {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.5rem, 3vw, 2.4rem);
-    font-weight: 700; color: var(--cream);
-    margin-bottom: .6rem;
-  }
-  .setlist-desc { font-size: .88rem; color: var(--muted); line-height: 1.7; max-width: 560px; }
-  .setlist-badge {
-    display: inline-block;
-    font-size: .6rem; font-weight: 700;
-    letter-spacing: .18em; text-transform: uppercase;
-    color: var(--gold); border: 1px solid var(--gold-20);
-    padding: .25rem .7rem; border-radius: 2px; margin-top: .8rem;
-  }
-
-  /* ── Optredens ─────────────────────────────────── */
-  #optredens {
-    background: var(--ink2);
-    padding: 7rem 3rem;
-  }
-  .optredens-inner { max-width: 1160px; margin: 0 auto; }
-  .optredens-head { margin-bottom: 4rem; }
-  .optredens-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700; color: var(--cream);
-  }
-
   .venue-row {
-    border-top: 1px solid rgba(240,230,204,.08);
-    padding: 2rem 0;
-    display: flex; align-items: center; gap: 2rem;
+    border-top: 1px solid rgba(245,239,230,.08);
+    padding: 1.75rem 0;
+    display: flex; align-items: center; gap: 1.5rem;
     transition: padding .2s;
   }
-  .venue-row:last-child { border-bottom: 1px solid rgba(240,230,204,.08); }
-  .venue-row:hover { padding-left: 1.5rem; }
-  .venue-dot {
-    width: 6px; height: 6px; border-radius: 50%;
+  .venue-row:last-child { border-bottom: 1px solid rgba(245,239,230,.08); }
+  .venue-row:hover { padding-left: 1rem; }
+  .v-dot {
+    width: 7px; height: 7px; border-radius: 50%;
     background: var(--gold); flex-shrink: 0;
-    transition: box-shadow .2s;
+    transition: box-shadow .3s;
   }
-  .venue-row:hover .venue-dot { box-shadow: 0 0 10px var(--gold); }
-  .venue-name {
+  .venue-row:hover .v-dot { box-shadow: 0 0 12px var(--gold); }
+  .v-name {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.3rem, 2.5vw, 2rem);
-    font-weight: 700; color: var(--cream);
-    flex: 1;
+    font-weight: 700; color: var(--cream); flex: 1;
   }
-  .venue-city { font-size: .85rem; color: var(--muted); }
-  .venue-tag {
-    font-size: .6rem; font-weight: 700;
-    letter-spacing: .15em; text-transform: uppercase;
+  .v-city { font-size: .85rem; color: rgba(245,239,230,.45); }
+  .v-tag {
+    font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
     color: var(--gold); border: 1px solid var(--gold-20);
-    padding: .3rem .8rem; border-radius: 2px;
-    white-space: nowrap;
+    padding: .28rem .75rem; border-radius: 2px; white-space: nowrap;
   }
 
-  /* ── Quote ─────────────────────────────────────── */
+  /* ── Quote (FOTO) ──────────────────────────────── */
   #quote {
-    position: relative;
-    min-height: 70vh;
+    position: relative; min-height: 72vh;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    padding: 7rem 3rem;
+    overflow: hidden; padding: 7rem 3rem;
   }
-  #quote-bg {
-    position: absolute; inset: 0;
-  }
-  #quote-bg img {
+  #qbg { position: absolute; inset: 0; }
+  #qbg img {
     width: 100%; height: 100%;
     object-fit: cover; object-position: center;
-    filter: brightness(.35) sepia(.5);
+    filter: brightness(.3) sepia(.4);
   }
-  #quote-bg::after {
+  #qbg::after {
     content: '';
     position: absolute; inset: 0;
-    background: rgba(13,12,9,.72);
+    background: rgba(16,12,8,.65);
   }
-  .quote-inner {
-    position: relative; z-index: 2;
-    max-width: 900px; text-align: center;
-  }
-  .quote-mark {
+  .q-inner { position: relative; z-index: 2; max-width: 900px; text-align: center; }
+  .q-mark {
     font-family: 'Playfair Display', serif;
-    font-size: 8rem; line-height: .6;
-    color: var(--gold); opacity: .3;
+    font-size: 7rem; line-height: .5; color: var(--gold); opacity: .25;
     margin-bottom: 1.5rem;
   }
-  .quote-text {
+  .q-text {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3.5vw, 3rem);
-    font-style: italic;
-    color: var(--cream);
-    line-height: 1.45;
-    margin-bottom: 2.5rem;
+    font-size: clamp(1.6rem, 3vw, 2.8rem);
+    font-style: italic; color: var(--cream);
+    line-height: 1.45; margin-bottom: 2.5rem;
   }
-  .quote-stats {
+  .q-stats {
     display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
-    padding-top: 2.5rem;
-    border-top: 1px solid rgba(212,168,75,.2);
+    border-top: 1px solid rgba(200,146,42,.2); padding-top: 2.5rem;
   }
-  .stat-val {
+  .q-val {
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem; font-weight: 700;
-    color: var(--gold); display: block; margin-bottom: .25rem;
+    font-size: 2.5rem; font-weight: 700; color: var(--gold);
+    display: block; margin-bottom: .25rem;
   }
-  .stat-lbl {
-    font-size: .65rem; color: var(--faint);
+  .q-lbl {
+    font-size: .62rem; color: rgba(245,239,230,.4);
     letter-spacing: .2em; text-transform: uppercase;
   }
 
-  /* ── Contact ───────────────────────────────────── */
+  /* ── Contact (SPLIT) ───────────────────────────── */
   #contact {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 60vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 62vh;
   }
-  .contact-left {
+  .c-left {
     background: var(--gold);
     padding: 6rem 4rem;
     display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
   }
-  .contact-left-title {
+  .c-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, rgba(0,0,0,.04) 0, rgba(0,0,0,.04) 1px,
+      transparent 1px, transparent 8px);
+  }
+  .c-left-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 4vw, 3.5rem);
-    font-weight: 900;
-    color: var(--ink); line-height: 1.15;
-    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 900; color: var(--ink);
+    line-height: 1.15; margin-bottom: 1.25rem;
+    position: relative; z-index: 1;
   }
-  .contact-left-sub {
-    font-size: .95rem; color: rgba(13,12,9,.65);
-    line-height: 1.7; max-width: 360px;
-    margin-bottom: 2.5rem;
+  .c-left-sub {
+    font-size: .92rem; color: rgba(22,18,14,.65);
+    line-height: 1.7; max-width: 340px;
+    margin-bottom: 2.25rem; position: relative; z-index: 1;
   }
-  .contact-left-link {
+  .c-left-lnk {
     display: inline-flex; align-items: center; gap: .6rem;
-    font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
     color: var(--ink); text-decoration: none;
+    position: relative; z-index: 1;
     transition: gap .2s;
   }
-  .contact-left-link:hover { gap: 1rem; }
+  .c-left-lnk:hover { gap: 1rem; }
 
-  .contact-right {
-    background: var(--ink2);
+  .c-right {
+    background: var(--cream);
     padding: 6rem 4rem;
     display: flex; flex-direction: column; justify-content: center;
   }
-  .contact-right-label { margin-bottom: 2.5rem; }
-  .contact-items { display: flex; flex-direction: column; gap: 1.75rem; margin-bottom: 3rem; }
-  .contact-item { display: flex; align-items: flex-start; gap: 1.25rem; }
-  .contact-icon {
-    width: 40px; height: 40px; border-radius: 6px;
-    background: var(--gold-08); border: 1px solid var(--gold-20);
+  .c-items { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2.5rem; }
+  .c-item { display: flex; align-items: flex-start; gap: 1rem; }
+  .c-icon {
+    width: 38px; height: 38px; border-radius: 6px;
+    background: var(--gold-10); border: 1px solid var(--gold-20);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     color: var(--gold);
   }
-  .contact-item-text .sub { font-size: .7rem; color: var(--faint); margin-bottom: .2rem; }
-  .contact-item-text .val { font-size: .95rem; font-weight: 600; color: var(--cream); }
-  .contact-item-text a { text-decoration: none; color: inherit; transition: color .2s; }
-  .contact-item-text a:hover { color: var(--gold); }
-
-  .contact-checklist { list-style: none; display: flex; flex-direction: column; gap: .85rem; margin-bottom: 2.5rem; }
-  .contact-checklist li {
-    display: flex; align-items: center; gap: .75rem;
-    font-size: .88rem; color: var(--muted);
+  .c-sub { font-size: .68rem; color: var(--faint); margin-bottom: .15rem; }
+  .c-val { font-size: .9rem; font-weight: 600; color: var(--ink); }
+  .c-val a { text-decoration: none; color: inherit; transition: color .2s; }
+  .c-val a:hover { color: var(--gold); }
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2.25rem; }
+  .checklist li {
+    display: flex; align-items: center; gap: .65rem;
+    font-size: .85rem; color: var(--muted);
   }
-  .check { color: var(--gold); flex-shrink: 0; }
+  .chk { color: var(--gold); flex-shrink: 0; }
 
-  .btn-book {
-    font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-    background: var(--gold); color: var(--ink); text-decoration: none;
-    padding: 1.1rem 2rem; border-radius: 2px;
-    text-align: center;
-    transition: opacity .2s, transform .2s;
-    display: block;
+  .btn-book-dark {
+    display: block; text-align: center;
+    font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    background: var(--ink); color: var(--cream);
+    padding: 1.1rem 2rem; border-radius: 3px; text-decoration: none;
+    transition: background .2s, transform .2s;
+    box-shadow: 0 4px 20px rgba(22,18,14,.2);
   }
-  .btn-book:hover { opacity: .88; transform: translateY(-2px); }
+  .btn-book-dark:hover { background: var(--ink2); transform: translateY(-2px); }
 
   /* ── Footer ────────────────────────────────────── */
   footer {
-    background: var(--ink);
-    border-top: 1px solid rgba(212,168,75,.1);
+    background: var(--ink2);
+    border-top: 1px solid rgba(200,146,42,.12);
     padding: 2rem 3rem;
     display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
   }
-  .footer-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem; font-weight: 700;
-    color: var(--cream); letter-spacing: .04em;
-  }
-  .footer-logo span { color: var(--gold); }
-  .footer-copy { font-size: .7rem; color: var(--faint); letter-spacing: .06em; }
-
-  /* ── Urgency bar ───────────────────────────────── */
-  #urgency {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
-    background: rgba(13,12,9,.95);
-    border-top: 1px solid rgba(212,168,75,.18);
-    backdrop-filter: blur(12px);
-    padding: .75rem 3rem;
-    display: flex; align-items: center; justify-content: space-between;
-    transform: translateY(100%);
-    transition: transform .4s ease;
-  }
-  #urgency.visible { transform: translateY(0); }
-  .urgency-text { font-size: .7rem; color: var(--muted); }
-  .urgency-text strong { color: var(--gold); }
-  .urgency-close {
-    background: none; border: none; cursor: pointer;
-    color: var(--faint); font-size: 1.2rem; padding: 0 .5rem;
-    transition: color .2s;
-  }
-  .urgency-close:hover { color: var(--cream); }
-
-  /* ── Reveal ────────────────────────────────────── */
-  .r { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform .9s ease; }
-  .r.in { opacity: 1; transform: none; }
-  .r2 { transition-delay: .15s; }
-  .r3 { transition-delay: .28s; }
-  .r4 { transition-delay: .42s; }
+  .f-copy { font-size: .68rem; color: rgba(245,239,230,.25); letter-spacing: .06em; }
 
   /* ── Responsive ────────────────────────────────── */
-  @media (max-width: 768px) {
-    #nav { padding: 1.2rem 1.5rem; }
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { height: 55vw; }
+    .hero-left { padding: 7rem 1.5rem 3rem; }
+    #nav { padding: 1.1rem 1.5rem; }
     #nav .nav-links { display: none; }
-    #hero { padding: 0 1.5rem 4rem; }
-    .hero-scroll { right: 1.5rem; }
-    #intro { padding: 3rem 1.5rem; }
-    #over { grid-template-columns: 1fr; }
-    .over-photo { height: 60vw; }
-    .over-text { padding: 3rem 1.5rem; }
-    #setlist { padding: 5rem 1.5rem; }
-    .setlist-item:hover { margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-    #optredens { padding: 5rem 1.5rem; }
-    #quote { padding: 5rem 1.5rem; }
+    .hero-scroll { left: 1.5rem; }
+    #strip, #setlist, #over, #optredens, #quote { padding: 5rem 1.5rem; }
+    .over-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .over-frame { display: none; }
     #contact { grid-template-columns: 1fr; }
-    .contact-left, .contact-right { padding: 4rem 1.5rem; }
-    footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
-    #urgency { padding: .75rem 1.5rem; }
+    .c-left, .c-right { padding: 4rem 1.5rem; }
+    footer { padding: 1.5rem; }
   }
 </style>
 
 <!-- ── NAV ──────────────────────────────────────────────────────────── -->
 <nav id="nav">
-  <a href="#" class="nav-logo">Mauro <span>Fryters</span></a>
+  <a href="#" class="logo-wrap">
+    <!-- SVG Logo badge -->
+    <svg class="logo-badge" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#C8922A;">
+      <circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="24" cy="24" r="17" stroke="currentColor" stroke-width=".5" opacity=".35"/>
+      <text x="24" y="30" text-anchor="middle"
+        font-family="'Playfair Display', Georgia, serif"
+        font-size="17" font-weight="700" fill="currentColor" letter-spacing="-.5">MF</text>
+    </svg>
+    <div class="logo-text-wrap">
+      <span class="logo-first">Mauro Fryters</span>
+      <span class="logo-last">Officieel voorstel</span>
+    </div>
+  </a>
+
   <div class="nav-links">
-    <a href="#over">Over Mauro</a>
-    <a href="#setlist">Repertoire</a>
-    <a href="#optredens">Optredens</a>
-    <a href="#contact">Contact</a>
+    <a href="#over" class="nav-lnk">Over Mauro</a>
+    <a href="#setlist" class="nav-lnk">Repertoire</a>
+    <a href="#optredens" class="nav-lnk">Optredens</a>
+    <a href="#contact" class="nav-lnk">Contact</a>
   </div>
+
   <a href="#contact" class="nav-cta" data-track="nav_cta">Boek Mauro</a>
 </nav>
 
 <!-- ── HERO ─────────────────────────────────────────────────────────── -->
 <section id="hero">
-  <div id="hero-bg">
-    <img src={imgHero} alt="Mauro Fryters live" loading="eager" />
-  </div>
 
-  <div class="hero-content r">
-    <div class="hero-eyebrow">
-      <span class="label">Zanger · Zandvoort · Noord-Holland</span>
+  <!-- Achtergrond decoraties -->
+  <div class="hero-bg-circle hbc-1"></div>
+  <div class="hero-bg-circle hbc-2"></div>
+
+  <!-- Zwevende gouden deeltjes -->
+  <div class="particles" id="particles"></div>
+
+  <!-- LINKS: tekst -->
+  <div class="hero-left">
+    <div class="hero-eyebrow r">
+      <span class="lbl">Zanger · Zandvoort · Noord-Holland</span>
     </div>
 
-    <h1 class="hero-name">
+    <h1 class="hero-name r d1">
       Mauro
-      <em class="thin">Fryters</em>
+      <em class="gold-line">Fryters</em>
     </h1>
 
-    <div class="hero-meta">
-      <span class="hero-tag">Nederlandstalige pop</span>
-      <span class="hero-sep"></span>
-      <span class="hero-tag">Engelstalige klassiekers</span>
-      <span class="hero-sep"></span>
-      <span class="hero-tag">Live · 2 uur repertoire</span>
-    </div>
+    <p class="hero-tagline r d2">
+      Nederlandstalige pop en tijdloze Engelstalige klassiekers.
+      Van een voetbaltoernooi in Zandvoort naar vaste podia in de regio.
+    </p>
 
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary" data-track="hero_cta">Boek Mauro</a>
-      <a href="#over" class="btn-ghost">Meer over hem</a>
+    <div class="hero-divider r d3"></div>
+
+    <div class="hero-actions r d3">
+      <a href="#contact" class="btn-gold" data-track="hero_cta">Boek Mauro</a>
+      <a href="#over" class="btn-outline-dark">Meer over hem</a>
+    </div>
+  </div>
+
+  <!-- RECHTS: grote foto -->
+  <div class="hero-right">
+    <div class="hero-photo-glow"></div>
+    <div class="hero-photo-container">
+      <img src={imgPortrait} alt="Mauro Fryters" loading="eager" />
     </div>
   </div>
 
   <div class="hero-scroll">
-    <div class="scroll-line"></div>
+    <div class="scroll-bar"></div>
     <span>Scroll</span>
   </div>
 </section>
 
-<!-- ── INTRO STRIP ───────────────────────────────────────────────────── -->
-<section id="intro">
-  <p class="intro-text r">
-    "Van een spontane microfoongreep op een voetbaltoernooi tot vaste podia door de regio — Mauro Fryters brengt altijd de juiste sfeer."
+<!-- ── GOLD STRIP ───────────────────────────────────────────────────── -->
+<section id="strip">
+  <p class="strip-text r">
+    "Van een spontane microfoongreep op een voetbaltoernooi tot vaste podia door heel de regio — Mauro Fryters brengt altijd de juiste sfeer."
   </p>
 </section>
 
 <!-- ── OVER MAURO ────────────────────────────────────────────────────── -->
 <section id="over">
-  <div class="over-photo">
-    <img src={imgPortrait} alt="Mauro Fryters" loading="lazy" />
-  </div>
+  <div class="over-inner">
 
-  <div class="over-text">
-    <span class="label r" style="margin-bottom:2rem; display:block;">Over Mauro</span>
-
-    <p class="over-quote r r2">
-      "Ik deed het in het begin voor de lol — en ineens stond ik op een podium."
-    </p>
-
-    <div class="over-bio r r3">
-      <p>
-        Mauro Fryters (28) groeide op in Zandvoort en werd zanger op de meest Zandvoortse manier die denkbaar is: door spontaan een microfoon te grijpen op een voetbaltoernooi bij SV Zandvoort. Wat begon als een spontaan moment groeide uit tot serieuze ambitie.
+    <div>
+      <span class="lbl r" style="color:var(--gold-l);">Over Mauro</span>
+      <h2 class="over-kop r d1">
+        Opgegroeid<br/>in Zandvoort,<br/><em>geboren op<br/>het podium</em>
+      </h2>
+      <p class="over-p r d2">
+        Mauro Fryters (28) werd zanger op de meest Zandvoortse manier denkbaar: door spontaan een microfoon te grijpen op een voetbaltoernooi bij SV Zandvoort. Wat begon als een grap groeide uit tot serieuze ambitie.
       </p>
-      <p>
-        Inmiddels werkt hij aan zijn stem met vocal coach Marcel Swerissen en staat hij regelmatig op podia in de regio — van intieme brasseries tot open festivals. In 2026 schrijft hij zijn eerste eigen nummers.
+      <p class="over-p r d3">
+        Inmiddels werkt hij aan zijn techniek met vocal coach Marcel Swerissen en staat hij regelmatig op podia in de regio. In 2026 schrijft hij zijn eerste eigen nummers.
       </p>
+      <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
+         class="over-ig r d4" data-track="instagram">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        @mauro_fryters
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+        </svg>
+      </a>
     </div>
 
-    <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
-       class="over-link r r4" data-track="instagram">
-      @mauro_fryters
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-      </svg>
-    </a>
+    <!-- Foto frame -->
+    <div class="over-frame r d2">
+      <div class="over-frame-img">
+        <img src={imgPortrait} alt="Mauro Fryters" loading="lazy" />
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- ── SETLIST / REPERTOIRE ──────────────────────────────────────────── -->
+<!-- ── SETLIST ───────────────────────────────────────────────────────── -->
 <section id="setlist">
-  <div class="setlist-head r">
-    <span class="label">Op het repertoire</span>
-    <h2 class="setlist-title">Wat hij speelt</h2>
-  </div>
-
-  <div class="setlist-items">
+  <div class="setlist-inner">
+    <div class="setlist-head r">
+      <span class="lbl">Repertoire</span>
+      <h2 class="setlist-title">Wat hij speelt</h2>
+    </div>
 
     <div class="setlist-item r">
-      <div class="setlist-num">01</div>
-      <div class="setlist-body">
-        <h3 class="setlist-name">Nederlandstalig</h3>
-        <p class="setlist-desc">
-          Eigentijdse Nederlandse hits en bekende nummers — herkenbaar, meezingbaar en vol sfeer. Er is veel vraag naar Nederlandstalig, en Mauro weet precies waarom: het brengt direct sfeer.
-        </p>
+      <div class="s-num">01</div>
+      <div>
+        <div class="s-name">Nederlandstalig</div>
+        <p class="s-desc">Eigentijdse Nederlandse hits en bekende nummers — herkenbaar, meezingbaar en vol sfeer. Er is veel vraag naar en Mauro weet precies waarom: het werkt direct.</p>
       </div>
     </div>
 
-    <div class="setlist-item r r2">
-      <div class="setlist-num">02</div>
-      <div class="setlist-body">
-        <h3 class="setlist-name">Engelstalig & Frank Sinatra</h3>
-        <p class="setlist-desc">
-          Tijdloze klassiekers uit de gouden era van de Amerikaanse muziek. Van Fly Me to the Moon tot My Way — standards die elke avond stijlvol afsluiten.
-        </p>
+    <div class="setlist-item r d1">
+      <div class="s-num">02</div>
+      <div>
+        <div class="s-name">Engelstalig & Frank Sinatra</div>
+        <p class="s-desc">Tijdloze standards uit de gouden era — van Fly Me to the Moon tot My Way. Nummers die elke avond stijlvol afsluiten en elk publiek raken.</p>
       </div>
     </div>
 
-    <div class="setlist-item r r3">
-      <div class="setlist-num">03</div>
-      <div class="setlist-body">
-        <h3 class="setlist-name">Eigen nummers</h3>
-        <p class="setlist-desc">
-          In 2026 schrijft Mauro zijn eerste eigen songs — de volgende stap voor een artiest die steeds meer zijn eigen geluid vindt.
-        </p>
-        <span class="setlist-badge">Binnenkort · 2026</span>
+    <div class="setlist-item r d2">
+      <div class="s-num">03</div>
+      <div>
+        <div class="s-name">Eigen nummers</div>
+        <p class="s-desc">In 2026 schrijft Mauro zijn eerste eigen songs. De volgende stap voor een artiest die steeds meer zijn eigen geluid vindt.</p>
+        <span class="s-badge">Binnenkort · 2026</span>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- ── OPTREDENS ─────────────────────────────────────────────────────── -->
 <section id="optredens">
-  <div class="optredens-inner">
-    <div class="optredens-head r">
-      <span class="label" style="display:block; margin-bottom:1rem;">Agenda</span>
-      <h2 class="optredens-title">Optredens</h2>
+  <div class="opt-inner">
+    <div class="opt-head r">
+      <span class="lbl" style="color:var(--gold-l); display:block; margin-bottom:.75rem;">Agenda</span>
+      <h2 class="opt-title">Optredens</h2>
     </div>
 
     {[
-      { naam: 'Brasserie Legends', stad: 'Aalsmeer',     tag: 'Vaste plek'  },
-      { naam: "Freddy's Bar",      stad: 'Amsterdam',    tag: 'Regulier'    },
-      { naam: 'Meifestival',       stad: 'Wijk aan Zee', tag: 'Mei 2026'    },
+      { naam:'Brasserie Legends', stad:'Aalsmeer',    tag:'Vaste plek' },
+      { naam:"Freddy's Bar",      stad:'Amsterdam',   tag:'Regulier'   },
+      { naam:'Meifestival',       stad:'Wijk aan Zee',tag:'Mei 2026'   },
     ].map((v, i) => (
-      <div class={`venue-row r r${i + 2}`}>
-        <div class="venue-dot"></div>
-        <div class="venue-name">{v.naam}</div>
-        <div class="venue-city">{v.stad}</div>
-        <div class="venue-tag">{v.tag}</div>
+      <div class={`venue-row r d${i+1}`}>
+        <div class="v-dot"></div>
+        <div class="v-name">{v.naam}</div>
+        <div class="v-city">{v.stad}</div>
+        <div class="v-tag">{v.tag}</div>
       </div>
     ))}
   </div>
@@ -693,21 +772,13 @@ const imgStage     = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbaf
 
 <!-- ── QUOTE ─────────────────────────────────────────────────────────── -->
 <section id="quote">
-  <div id="quote-bg">
-    <img src={imgStage} alt="Podium" loading="lazy" />
-  </div>
-
-  <div class="quote-inner r">
-    <div class="quote-mark">"</div>
-    <p class="quote-text">
-      Ik doe het omdat ik het gewoon leuk vind — en dan merk je dat anderen dat ook voelen.
-    </p>
-    <div class="quote-stats">
+  <div id="qbg"><img src={imgStage} alt="Podium" loading="lazy" /></div>
+  <div class="q-inner r">
+    <div class="q-mark">"</div>
+    <p class="q-text">Ik doe het omdat ik het gewoon leuk vind — en dan merk je dat anderen dat ook voelen.</p>
+    <div class="q-stats">
       {[['2 uur','Repertoire'],['3+','Vaste podia'],['2026','Eigen nummers']].map(([v,l]) => (
-        <div>
-          <span class="stat-val">{v}</span>
-          <span class="stat-lbl">{l}</span>
-        </div>
+        <div><span class="q-val">{v}</span><span class="q-lbl">{l}</span></div>
       ))}
     </div>
   </div>
@@ -715,60 +786,50 @@ const imgStage     = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbaf
 
 <!-- ── CONTACT ────────────────────────────────────────────────────────── -->
 <section id="contact">
-  <div class="contact-left">
-    <h2 class="contact-left-title r">
-      Mauro boeken voor jouw avond?
-    </h2>
-    <p class="contact-left-sub r r2">
-      Beschikbaar voor privéfeesten, bruiloften, bedrijfsevenementen en horeca-optredens in de regio Amsterdam en omstreken.
+  <div class="c-left">
+    <h2 class="c-left-title r">Mauro boeken voor jouw avond?</h2>
+    <p class="c-left-sub r d1">
+      Beschikbaar voor privéfeesten, bruiloften, bedrijfsevenementen en horeca-optredens in de regio Amsterdam.
     </p>
     <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
-       class="contact-left-link r r3" data-track="contact_ig">
+       class="c-left-lnk r d2" data-track="contact_ig">
       Stuur een bericht
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
       </svg>
     </a>
   </div>
 
-  <div class="contact-right">
-    <div class="contact-right-label">
-      <span class="label">Contact & boeking</span>
-    </div>
-
-    <div class="contact-items r">
-      <div class="contact-item">
-        <div class="contact-icon">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+  <div class="c-right">
+    <span class="lbl r" style="display:block; margin-bottom:2rem;">Contact & boeking</span>
+    <div class="c-items r d1">
+      <div class="c-item">
+        <div class="c-icon">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
           </svg>
         </div>
-        <div class="contact-item-text">
-          <div class="sub">Instagram</div>
-          <div class="val">
-            <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener">@mauro_fryters</a>
-          </div>
+        <div><div class="c-sub">Instagram</div>
+          <div class="c-val"><a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener">@mauro_fryters</a></div>
         </div>
       </div>
-
-      <div class="contact-item">
-        <div class="contact-icon">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <div class="c-item">
+        <div class="c-icon">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
           </svg>
         </div>
-        <div class="contact-item-text">
-          <div class="sub">Standplaats</div>
-          <div class="val">Zandvoort & regio Amsterdam</div>
+        <div><div class="c-sub">Standplaats</div>
+          <div class="c-val">Zandvoort & regio Amsterdam</div>
         </div>
       </div>
     </div>
 
-    <ul class="contact-checklist r r2">
+    <ul class="checklist r d2">
       {['Twee uur live muziek','Nederlandstalig én Engelstalig','Beschikbaar in de regio','Persoonlijk & professioneel'].map(t => (
         <li>
-          <svg class="check" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <svg class="chk" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
           </svg>
           {t}
@@ -777,7 +838,7 @@ const imgStage     = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbaf
     </ul>
 
     <a href="https://www.instagram.com/mauro_fryters" target="_blank" rel="noopener"
-       class="btn-book r r3" data-track="contact_cta">
+       class="btn-book-dark r d3" data-track="contact_cta">
       Neem contact op
     </a>
   </div>
@@ -785,45 +846,55 @@ const imgStage     = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbaf
 
 <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
 <footer>
-  <div class="footer-logo">Mauro <span>Fryters</span></div>
-  <span class="footer-copy">Exclusief voorstel · Niet publiekelijk vindbaar</span>
+  <a href="#" class="logo-wrap" style="text-decoration:none;">
+    <svg class="logo-badge" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#C8922A; width:32px; height:32px;">
+      <circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.5"/>
+      <text x="24" y="30" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="17" font-weight="700" fill="currentColor" letter-spacing="-.5">MF</text>
+    </svg>
+    <div class="logo-text-wrap">
+      <span class="logo-first" style="font-size:1rem; color:rgba(245,239,230,.7);">Mauro Fryters</span>
+    </div>
+  </a>
+  <span class="f-copy">Exclusief voorstel · Niet publiekelijk vindbaar</span>
 </footer>
-
-<!-- ── URGENCY BAR (bottom) ──────────────────────────────────────────── -->
-<div id="urgency">
-  <span class="urgency-text">
-    <strong>Exclusief voorstel</strong> — Dit ontwerp is persoonlijk gemaakt voor Mauro Fryters
-  </span>
-  <button class="urgency-close" id="urgency-close" aria-label="Sluiten">×</button>
-</div>
 
 {lead?.id && <Tracker leadId={lead.id} />}
 
 <script>
   (function () {
-    const nav     = document.getElementById('nav') as HTMLElement;
-    const urgency = document.getElementById('urgency') as HTMLElement;
-    const closeBtn = document.getElementById('urgency-close');
-
     // Nav solid on scroll
-    function onScroll() {
-      nav?.classList.toggle('solid', window.scrollY > 60);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-
-    // Urgency bar after 3s
-    setTimeout(() => urgency?.classList.add('visible'), 3000);
-    closeBtn?.addEventListener('click', () => urgency?.classList.remove('visible'));
+    const nav = document.getElementById('nav') as HTMLElement;
+    window.addEventListener('scroll', () => {
+      nav?.classList.toggle('solid', window.scrollY > 70);
+    }, { passive: true });
 
     // Reveal on scroll
     const io = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      }),
+      es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
       { threshold: 0.08 }
     );
     document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+    // Zwevende gouden deeltjes genereren
+    const container = document.getElementById('particles');
+    if (container) {
+      const count = 18;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'p';
+        const size = Math.random() * 5 + 2;
+        p.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${Math.random() * 55}%;
+          bottom: ${Math.random() * 20}%;
+          animation-duration: ${Math.random() * 8 + 6}s;
+          animation-delay: ${Math.random() * 8}s;
+          opacity: 0;
+        `;
+        container.appendChild(p);
+      }
+    }
   })();
 </script>
 
