@@ -115,7 +115,18 @@ const presets: Record<StylePreset, StyleConfig> = {
 
 export function resolveStylePreset(instructions: string | null): StyleConfig {
   if (!instructions) return presets.default;
-  const key = instructions.toLowerCase().trim() as StylePreset;
+  
+  let keyStr = instructions;
+  try {
+    const parsed = JSON.parse(instructions);
+    if (parsed.preset) {
+      keyStr = parsed.preset;
+    }
+  } catch (e) {
+    // Not JSON, treat as raw string
+  }
+
+  const key = keyStr.toLowerCase().trim() as StylePreset;
   return presets[key] ?? presets.default;
 }
 

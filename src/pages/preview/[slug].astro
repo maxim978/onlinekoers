@@ -1,42 +1,48 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Tracker from '../../components/Tracker.astro';
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin } from '../../lib/supabase';
 import { resolveStylePreset, cn } from '../../lib/styleEngine';
 
 const { slug } = Astro.params;
-
 if (!slug) return Astro.redirect('/');
 
-const { data: lead, error } = await supabase
+const { data: lead, error } = await supabaseAdmin
   .from('leads')
   .select('*')
   .eq('slug', slug)
   .maybeSingle();
 
-if (error || !lead) {
-  return new Response(null, { status: 404 });
-}
+if (error || !lead) return new Response(null, { status: 404 });
 
-// Update status to 'Bekeken' if it was 'Live' (first view)
-if (lead.status === 'Live') {
-  await supabase
-    .from('leads')
-    .update({ status: 'Bekeken' })
-    .eq('id', lead.id);
-}
+try { await supabaseAdmin.rpc('increment_view_count', { lead_id_param: lead.id }); } catch (_) {}
 
 const style = resolveStylePreset(lead.style_instructions);
-const images: string[] = Array.isArray(lead.photos) ? lead.photos : (Array.isArray(lead.images) ? lead.images : []);
-const services = Array.isArray(lead.services) ? lead.services : [];
 
-const industryLabel: Record<string, string> = {
-  bouw: 'Bouw & Constructie',
-  interieur: 'Interieur & Design',
-  techniek: 'Techniek & Installatie',
-  vastgoed: 'Vastgoed',
-  hovenier: 'Hovenier & Tuinontwerp',
-};
+let services: any[] = [];
+try {
+  if (lead.style_instructions) {
+    const parsed = JSON.parse(lead.style_instructions);
+    if (Array.isArray(parsed.services)) services = parsed.services;
+  }
+} catch (e) {}
+
+// Fallback to old format or empty
+if (services.length === 0 && Array.isArray((lead as any).services)) {
+  services = (lead as any).services;
+}
+
+const images: string[] = Array.isArray(lead.photos) ? lead.photos : [];
+const heroImage = images[0] ?? null;
+const galleryImages = images.slice(1);
+
+const primaryColor = lead.primary_color || '#1B3A2D';
+const secondaryColor = lead.secondary_color || '#F7F3EE';
+const accentColor = (lead as any).accent_color || '#C4973A';
+
+const marqueeItems: string[] = services.length > 0
+  ? services.map((s: any) => s.title)
+  : ['Kwaliteit', 'Vakmanschap', 'Betrouwbaar', 'Jarenlange ervaring', 'Persoonlijke aanpak'];
 
 const svgIcons: Record<string, string> = {
   leaf: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>`,
@@ -49,98 +55,231 @@ const svgIcons: Record<string, string> = {
 ---
 
 <Layout
-  title={lead.company_name}
-  description={lead.description || `Bekijk de website preview van ${lead.company_name}`}
-  primaryColor={lead.primary_color}
-  secondaryColor={lead.secondary_color}
+  title={`${lead.company_name} | Exclusieve Website Preview`}
+  description={lead.description ?? `Exclusieve website preview voor ${lead.company_name}.`}
+  primaryColor={primaryColor}
+  secondaryColor={secondaryColor}
+  ogImage={heroImage ?? undefined}
 >
-  <style define:vars={{ accentColor: lead.accent_color }}>
-    #site-nav.scrolled { background: rgba(255,255,255,0.97); box-shadow: 0 1px 24px rgba(0,0,0,0.08); }
-    .badge-pulse { animation: pulse-ring 2.5s ease infinite; }
-    @keyframes pulse-ring { 
-      0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accentColor), 0.4) } 
-      50% { box-shadow: 0 0 0 8px rgba(var(--accentColor), 0) } 
+  <style define:vars={{ primaryColor, secondaryColor, accentColor }}>
+    :global(html) {
+      scroll-behavior: smooth;
+    }
+    
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    .marquee-track { overflow: hidden; }
+    .marquee-inner {
+      display: flex;
+      width: max-content;
+      animation: marqueeScroll 44s linear infinite;
+    }
+    .marquee-inner:hover { animation-play-state: paused; }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+      50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+    }
+    .bounce-down { animation: bounce-down 1.5s infinite; }
+
+    #site-nav { transition: top 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
+    #site-nav.scrolled {
+      top: 0 !important;
+      background: rgba(255,255,255,0.97) !important;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 1px 24px rgba(0,0,0,0.1);
+    }
+    #site-nav.scrolled .nav-link { color: #334155 !important; }
+    #site-nav.scrolled .nav-brand { color: var(--primaryColor) !important; }
+    #site-nav.scrolled .nav-brand img { filter: none !important; }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+    .reveal-delay-4 { transition-delay: 0.6s; }
+    .reveal-delay-5 { transition-delay: 0.75s; }
+
+    .img-zoom { overflow: hidden; }
+    .img-zoom img { transition: transform 0.7s ease; }
+    .img-zoom:hover img { transform: scale(1.05); }
+
+    .diagonal-bottom {
+      clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+      padding-bottom: calc(7rem + 5vw);
+    }
+    .diagonal-top {
+      clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+      margin-top: -5vw;
+      padding-top: calc(7rem + 5vw);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .service-card {
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+    .service-card:hover {
+      border-color: var(--accentColor);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     }
   </style>
 
-  <!-- Preview Banner -->
-  <div class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-700">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center gap-1.5 bg-orange-500/20 border border-orange-500/40 rounded-full px-3 py-1 text-orange-400 text-xs font-semibold">
-          <span class="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span>
-          PREVIEW
-        </span>
-        <span class="text-slate-300 text-sm hidden sm:block">
-          Exclusief ontwerp voor <strong class="text-white">{lead.company_name}</strong>
-        </span>
-      </div>
-      <div class="flex items-center gap-3">
-        <a href="#contact-section" class="btn-primary text-sm py-2 px-4">
-          Dit wil ik!
-        </a>
-      </div>
+  <!-- URGENCY BANNER -->
+  <div id="urgency-bar" class="fixed top-0 left-0 right-0 z-[60] bg-slate-950 border-b border-white/10 text-white text-xs py-2 px-6 flex items-center justify-between" style="transition: transform 0.3s ease;">
+    <div class="flex items-center gap-4">
+      <span class="font-bold tracking-widest uppercase" style={`color: ${accentColor}`}>Exclusief Voorstel</span>
+      <span class="hidden sm:inline opacity-60">Alleen beschikbaar voor {lead.company_name}</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="w-2 h-2 rounded-full" style={`background-color: ${accentColor}; box-shadow: 0 0 10px ${accentColor}`}></span>
+      <span class="opacity-80">Ontwerp Review</span>
     </div>
   </div>
 
-  <div class="h-[57px]"></div>
-
-  <!-- HERO -->
-  <section class={cn("relative min-h-[90vh] flex items-center justify-center overflow-hidden", style.heroLayout === 'fullbleed' ? 'p-0' : 'px-6')}>
-    <div class="absolute inset-0" style={`background: linear-gradient(135deg, ${lead.secondary_color} 0%, #1e293b 100%)`}></div>
-    
-    <!-- Pattern overlay -->
-    <div class="absolute inset-0 opacity-10" style={`background-image: radial-gradient(circle at 30% 50%, ${lead.primary_color} 0%, transparent 60%)`}></div>
-
-    <div class={cn("relative z-10 text-center transition-all duration-1000", style.containerMaxWidth)}>
-      {lead.logo_url && (
-        <img src={lead.logo_url} alt={lead.company_name} class="h-16 w-auto mx-auto mb-8 object-contain" />
-      )}
-
-      <div class={cn("inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6", style.fontHeading)}
-           style={`color: ${lead.primary_color}; background-color: ${lead.primary_color}20; border: 1px solid ${lead.primary_color}40`}>
-        {lead.category || industryLabel[lead.industry] || 'Vakmanschap'}
+  <!-- STICKY NAV -->
+  <nav id="site-nav" class="fixed left-0 right-0 z-50 transition-all duration-300" style="top:36px">
+    <div class="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+      <div class="nav-brand font-bold text-white text-xl tracking-tight">
+        {lead.logo_url
+          ? <img src={lead.logo_url} alt={lead.company_name} class="h-8 w-auto object-contain" style="filter:brightness(0) invert(1)" />
+          : lead.company_name
+        }
       </div>
-
-      <h1 class={cn("font-black text-white leading-tight mb-6", style.h1Size, style.fontHeading)}>
-        {lead.headline || lead.company_name}
-      </h1>
-
-      <p class={cn("text-slate-300 mx-auto leading-relaxed mb-10 max-w-2xl", style.fontBody, style.h2Size)}>
-        {lead.subheadline || lead.style_instructions}
-      </p>
-
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="#contact-section" class={cn("btn-primary", style.buttonStyle)}>
-          Neem contact op
-        </a>
-        <a href="#diensten" class={cn("btn-outline", style.buttonStyle)}>
-          Onze diensten
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#contact" data-event="nav_cta" class="nav-link text-sm font-bold px-6 py-2.5 rounded-full transition-transform hover:-translate-y-0.5" style={`background-color: ${accentColor}; color: ${primaryColor}`}>
+          Direct Contact
         </a>
       </div>
     </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex flex-col justify-end pb-32 px-8 md:px-14 overflow-hidden pt-36">
+    {heroImage
+      ? <img src={heroImage} alt={lead.company_name} class="absolute inset-0 w-full h-full object-cover filter brightness-90 contrast-125" />
+      : <div class="absolute inset-0 bg-slate-900"></div>
+    }
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto w-full text-white">
+      <div class="max-w-3xl reveal">
+        <p class="text-sm font-bold tracking-[0.25em] uppercase mb-4 opacity-80" style={`color: ${accentColor}`}>
+          {lead.category || 'Website Preview'}
+        </p>
+        <h1 class="text-5xl md:text-7xl font-bold leading-[1.06] mb-8">
+          {lead.headline || lead.company_name}
+        </h1>
+        {lead.subheadline && (
+          <p class="text-lg md:text-xl text-white/80 leading-relaxed mb-10 max-w-2xl">
+            {lead.subheadline}
+          </p>
+        )}
+        <div class="flex items-center gap-6">
+          <a href="#contact" data-event="hero_cta" class="group inline-flex items-center gap-3 font-bold text-sm bg-white rounded-full px-8 py-4 transition-transform hover:-translate-y-1" style={`color: ${primaryColor}`}>
+            Offerte aanvragen
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+        
+        <div class="flex flex-wrap gap-x-6 gap-y-2 mt-12">
+          <span class="text-white/70 text-xs font-medium">✓ Gratis adviesgesprek</span>
+          <span class="text-white/70 text-xs font-medium">✓ Binnen 2 werkdagen reactie</span>
+          <span class="text-white/70 text-xs font-medium">✓ Geen verplichtingen</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+      <span class="text-white/40 text-[10px] tracking-widest uppercase">Scroll</span>
+      <svg class="w-5 h-5 text-white/40 bounce-down" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
+      </svg>
+    </div>
   </section>
+
+  <!-- MARQUEE BAND -->
+  <div class="py-4 overflow-hidden" style={`background-color: ${primaryColor};`}>
+    <div class="marquee-inner text-white/30 text-xs font-semibold tracking-[0.25em] uppercase select-none">
+      {[1,2,3,4,5,6,7,8].map(() => (
+        <span class="flex items-center gap-8 px-8">
+          {marqueeItems.map((item: string) => (
+            <>
+              <span>{item}</span>
+              <span style={`color: ${accentColor};`}>✦</span>
+            </>
+          ))}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- OVER ONS -->
+  {lead.description && (
+    <section id="over-ons" class="py-28 px-8 md:px-14 diagonal-bottom" style={`background-color: ${secondaryColor};`}>
+      <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+        <div class="reveal">
+          <p class="text-xs font-bold tracking-[0.2em] uppercase mb-6" style={`color: ${accentColor};`}>Over ons</p>
+          <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-8" style={`color: ${primaryColor};`}>
+            {lead.headline || `Over ${lead.company_name}`}
+          </h2>
+          <p class="text-gray-600 text-lg leading-relaxed mb-6">
+            {lead.description}
+          </p>
+          <a href="#contact" data-event="cta_click" class="group inline-flex items-center gap-2 font-bold text-sm transition-all duration-200" style={`color: ${primaryColor};`}>
+            Maak een afspraak
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+        
+        {galleryImages.length >= 3 ? (
+          <div class="grid grid-cols-2 gap-3 reveal reveal-delay-2">
+            <div class="img-zoom rounded-2xl aspect-[2/3] row-span-2">
+              <img src={galleryImages[0]} alt="werk" class="w-full h-full object-cover rounded-2xl" loading="lazy" />
+            </div>
+            <div class="img-zoom rounded-2xl aspect-square">
+              <img src={galleryImages[1]} alt="werk" class="w-full h-full object-cover rounded-2xl" loading="lazy" />
+            </div>
+            <div class="img-zoom rounded-2xl aspect-square">
+              <img src={galleryImages[2]} alt="werk" class="w-full h-full object-cover rounded-2xl" loading="lazy" />
+            </div>
+          </div>
+        ) : galleryImages.length > 0 ? (
+          <div class="reveal reveal-delay-2">
+            <div class="img-zoom rounded-2xl aspect-square">
+              <img src={galleryImages[0]} alt="werk" class="w-full h-full object-cover rounded-2xl" loading="lazy" />
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  )}
 
   <!-- DIENSTEN -->
   {services.length > 0 && (
-    <section id="diensten" class={cn("py-28 bg-slate-900", style.sectionPadding)}>
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-          <h2 class={cn("font-black text-white mb-4", style.h2Size, style.fontHeading)}>Onze diensten</h2>
-          <p class="text-slate-400 text-lg max-w-xl mx-auto">
-            Kwaliteit die voor zich spreekt. Wij zijn uw vertrouwde partner in de regio.
-          </p>
+    <section id="diensten" class="py-28 px-8 md:px-14 bg-white diagonal-top">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <p class="text-xs font-bold tracking-[0.2em] uppercase mb-4" style={`color: ${accentColor};`}>Wat wij doen</p>
+          <h2 class="text-4xl md:text-5xl font-bold" style={`color: ${primaryColor};`}>Onze diensten</h2>
         </div>
-
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((s: any, i: number) => (
-            <div class={cn("rounded-2xl p-8 border border-slate-700 transition-all duration-300 hover:border-slate-500", style.cardStyle)}>
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-6 shadow-lg"
-                   style={`background-color: ${lead.primary_color}15`}>
-                <div class="w-6 h-6" style={`color: ${lead.primary_color}`} set:html={svgIcons[s.icon] || svgIcons.leaf} />
+            <div class={`service-card reveal reveal-delay-${(i % 3) + 1} bg-white p-8 rounded-2xl shadow-sm`} style={`--accentColor: ${accentColor};`}>
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-6" style={`background-color: ${accentColor}18;`}>
+                <div class="w-5 h-5" style={`color: ${primaryColor};`} set:html={svgIcons[s.icon] || svgIcons.leaf} />
               </div>
-              <h3 class="text-xl font-bold text-white mb-3">{s.title}</h3>
-              <p class="text-slate-400 leading-relaxed text-sm">{s.description}</p>
+              <h3 class="text-base font-bold mb-3" style={`color: ${primaryColor};`}>{s.title}</h3>
+              <p class="text-gray-500 text-sm leading-relaxed">{s.description}</p>
             </div>
           ))}
         </div>
@@ -148,44 +287,163 @@ const svgIcons: Record<string, string> = {
     </section>
   )}
 
-  <!-- GALLERY -->
-  {images.length > 0 && (
-    <section class="py-24 bg-slate-950">
-      <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class={cn("font-black text-white mb-12", style.h2Size, style.fontHeading)}>Ons portfolio</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {images.map((src, i) => (
-            <div class={cn("aspect-video overflow-hidden bg-slate-800", style.borderRadius)}>
-              <img src={src} alt="project" class={cn("w-full h-full object-cover transition-transform duration-700 hover:scale-110", style.imageStyle)} loading="lazy" />
+  <!-- PROJECTEN -->
+  {galleryImages.length >= 4 && (
+    <section id="projecten" class="py-28 px-8 md:px-14" style={`background-color: ${secondaryColor};`}>
+      <div class="max-w-5xl mx-auto">
+        <div class="mb-6 reveal">
+          <p class="text-xs font-bold tracking-[0.25em] uppercase mb-4" style={`color: ${primaryColor}; opacity: 0.5;`}>
+            {lead.subheadline || 'Onze projecten'}
+          </p>
+          <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+            <span style={`color: ${primaryColor};`}>Bekijk ons</span><br />
+            <span style={`color: ${accentColor};`}>eerdere werk</span>
+          </h2>
+        </div>
+        
+        <div class="flex flex-col gap-4 reveal reveal-delay-1">
+          <div class="grid gap-4" style="grid-template-columns: 3fr 2fr; height: 320px;">
+            <div class="img-zoom relative rounded-3xl overflow-hidden">
+              <img src={galleryImages[0]} alt="project" class="w-full h-full object-cover" loading="lazy" />
             </div>
-          ))}
+            <div class="img-zoom relative rounded-3xl overflow-hidden">
+              <img src={galleryImages[1]} alt="project" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </div>
+          <div class="grid gap-4" style="grid-template-columns: 2fr 3fr; height: 320px;">
+            <div class="img-zoom relative rounded-3xl overflow-hidden">
+              <img src={galleryImages[2]} alt="project" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="img-zoom relative rounded-3xl overflow-hidden">
+              <img src={galleryImages[3] || galleryImages[0]} alt="project" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
   )}
+
+  <!-- QUOTE -->
+  <section class="py-24 px-8 md:px-14 diagonal-bottom" style={`background-color: ${primaryColor};`}>
+    <div class="max-w-5xl mx-auto text-center reveal">
+      <div class="text-6xl mb-8 opacity-30" style={`color: ${accentColor};`}>"</div>
+      <blockquote class="text-2xl md:text-3xl font-semibold text-white leading-relaxed max-w-3xl mx-auto mb-10">
+        Vakmanschap is niet wat je doet, maar hoe je het doet. Wij creëren de oplossing die écht bij u past.
+      </blockquote>
+      
+      <div class="flex flex-wrap justify-center gap-12 text-white/80 text-sm">
+        <div class="text-center">
+          <div class="text-3xl font-bold mb-1" style={`color: ${accentColor};`}>15+</div>
+          <div class="text-white/50 text-xs uppercase tracking-widest">Jaar ervaring</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold mb-1" style={`color: ${accentColor};`}>100%</div>
+          <div class="text-white/50 text-xs uppercase tracking-widest">Vrijblijvend advies</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- CONTACT -->
-  <section id="contact-section" class="py-28" style={`background: linear-gradient(135deg, ${lead.secondary_color} 0%, #1e293b 100%)`}>
-    <div class="max-w-3xl mx-auto px-6 text-center">
-      <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Klaar om te starten?</h2>
-      <p class="text-slate-400 text-lg mb-10">
-        {lead.address && <span class="block mb-2 font-semibold">📍 {lead.address}</span>}
-        Neem contact op voor een vrijblijvend voorstel.
-      </p>
+  <section id="contact" class="py-28 px-8 md:px-14 bg-white diagonal-top">
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+      <div class="reveal">
+        <p class="text-xs font-bold tracking-[0.2em] uppercase mb-6" style={`color: ${accentColor};`}>Contact</p>
+        <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-6" style={`color: ${primaryColor};`}>
+          Klaar voor<br/>iets moois?
+        </h2>
+        <p class="text-gray-500 text-lg leading-relaxed mb-12">
+          Neem gerust contact op voor een vrijblijvend gesprek. Wij denken graag met u mee over de mogelijkheden.
+        </p>
+        
+        <div class="space-y-6">
+          {lead.contact_phone && (
+            <a href={`tel:${lead.contact_phone}`} data-event="contact_click" data-contact-type="phone" class="flex items-center gap-5 group">
+              <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:shadow-md" style={`background-color: ${accentColor}20;`}>
+                <svg class="w-6 h-6" style={`color: ${primaryColor};`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-1 tracking-wide">Bel ons direct</p>
+                <p class="text-lg font-bold" style={`color: ${primaryColor};`}>{lead.contact_phone}</p>
+              </div>
+            </a>
+          )}
+          
+          <div class="flex items-center gap-5">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${accentColor}20;`}>
+              <svg class="w-6 h-6" style={`color: ${primaryColor};`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 mb-1 tracking-wide">Regio</p>
+              <p class="font-bold" style={`color: ${primaryColor};`}>{lead.address || 'Nederland'}</p>
+              <p class="text-xs text-gray-400">Particulier & zakelijk</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        {lead.contact_phone && (
-          <a href={`tel:${lead.contact_phone}`} class="btn-primary flex items-center gap-2">
-             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.455 5.455l.774-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
-             {lead.contact_phone}
-          </a>
-        )}
-        <a href={`mailto:info@onlinekoers.nl?subject=Interesse in website voor ${lead.company_name}`} class="btn-outline">
-           Ja, ik ben geïnteresseerd
+      <div class="rounded-3xl p-10 text-white shadow-2xl reveal reveal-delay-2" style={`background-color: ${primaryColor};`}>
+        <h3 class="text-2xl font-bold mb-2">Gratis kennismaking</h3>
+        <p class="text-white/60 text-sm mb-8 leading-relaxed">
+          Wij komen vrijblijvend langs, bekijken de situatie en bespreken uw wensen. Geen verplichtingen.
+        </p>
+        <ul class="space-y-3 mb-10">
+          <li class="flex items-center gap-3 text-sm text-white/80">
+            <svg class="w-4 h-4 flex-shrink-0" style={`color: ${accentColor};`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            Vrijblijvend en kosteloos
+          </li>
+          <li class="flex items-center gap-3 text-sm text-white/80">
+            <svg class="w-4 h-4 flex-shrink-0" style={`color: ${accentColor};`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            Binnen 2 werkdagen reactie
+          </li>
+          <li class="flex items-center gap-3 text-sm text-white/80">
+            <svg class="w-4 h-4 flex-shrink-0" style={`color: ${accentColor};`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            Kwaliteitsgarantie
+          </li>
+        </ul>
+        <a href="#contact" data-event="contact_click" data-contact-type="cta_button" class="block w-full text-center py-4 rounded-2xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl mb-3" style={`background-color: ${accentColor}; color: ${primaryColor};`}>
+          Neem contact op
         </a>
       </div>
     </div>
   </section>
 
+  <footer class="py-10 px-8 md:px-14 border-t border-gray-100" style={`background-color: ${secondaryColor};`}>
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        {lead.logo_url && <img src={lead.logo_url} alt="Logo" class="h-8" onerror="this.style.display='none'" />}
+        <span class="font-semibold text-sm" style={`color: ${primaryColor};`}>{lead.company_name}</span>
+      </div>
+      <span class="text-xs text-gray-400">Exclusief voorstel · Niet publiekelijk vindbaar</span>
+    </div>
+  </footer>
+
   <Tracker leadId={lead.id} />
+
+  <script>
+    (function () {
+      var nav = document.getElementById('site-nav');
+      var bar = document.getElementById('urgency-bar');
+      function onScroll() {
+        var scrolled = window.scrollY > 80;
+        nav?.classList.toggle('scrolled', scrolled);
+        if (bar) {
+          bar.style.transform = scrolled ? 'translateY(-100%)' : 'translateY(0)';
+          if (nav) nav.style.top = scrolled ? '0' : '36px';
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+  </script>
 </Layout>
