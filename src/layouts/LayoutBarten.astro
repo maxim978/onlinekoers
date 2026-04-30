@@ -16,10 +16,6 @@ const { data: lead } = await supabaseAdmin
   .eq('slug', 'vleesboerderij-barten')
   .maybeSingle();
 
-const primaryColor = '#1B2A1E';
-const secondaryColor = '#FAF9F6';
-const accentColor = '#B3985D';
-const ctaColor = '#9B3D2F';
 ---
 
 <!DOCTYPE html>
@@ -29,17 +25,17 @@ const ctaColor = '#9B3D2F';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description || "Vleesboerderij Barten - Eerlijk vlees uit de Alblasserwaard"} />
     <title>{title} | Vleesboerderij Barten</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
 
-    <style is:global define:vars={{ primaryColor, secondaryColor, accentColor, ctaColor }}>
+    <style is:global>
       :root {
-        --primary: var(--primaryColor);
-        --secondary: var(--secondaryColor);
-        --accent: var(--accentColor);
-        --cta: var(--ctaColor);
+        --primary: #1B2A1E;
+        --secondary: #FAF9F6;
+        --accent: #B3985D;
+        --cta: #9B3D2F;
         --text-dark: #1B2A1E;
         --text-light: #FAF9F6;
         --glass: rgba(255, 255, 255, 0.03);
