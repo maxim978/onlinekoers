@@ -1,0 +1,78 @@
+---
+import LayoutBarten from '../../../layouts/LayoutBarten.astro';
+import { products } from '../../../data/bartenProducts';
+
+const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
+---
+
+<LayoutBarten title="Ons Assortiment" activePage="assortiment">
+  <section style="padding: 12rem 0 6rem; background: var(--primary); color: white;">
+    <div class="container">
+      <div style="max-width: 800px;">
+        <span class="reveal" style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">De Toonbank</span>
+        <h1 class="reveal" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1; margin-bottom: 2rem;">Ambachtelijk <br/>Assortiment</h1>
+        <p class="reveal" style="font-size: 1.1rem; opacity: 0.7; max-width: 500px; line-height: 1.6;">Ontdek onze met zorg geselecteerde producten. Puur vlees, vakkundig gesneden en minimaal 3 weken gerijpt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 6rem 0;">
+    <div class="container">
+      <!-- CATEGORY FILTER -->
+      <div style="display: flex; gap: 1.5rem; margin-bottom: 5rem; overflow-x: auto; padding-bottom: 1rem;">
+        {categories.map((cat, i) => (
+          <button class={`reveal cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat} 
+            style={`padding: 1rem 2rem; border-radius: 99px; border: 1px solid rgba(0,0,0,0.1); background: transparent; font-weight: 700; cursor: pointer; transition: all 0.3s; transition-delay: ${i * 0.1}s;`}>
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div class="product-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem;">
+        {products.map((p, i) => (
+          <div class="reveal product-card" data-category={p.category} style={`transition-delay: ${(i % 3) * 0.1}s;`}>
+            <div style="position: relative; aspect-ratio: 4/5; border-radius: 2rem; overflow: hidden; margin-bottom: 2rem; background: #eee;">
+              <img src={p.image} alt={p.name} style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);" />
+              <div class="img-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); opacity: 0; transition: opacity 0.4s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+              <div>
+                <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); display: block; margin-bottom: 0.5rem;">{p.category}</span>
+                <h3 style="font-size: 1.5rem;">{p.name}</h3>
+              </div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">€{p.price.toFixed(2)}</div>
+            </div>
+            <p style="font-size: 0.9rem; opacity: 0.5; line-height: 1.6; margin-bottom: 2rem;">Per {p.unit}. Ambachtelijk verwerkt en vacuüm verpakt voor behoud van smaak.</p>
+            <a href="/preview/vleesboerderij-barten/bestellen" class="btn-premium" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--primary); color: var(--primary);">Voeg toe aan bestelling</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .cat-btn.active { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+    .product-card:hover img { transform: scale(1.1); }
+    .product-card:hover .img-overlay { opacity: 1; }
+  </style>
+
+  <script>
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.cat-btn.active').classList.remove('active');
+        btn.classList.add('active');
+        const cat = btn.dataset.category;
+        
+        document.querySelectorAll('.product-card').forEach(card => {
+          if (cat === 'Alle' || card.dataset.category === cat) {
+            card.style.display = 'block';
+            setTimeout(() => card.style.opacity = '1', 50);
+          } else {
+            card.style.opacity = '0';
+            setTimeout(() => card.style.display = 'none', 400);
+          }
+        });
+      });
+    });
+  </script>
+</LayoutBarten>

@@ -1,0 +1,182 @@
+---
+import LayoutBarten from '../../../layouts/LayoutBarten.astro';
+import { products } from '../../../data/bartenProducts';
+
+const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
+---
+
+<LayoutBarten title="Bestellen" activePage="bestellen">
+  <section style="padding: 12rem 0 6rem; background: var(--secondary);">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 380px; gap: 3rem; align-items: start;">
+        
+        <!-- SELECTION SIDE -->
+        <div>
+          <div style="margin-bottom: 5rem;">
+            <span class="reveal" style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">Direct Bestellen</span>
+            <h1 class="reveal" style="font-size: 3.5rem; line-height: 1; margin-bottom: 1.5rem;">Stel uw pakket <br/>samen</h1>
+            <p class="reveal" style="font-size: 1.05rem; opacity: 0.6; line-height: 1.7; max-width: 520px;">Selecteer de producten die u wilt bestellen. Wij maken alles vers voor u klaar voor afhaal in onze winkel.</p>
+          </div>
+
+          <!-- FILTERS -->
+          <div style="display: flex; gap: 1rem; margin-bottom: 3rem; overflow-x: auto; padding-bottom: 1rem;">
+            {categories.map((cat, i) => (
+              <button class={`reveal cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat} 
+                style={`padding: 0.75rem 1.5rem; border-radius: 99px; border: 1px solid rgba(0,0,0,0.05); background: white; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.02);`}>
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <!-- PRODUCT LIST -->
+          <div style="display: grid; gap: 1rem;">
+            {products.map(p => (
+              <div class="reveal product-row" data-category={p.category} style="background: white; border-radius: 1.5rem; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 40px rgba(0,0,0,0.02); transition: transform 0.3s;">
+                <div style="display: flex; align-items: center; gap: 2rem;">
+                  <img src={p.image} alt={p.name} style="width: 70px; height: 70px; border-radius: 1rem; object-fit: cover;" />
+                  <div>
+                    <h4 style="font-size: 1.1rem; margin-bottom: 0.25rem;">{p.name}</h4>
+                    <span style="font-size: 0.8rem; opacity: 0.4;">Per {p.unit} · €{p.price.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div class="qty-control" style="display: flex; align-items: center; gap: 1rem; background: #f8fafc; padding: 0.5rem; border-radius: 1rem;">
+                    <button class="qty-btn minus" data-id={p.id} style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">-</button>
+                    <span class="qty-val" id={`qty-${p.id}`} style="font-weight: 700; min-width: 20px; text-align: center;">0</span>
+                    <button class="qty-btn plus" data-id={p.id} data-name={p.name} data-price={p.price} style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">+</button>
+                  </div>
+                  <div style="font-weight: 800; min-width: 80px; text-align: right;" id={`total-${p.id}`}>€0.00</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- CART SIDE -->
+        <div style="position: sticky; top: 120px;">
+          <div class="reveal glass-card" style="background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 40px 100px rgba(0,0,0,0.05); padding: 3rem; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--accent);"></div>
+            <h3 class="serif" style="font-size: 2rem; margin-bottom: 2rem;">Uw Selectie</h3>
+            
+            <div id="cart-items" style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1.25rem;">
+              <p style="opacity: 0.4; font-size: 0.9rem; text-align: center; padding: 2rem 0;">Geen producten geselecteerd</p>
+            </div>
+
+            <div style="border-top: 2px solid #f8fafc; padding-top: 2rem; margin-bottom: 3rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4;">Totaalbedrag</span>
+                <span id="grand-total" style="font-size: 2.5rem; font-weight: 900; line-height: 1; color: var(--primary);">€0.00</span>
+              </div>
+            </div>
+
+            <button id="checkout-trigger" class="btn-premium btn-cta" style="width: 100%; justify-content: center; padding: 1.5rem; opacity: 0.5; pointer-events: none;">Bestelling afronden</button>
+            <p style="font-size: 0.7rem; opacity: 0.4; text-align: center; margin-top: 1.5rem;">Afhalen in Meerkerk · Betaling in de winkel</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkout-modal" style="position: fixed; inset: 0; background: rgba(27, 42, 30, 0.4); backdrop-filter: blur(20px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem;">
+    <div style="background: white; width: 100%; max-width: 500px; border-radius: 2.5rem; padding: 4rem; position: relative;">
+      <button id="close-modal" style="position: absolute; top: 2rem; right: 2rem; border: none; background: transparent; cursor: pointer; opacity: 0.3; font-size: 2rem;">&times;</button>
+      <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 1rem;">Gegevens</h2>
+      <p style="opacity: 0.6; margin-bottom: 3rem; line-height: 1.6;">Laat uw gegevens achter zodat we de bestelling voor u kunnen klaarzetten.</p>
+      
+      <form id="final-form" style="display: grid; gap: 1.5rem;">
+        <div style="display: grid; gap: 0.5rem;">
+          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Uw Naam</label>
+          <input type="text" placeholder="Jan de Vries" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
+        </div>
+        <div style="display: grid; gap: 0.5rem;">
+          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">E-mailadres</label>
+          <input type="email" placeholder="jan@voorbeeld.nl" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
+        </div>
+        <div style="display: grid; gap: 0.5rem;">
+          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Telefoonnummer</label>
+          <input type="tel" placeholder="06 12345678" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
+        </div>
+        <button type="submit" class="btn-premium btn-cta" style="margin-top: 1rem; padding: 1.5rem; justify-content: center;">Bevestig Bestelling</button>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .cat-btn.active { background: var(--primary) !important; color: white !important; }
+    .product-row:hover { transform: scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.05); }
+    .qty-btn:active { background: #eee !important; transform: scale(0.95); }
+  </style>
+
+  <script>
+    let cart = [];
+    const cartItems = document.getElementById('cart-items');
+    const grandTotal = document.getElementById('grand-total');
+    const checkoutTrigger = document.getElementById('checkout-trigger');
+
+    function updateCart() {
+      const activeItems = cart.filter(item => item.qty > 0);
+      
+      if (activeItems.length === 0) {
+        cartItems.innerHTML = '<p style="opacity: 0.4; font-size: 0.9rem; text-align: center; padding: 2rem 0;">Geen producten geselecteerd</p>';
+        checkoutTrigger.style.opacity = '0.5';
+        checkoutTrigger.style.pointerEvents = 'none';
+      } else {
+        cartItems.innerHTML = activeItems.map(item => `
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <span style="font-weight: 800; color: var(--accent);">${item.qty}x</span>
+              <span style="font-weight: 600;">${item.name}</span>
+            </div>
+            <span style="font-weight: 700;">€${(item.price * item.qty).toFixed(2)}</span>
+          </div>
+        `).join('');
+        checkoutTrigger.style.opacity = '1';
+        checkoutTrigger.style.pointerEvents = 'all';
+      }
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      grandTotal.innerText = `€${total.toFixed(2)}`;
+    }
+
+    document.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const price = parseFloat(btn.dataset.price);
+        const isPlus = btn.classList.contains('plus');
+
+        let item = cart.find(i => i.id === id);
+        if (!item && isPlus) {
+          item = { id, name, price, qty: 0 };
+          cart.push(item);
+        }
+
+        if (item) {
+          item.qty = isPlus ? item.qty + 1 : Math.max(0, item.qty - 1);
+          document.getElementById(`qty-${id}`).innerText = item.qty;
+          document.getElementById(`total-${id}`).innerText = `€${(item.price * item.qty).toFixed(2)}`;
+          updateCart();
+        }
+      });
+    });
+
+    // Modal
+    const modal = document.getElementById('checkout-modal');
+    checkoutTrigger.addEventListener('click', () => modal.style.display = 'flex');
+    document.getElementById('close-modal').addEventListener('click', () => modal.style.display = 'none');
+
+    // Filter
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.cat-btn.active').classList.remove('active');
+        btn.classList.add('active');
+        const cat = btn.dataset.category;
+        document.querySelectorAll('.product-row').forEach(row => {
+          row.style.display = (cat === 'Alle' || row.dataset.category === cat) ? 'flex' : 'none';
+        });
+      });
+    });
+  </script>
+</LayoutBarten>

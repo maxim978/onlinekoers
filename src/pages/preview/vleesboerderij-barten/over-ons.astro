@@ -1,0 +1,64 @@
+---
+import LayoutBarten from '../../../layouts/LayoutBarten.astro';
+---
+
+<LayoutBarten title="Onze Boerderij" activePage="over-ons">
+  <section style="padding: 12rem 0 6rem; background: var(--primary); color: white;">
+    <div class="container">
+      <div style="max-width: 800px;">
+        <span class="reveal" style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">De Bron</span>
+        <h1 class="reveal" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1; margin-bottom: 2rem;">Het Verhaal van <br/>Barten</h1>
+        <p class="reveal" style="font-size: 1.1rem; opacity: 0.7; max-width: 500px; line-height: 1.6;">Al generaties lang verbonden met de grond in Meerkerk. Passie voor de veehouderij en respect voor de natuur.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 10rem 0;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8rem; align-items: center;">
+        <div class="reveal">
+          <h2 style="font-size: 3rem; margin-bottom: 2rem;">Verbeterd Roodbont</h2>
+          <p style="font-size: 1.1rem; line-height: 1.8; opacity: 0.6; margin-bottom: 2rem;">
+            Wij hebben bewust gekozen voor het runderras Verbeterd Roodbont. Dit ras staat bekend om zijn rustige karakter en de uitmuntende vleeskwaliteit. De runderen hebben een mooie vetdooradering, wat zorgt voor de kenmerkende volle smaak en malsheid.
+          </p>
+          <div style="background: var(--secondary); padding: 3rem; border-radius: 2rem;">
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+              <div style="font-size: 2.5rem;">🌾</div>
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">Puur Natuur</h4>
+                <p style="font-size: 0.9rem; opacity: 0.5;">Geen onnodige toevoegingen, alleen vers gras en natuurlijke voeding.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal">
+          <img src="/images/barten/farm.png" alt="Runderen" style="width: 100%; border-radius: 2rem; transform: rotate(2deg); box-shadow: 0 40px 100px rgba(0,0,0,0.1);" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 10rem 0; background: var(--secondary);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 6rem;">
+        <h2 style="font-size: 3.5rem;">Van Kalf tot Biefstuk</h2>
+        <p style="opacity: 0.6; max-width: 600px; margin: 0 auto;">Wij beheren de gehele keten zelf, zodat we de hoogste kwaliteit kunnen garanderen.</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;">
+        {[
+          { icon: '🐄', title: 'Geboorte', desc: 'Kalveren worden geboren op onze eigen boerderij.' },
+          { icon: '🌿', title: 'Opfok', desc: 'De runderen groeien op in de weide.' },
+          { icon: '🔪', title: 'Verwerking', desc: 'Vakkundige slacht en verwerking in eigen beheer.' },
+          { icon: '🧺', title: 'Winkel', desc: 'Directe verkoop in onze boerderijwinkel.' }
+        ].map((item, i) => (
+          <div class="reveal glass-card" style={`background: white; padding: 3rem 2rem; text-align: center; transition-delay: ${i * 0.1}s;`}>
+            <div style="font-size: 3rem; margin-bottom: 1.5rem;">{item.icon}</div>
+            <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">{item.title}</h4>
+            <p style="font-size: 0.85rem; opacity: 0.5; line-height: 1.6;">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</LayoutBarten>

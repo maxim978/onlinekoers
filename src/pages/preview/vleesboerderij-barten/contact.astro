@@ -1,0 +1,73 @@
+---
+import LayoutBarten from '../../../layouts/LayoutBarten.astro';
+---
+
+<LayoutBarten title="Contact" activePage="contact">
+  <section style="padding: 12rem 0 6rem; background: var(--secondary);">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8rem; align-items: start;">
+        
+        <div class="reveal">
+          <span style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">Bereikbaarheid</span>
+          <h1 style="font-size: 3.5rem; line-height: 1; margin-bottom: 2rem;">Kom gezellig <br/>langs</h1>
+          <p style="font-size: 1.1rem; opacity: 0.6; line-height: 1.8; margin-bottom: 4rem;">
+            Onze boerderijwinkel is gevestigd aan de Boveneind in Meerkerk. Parkeren kan direct op het erf. Wij helpen u graag met advies over onze producten.
+          </p>
+
+          <div style="display: grid; gap: 3rem;">
+            <div style="display: flex; gap: 2rem; align-items: center;">
+              <div style="width: 60px; height: 60px; border-radius: 1.5rem; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📍</div>
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">Bezoekadres</h4>
+                <p style="opacity: 0.5;">Boveneind 27, 4233 EH Meerkerk</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+              <div style="width: 60px; height: 60px; border-radius: 1.5rem; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📞</div>
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">Telefoon</h4>
+                <p style="opacity: 0.5;">0183-352232</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+              <div style="width: 60px; height: 60px; border-radius: 1.5rem; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✉️</div>
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">E-mail</h4>
+                <p style="opacity: 0.5;">info@vleesboerderijbarten.nl</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="glass-card" style="background: white; padding: 4rem; box-shadow: 0 40px 100px rgba(0,0,0,0.05); margin-bottom: 4rem;">
+            <h3 class="serif" style="font-size: 2rem; margin-bottom: 2rem;">Openingstijden</h3>
+            <div style="display: grid; gap: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f8fafc; padding-bottom: 1rem;">
+                <span style="font-weight: 700;">Maandag - Donderdag</span>
+                <span style="opacity: 0.4;">Gesloten</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f8fafc; padding-bottom: 1rem;">
+                <span style="font-weight: 700;">Vrijdag</span>
+                <span style="color: var(--accent); font-weight: 800;">13:00 - 18:00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="font-weight: 700;">Zaterdag</span>
+                <span style="color: var(--accent); font-weight: 800;">09:00 - 16:00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid #f8fafc; padding-top: 1rem;">
+                <span style="font-weight: 700;">Zondag</span>
+                <span style="opacity: 0.4;">Gesloten</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="width: 100%; height: 300px; border-radius: 2rem; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.1em;">
+            [ Google Maps Integratie ]
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</LayoutBarten>

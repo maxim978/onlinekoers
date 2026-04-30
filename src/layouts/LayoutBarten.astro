@@ -1,0 +1,200 @@
+---
+import Tracker from '../components/Tracker.astro';
+import { supabaseAdmin } from '../lib/supabase';
+
+export interface Props {
+  title: string;
+  description?: string;
+  activePage?: string;
+}
+
+const { title, description, activePage } = Astro.props;
+
+const { data: lead } = await supabaseAdmin
+  .from('leads')
+  .select('id')
+  .eq('slug', 'vleesboerderij-barten')
+  .maybeSingle();
+
+const primaryColor = '#1B2A1E';
+const secondaryColor = '#FAF9F6';
+const accentColor = '#B3985D';
+const ctaColor = '#9B3D2F';
+---
+
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description || "Vleesboerderij Barten - Eerlijk vlees uit de Alblasserwaard"} />
+    <title>{title} | Vleesboerderij Barten</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
+
+    <style define:vars={{ primaryColor, secondaryColor, accentColor, ctaColor }}>
+      :root {
+        --primary: var(--primaryColor);
+        --secondary: var(--secondaryColor);
+        --accent: var(--accentColor);
+        --cta: var(--ctaColor);
+        --text-dark: #1B2A1E;
+        --text-light: #FAF9F6;
+        --glass: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.1);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Outfit', sans-serif;
+        background: var(--secondary);
+        color: var(--text-dark);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
+
+      .container { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 5rem); }
+
+      /* --- Premium Utilities --- */
+      .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .reveal.visible { opacity: 1; transform: translateY(0); }
+
+      .glass-card {
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+      }
+
+      .btn-premium {
+        display: inline-flex; align-items: center; gap: 0.75rem;
+        background: var(--primary);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 99px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+      }
+      .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(27, 42, 30, 0.2); }
+      
+      .btn-cta { background: var(--cta); }
+      .btn-cta:hover { box-shadow: 0 20px 40px rgba(155, 61, 47, 0.2); }
+
+      /* --- Nav --- */
+      nav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        padding: 1.5rem 0;
+        transition: all 0.4s;
+      }
+      nav.scrolled {
+        background: rgba(26, 42, 30, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 1rem 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      }
+      .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+      .nav-logo { font-size: 1.5rem; font-weight: 900; color: white; text-decoration: none; letter-spacing: -0.02em; }
+      .nav-logo span { color: var(--accent); }
+      
+      .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+      .nav-link { 
+        color: rgba(255,255,255,0.7); 
+        text-decoration: none; 
+        font-size: 0.85rem; 
+        font-weight: 600; 
+        text-transform: uppercase; 
+        letter-spacing: 0.1em;
+        transition: color 0.3s;
+      }
+      .nav-link:hover, .nav-link.active { color: white; }
+      
+      .nav-scrolled .nav-logo { color: white; }
+      .nav-scrolled .nav-link { color: rgba(255,255,255,0.7); }
+
+      /* Hero text colors by default white if dark bg */
+      .hero-section { color: white; }
+    </style>
+  </head>
+  <body>
+    <nav id="navbar">
+      <div class="container nav-inner">
+        <a href="/preview/vleesboerderij-barten" class="nav-logo serif">BARTEN<span>.</span></a>
+        
+        <div class="nav-links">
+          <a href="/preview/vleesboerderij-barten" class={`nav-link ${activePage === 'home' ? 'active' : ''}`}>Home</a>
+          <a href="/preview/vleesboerderij-barten/assortiment" class={`nav-link ${activePage === 'assortiment' ? 'active' : ''}`}>Assortiment</a>
+          <a href="/preview/vleesboerderij-barten/over-ons" class={`nav-link ${activePage === 'over-ons' ? 'active' : ''}`}>Onze Boerderij</a>
+          <a href="/preview/vleesboerderij-barten/contact" class={`nav-link ${activePage === 'contact' ? 'active' : ''}`}>Contact</a>
+          <a href="/preview/vleesboerderij-barten/bestellen" class="btn-premium btn-cta" style="padding: 0.6rem 1.5rem; font-size: 0.8rem;">Bestellen</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer style="background: var(--primary); color: white; padding: 6rem 0 2rem;">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem;">
+          <div>
+            <h3 class="serif" style="font-size: 2rem; margin-bottom: 1.5rem;">Vleesboerderij Barten</h3>
+            <p style="opacity: 0.6; line-height: 1.8; max-width: 400px;">
+              Eerlijk vlees uit de Alblasserwaard, met liefde voor het dier en passie voor het vak. Direct van de boer naar uw bord.
+            </p>
+          </div>
+          <div>
+            <h4 style="margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em;">Navigatie</h4>
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+              <a href="/preview/vleesboerderij-barten/assortiment" style="color: white; opacity: 0.6; text-decoration: none;">Assortiment</a>
+              <a href="/preview/vleesboerderij-barten/over-ons" style="color: white; opacity: 0.6; text-decoration: none;">Onze Boerderij</a>
+              <a href="/preview/vleesboerderij-barten/bestellen" style="color: white; opacity: 0.6; text-decoration: none;">Bestellen</a>
+              <a href="/preview/vleesboerderij-barten/contact" style="color: white; opacity: 0.6; text-decoration: none;">Contact</a>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em;">Openingstijden</h4>
+            <p style="opacity: 0.6; font-size: 0.9rem; line-height: 1.8;">
+              Vrijdag: 13:00 - 18:00<br/>
+              Zaterdag: 09:00 - 16:00
+            </p>
+          </div>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.4;">
+          <span>© 2026 Vleesboerderij Barten</span>
+          <span>Exclusief voorstel door OnlineKoers</span>
+        </div>
+      </div>
+    </footer>
+
+    {lead?.id && <Tracker leadId={lead.id} />}
+
+    <script>
+      const nav = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav?.classList.add('scrolled');
+        } else {
+          nav?.classList.remove('scrolled');
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+  </body>
+</html>
