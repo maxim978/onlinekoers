@@ -6,177 +6,601 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 ---
 
 <LayoutBarten title="Bestellen" activePage="bestellen">
-  <section style="padding: 12rem 0 6rem; background: var(--secondary);">
-    <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr 380px; gap: 3rem; align-items: start;">
-        
-        <!-- SELECTION SIDE -->
-        <div>
-          <div style="margin-bottom: 5rem;">
-            <span class="reveal" style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">Direct Bestellen</span>
-            <h1 class="reveal" style="font-size: 3.5rem; line-height: 1; margin-bottom: 1.5rem;">Stel uw pakket <br/>samen</h1>
-            <p class="reveal" style="font-size: 1.05rem; opacity: 0.6; line-height: 1.7; max-width: 520px;">Selecteer de producten die u wilt bestellen. Wij maken alles vers voor u klaar voor afhaal in onze winkel.</p>
-          </div>
 
-          <!-- FILTERS -->
-          <div style="display: flex; gap: 1rem; margin-bottom: 3rem; overflow-x: auto; padding-bottom: 1rem;">
-            {categories.map((cat, i) => (
-              <button class={`reveal cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat} 
-                style={`padding: 0.75rem 1.5rem; border-radius: 99px; border: 1px solid rgba(0,0,0,0.05); background: white; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.02);`}>
-                {cat}
-              </button>
-            ))}
-          </div>
+<style>
+  /* ── Pagina achtergrond ── */
+  .bestel-page { background: var(--secondary); }
 
-          <!-- PRODUCT LIST -->
-          <div style="display: grid; gap: 1rem;">
-            {products.map(p => (
-              <div class="reveal product-row" data-category={p.category} style="background: white; border-radius: 1.5rem; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 40px rgba(0,0,0,0.02); transition: transform 0.3s;">
-                <div style="display: flex; align-items: center; gap: 2rem;">
-                  <img src={p.image} alt={p.name} style="width: 70px; height: 70px; border-radius: 1rem; object-fit: cover;" />
-                  <div>
-                    <h4 style="font-size: 1.1rem; margin-bottom: 0.25rem;">{p.name}</h4>
-                    <span style="font-size: 0.8rem; opacity: 0.4;">Per {p.unit} · €{p.price.toFixed(2)}</span>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 1.5rem;">
-                  <div class="qty-control" style="display: flex; align-items: center; gap: 1rem; background: #f8fafc; padding: 0.5rem; border-radius: 1rem;">
-                    <button class="qty-btn minus" data-id={p.id} style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">-</button>
-                    <span class="qty-val" id={`qty-${p.id}`} style="font-weight: 700; min-width: 20px; text-align: center;">0</span>
-                    <button class="qty-btn plus" data-id={p.id} data-name={p.name} data-price={p.price} style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">+</button>
-                  </div>
-                  <div style="font-weight: 800; min-width: 80px; text-align: right;" id={`total-${p.id}`}>€0.00</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+  /* ── Page header ── */
+  .bestel-hero {
+    background: var(--primary);
+    padding: 10rem 0 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .bestel-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url('/images/barten/bbq.png') center/cover no-repeat;
+    opacity: .08;
+  }
+  .bestel-hero-inner { position: relative; z-index: 1; }
+  .bestel-tag {
+    display: inline-block;
+    font-size: .7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .3em; color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+  .bestel-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 900; line-height: 1.0;
+    color: white; margin-bottom: 1.25rem;
+  }
+  .bestel-sub {
+    font-size: 1rem; color: rgba(255,255,255,.55);
+    line-height: 1.7; max-width: 480px;
+  }
 
-        <!-- CART SIDE -->
-        <div style="position: sticky; top: 120px;">
-          <div class="reveal glass-card" style="background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 40px 100px rgba(0,0,0,0.05); padding: 3rem; overflow: hidden;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--accent);"></div>
-            <h3 class="serif" style="font-size: 2rem; margin-bottom: 2rem;">Uw Selectie</h3>
-            
-            <div id="cart-items" style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1.25rem;">
-              <p style="opacity: 0.4; font-size: 0.9rem; text-align: center; padding: 2rem 0;">Geen producten geselecteerd</p>
-            </div>
+  /* ── Trust strip ── */
+  .trust-strip {
+    background: var(--accent);
+    padding: .9rem 0;
+  }
+  .trust-inner {
+    display: flex; align-items: center; justify-content: center;
+    gap: 2.5rem; flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .78rem; font-weight: 700;
+    color: rgba(27,42,30,.85);
+  }
+  .trust-item svg { flex-shrink: 0; }
 
-            <div style="border-top: 2px solid #f8fafc; padding-top: 2rem; margin-bottom: 3rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4;">Totaalbedrag</span>
-                <span id="grand-total" style="font-size: 2.5rem; font-weight: 900; line-height: 1; color: var(--primary);">€0.00</span>
-              </div>
-            </div>
+  /* ── Main bestelblok ── */
+  .bestel-body { padding: 4rem 0 8rem; }
+  .bestel-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 3rem;
+    align-items: start;
+  }
 
-            <button id="checkout-trigger" class="btn-premium btn-cta" style="width: 100%; justify-content: center; padding: 1.5rem; opacity: 0.5; pointer-events: none;">Bestelling afronden</button>
-            <p style="font-size: 0.7rem; opacity: 0.4; text-align: center; margin-top: 1.5rem;">Afhalen in Meerkerk · Betaling in de winkel</p>
-          </div>
-        </div>
+  /* ── Category tabs ── */
+  .cat-tabs {
+    display: flex; gap: .6rem; flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .cat-btn {
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: .6rem 1.4rem; border-radius: 99px;
+    border: 1.5px solid rgba(27,42,30,.12);
+    background: white; color: rgba(27,42,30,.55);
+    cursor: pointer; transition: all .25s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .cat-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .cat-btn.active {
+    background: var(--primary); border-color: var(--primary);
+    color: white; box-shadow: 0 4px 16px rgba(27,42,30,.2);
+  }
 
-      </div>
+  /* ── Product grid ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  /* ── Product card ── */
+  .product-card {
+    background: white;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    transition: transform .3s, box-shadow .3s, border-color .3s;
+    display: flex; flex-direction: column;
+    border: 2px solid transparent;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0,0,0,.1);
+  }
+  .product-card.in-cart {
+    border-color: var(--primary);
+  }
+  .p-img {
+    aspect-ratio: 4/3; overflow: hidden;
+    background: #f0ede8;
+  }
+  .p-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .4s;
+  }
+  .product-card:hover .p-img img { transform: scale(1.07); }
+  .p-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+    flex: 1; display: flex; flex-direction: column;
+  }
+  .p-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700;
+    color: var(--text-dark); margin-bottom: .25rem; line-height: 1.3;
+  }
+  .p-unit {
+    font-size: .72rem; color: rgba(27,42,30,.4);
+    margin-bottom: 1rem;
+  }
+  .p-bottom {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: .5rem;
+    margin-top: auto;
+  }
+  .p-price {
+    font-size: 1rem; font-weight: 800;
+    color: var(--primary);
+  }
+  .qty-wrap {
+    display: flex; align-items: center; gap: .5rem;
+    background: #f4f2ec; padding: .3rem; border-radius: .75rem;
+  }
+  .qty-btn {
+    width: 30px; height: 30px; border-radius: .55rem;
+    border: none; background: white; cursor: pointer;
+    font-weight: 900; font-size: 1rem; color: var(--text-dark);
+    transition: background .2s, transform .1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-btn:hover { background: var(--primary); color: white; }
+  .qty-btn:active { transform: scale(.92); }
+  .qty-val {
+    font-weight: 800; font-size: .88rem;
+    min-width: 18px; text-align: center;
+    color: var(--text-dark);
+  }
+
+  /* ── Order panel ── */
+  .order-panel {
+    position: sticky; top: 100px;
+    background: white;
+    border-radius: 1.75rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  .panel-stripe {
+    height: 5px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+  }
+  .panel-inner { padding: 2rem; }
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--text-dark); margin-bottom: .25rem;
+  }
+  .panel-subtitle {
+    font-size: .75rem; color: rgba(27,42,30,.4);
+    margin-bottom: 1.75rem;
+  }
+  #cart-items { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+  .empty-msg {
+    text-align: center; padding: 2rem 1rem;
+    font-size: .85rem; color: rgba(27,42,30,.3); line-height: 1.6;
+  }
+  .cart-item {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 1rem;
+  }
+  .ci-left { display: flex; align-items: center; gap: .75rem; }
+  .ci-qty {
+    width: 28px; height: 28px; border-radius: .55rem;
+    background: var(--primary); color: white;
+    font-size: .72rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ci-name { font-size: .88rem; font-weight: 600; color: var(--text-dark); }
+  .ci-price { font-size: .9rem; font-weight: 800; color: var(--text-dark); white-space: nowrap; }
+  .panel-divider { height: 1px; background: #f0ede8; margin: 1.25rem 0; }
+  .panel-total {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  .total-lbl {
+    font-size: .7rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: rgba(27,42,30,.4);
+  }
+  .total-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900; color: var(--text-dark);
+  }
+  .btn-bestel {
+    width: 100%; padding: 1.2rem;
+    background: var(--cta); color: white;
+    border: none; border-radius: 99px;
+    font-size: .78rem; font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; transition: all .3s;
+    box-shadow: 0 6px 24px rgba(155,61,47,.25);
+  }
+  .btn-bestel:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(155,61,47,.35);
+  }
+  .btn-bestel:disabled { opacity: .35; cursor: not-allowed; }
+  .panel-trust {
+    text-align: center; margin-top: 1.25rem;
+    font-size: .68rem; color: rgba(27,42,30,.35);
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+  }
+
+  /* ── Checkout modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(27,42,30,.55);
+    backdrop-filter: blur(12px);
+    z-index: 2000; display: none;
+    align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: white; width: 100%; max-width: 480px;
+    border-radius: 2rem; padding: 3rem;
+    position: relative; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 40px 100px rgba(0,0,0,.2);
+  }
+  .modal-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: none; background: #f4f2ec; cursor: pointer;
+    font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    color: rgba(27,42,30,.5); transition: background .2s;
+  }
+  .modal-close:hover { background: #e8e5e0; }
+  .modal-h { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+  .modal-sub { font-size: .88rem; color: rgba(27,42,30,.5); margin-bottom: 2rem; line-height: 1.6; }
+  .modal-field { display: grid; gap: .4rem; margin-bottom: 1.25rem; }
+  .modal-field label {
+    font-size: .65rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: rgba(27,42,30,.45);
+  }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; padding: .9rem 1.25rem;
+    border-radius: .85rem; border: 1.5px solid rgba(27,42,30,.1);
+    outline: none; font-family: 'Outfit', sans-serif;
+    font-size: .95rem; transition: border-color .2s;
+    background: #fdfcfb;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
+    border-color: var(--primary);
+  }
+  .modal-field textarea { resize: vertical; min-height: 80px; }
+  .modal-divider { height: 1px; background: #f0ede8; margin: 1.5rem 0; }
+  .modal-order-summary { margin-bottom: 1.5rem; }
+  .mos-title {
+    font-size: .7rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: rgba(27,42,30,.4); margin-bottom: 1rem;
+  }
+  .mos-item {
+    display: flex; justify-content: space-between;
+    font-size: .88rem; padding: .4rem 0;
+    color: var(--text-dark);
+  }
+  .mos-total {
+    display: flex; justify-content: space-between;
+    font-weight: 800; padding-top: .75rem;
+    border-top: 1px solid #f0ede8;
+    margin-top: .5rem;
+  }
+  .btn-confirm {
+    width: 100%; padding: 1.2rem;
+    background: var(--cta); color: white;
+    border: none; border-radius: 99px;
+    font-size: .82rem; font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; transition: all .3s;
+  }
+  .btn-confirm:hover { background: #b5493a; }
+
+  /* ── Succes ── */
+  .success-wrap {
+    text-align: center; padding: 2rem 0;
+    display: none;
+  }
+  .success-wrap.show { display: block; }
+  .success-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #e8f5e9; border: 2px solid #c8e6c9;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: #388e3c;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 860px) {
+    .bestel-grid { grid-template-columns: 1fr; }
+    .order-panel { position: static; }
+  }
+  @media (max-width: 600px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .bestel-hero { padding: 8rem 0 3.5rem; }
+    .trust-inner { gap: 1.25rem; }
+  }
+</style>
+
+<!-- HERO HEADER -->
+<section class="bestel-hero">
+  <div class="container bestel-hero-inner">
+    <span class="bestel-tag reveal">Direct Bestellen</span>
+    <h1 class="bestel-h1 reveal">Stel uw pakket<br/>samen</h1>
+    <p class="bestel-sub reveal">Kies uw producten, wij maken alles vers klaar voor afhaal in Meerkerk.</p>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="container trust-inner">
+    <div class="trust-item">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+      </svg>
+      Verse producten
     </div>
-  </section>
-
-  <!-- CHECKOUT MODAL -->
-  <div id="checkout-modal" style="position: fixed; inset: 0; background: rgba(27, 42, 30, 0.4); backdrop-filter: blur(20px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem;">
-    <div style="background: white; width: 100%; max-width: 500px; border-radius: 2.5rem; padding: 4rem; position: relative;">
-      <button id="close-modal" style="position: absolute; top: 2rem; right: 2rem; border: none; background: transparent; cursor: pointer; opacity: 0.3; font-size: 2rem;">&times;</button>
-      <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 1rem;">Gegevens</h2>
-      <p style="opacity: 0.6; margin-bottom: 3rem; line-height: 1.6;">Laat uw gegevens achter zodat we de bestelling voor u kunnen klaarzetten.</p>
-      
-      <form id="final-form" style="display: grid; gap: 1.5rem;">
-        <div style="display: grid; gap: 0.5rem;">
-          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Uw Naam</label>
-          <input type="text" placeholder="Jan de Vries" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
-        </div>
-        <div style="display: grid; gap: 0.5rem;">
-          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">E-mailadres</label>
-          <input type="email" placeholder="jan@voorbeeld.nl" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
-        </div>
-        <div style="display: grid; gap: 0.5rem;">
-          <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Telefoonnummer</label>
-          <input type="tel" placeholder="06 12345678" required style="width: 100%; padding: 1rem 1.5rem; border-radius: 1rem; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit;" />
-        </div>
-        <button type="submit" class="btn-premium btn-cta" style="margin-top: 1rem; padding: 1.5rem; justify-content: center;">Bevestig Bestelling</button>
-      </form>
+    <div class="trust-item">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25"/>
+      </svg>
+      Afhalen in Meerkerk
+    </div>
+    <div class="trust-item">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"/>
+      </svg>
+      Betaling in de winkel
+    </div>
+    <div class="trust-item">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+      </svg>
+      Vr 13–18u &amp; Za 09–16u
     </div>
   </div>
+</div>
 
-  <style>
-    .cat-btn.active { background: var(--primary) !important; color: white !important; }
-    .product-row:hover { transform: scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.05); }
-    .qty-btn:active { background: #eee !important; transform: scale(0.95); }
-  </style>
+<!-- MAIN BODY -->
+<section class="bestel-body bestel-page">
+  <div class="container">
+    <div class="bestel-grid">
 
-  <script>
-    let cart = [];
-    const cartItems = document.getElementById('cart-items');
-    const grandTotal = document.getElementById('grand-total');
-    const checkoutTrigger = document.getElementById('checkout-trigger');
+      <!-- LEFT: products -->
+      <div>
+        <!-- Category filter -->
+        <div class="cat-tabs">
+          {categories.map((cat, i) => (
+            <button class={`cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat}>{cat}</button>
+          ))}
+        </div>
 
-    function updateCart() {
-      const activeItems = cart.filter(item => item.qty > 0);
-      
-      if (activeItems.length === 0) {
-        cartItems.innerHTML = '<p style="opacity: 0.4; font-size: 0.9rem; text-align: center; padding: 2rem 0;">Geen producten geselecteerd</p>';
-        checkoutTrigger.style.opacity = '0.5';
-        checkoutTrigger.style.pointerEvents = 'none';
-      } else {
-        cartItems.innerHTML = activeItems.map(item => `
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <span style="font-weight: 800; color: var(--accent);">${item.qty}x</span>
-              <span style="font-weight: 600;">${item.name}</span>
+        <!-- Product grid -->
+        <div class="product-grid">
+          {products.map(p => (
+            <div class="product-card reveal" data-category={p.category} data-id={p.id}>
+              <div class="p-img">
+                <img src={p.image} alt={p.name} loading="lazy" />
+              </div>
+              <div class="p-body">
+                <div class="p-name">{p.name}</div>
+                <div class="p-unit">Per {p.unit} · €{p.price.toFixed(2)}</div>
+                <div class="p-bottom">
+                  <div class="p-price">€<span id={`total-${p.id}`}>0.00</span></div>
+                  <div class="qty-wrap">
+                    <button class="qty-btn minus" data-id={p.id} data-name={p.name} data-price={p.price}>−</button>
+                    <span class="qty-val" id={`qty-${p.id}`}>0</span>
+                    <button class="qty-btn plus" data-id={p.id} data-name={p.name} data-price={p.price}>+</button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <span style="font-weight: 700;">€${(item.price * item.qty).toFixed(2)}</span>
-          </div>
-        `).join('');
-        checkoutTrigger.style.opacity = '1';
-        checkoutTrigger.style.pointerEvents = 'all';
-      }
+          ))}
+        </div>
+      </div>
 
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      grandTotal.innerText = `€${total.toFixed(2)}`;
+      <!-- RIGHT: order panel -->
+      <div class="order-panel">
+        <div class="panel-stripe"></div>
+        <div class="panel-inner">
+          <div class="panel-title">Uw Selectie</div>
+          <div class="panel-subtitle">Producten worden vers klaargemaakt</div>
+          <div id="cart-items">
+            <div class="empty-msg">Nog geen producten<br/>toegevoegd</div>
+          </div>
+          <div class="panel-divider"></div>
+          <div class="panel-total">
+            <span class="total-lbl">Totaalbedrag</span>
+            <span class="total-val" id="grand-total">€0,00</span>
+          </div>
+          <button class="btn-bestel" id="checkout-trigger" disabled>
+            Bestelling afronden →
+          </button>
+          <div class="panel-trust">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+            </svg>
+            Afhalen in Meerkerk · Betaling in de winkel
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="close-modal">×</button>
+
+    <div id="modal-form-view">
+      <h2 class="modal-h">Uw gegevens</h2>
+      <p class="modal-sub">Vul uw gegevens in zodat we de bestelling voor u kunnen klaarzetten op het gewenste moment.</p>
+
+      <!-- Order summary in modal -->
+      <div class="modal-order-summary">
+        <div class="mos-title">Uw bestelling</div>
+        <div id="modal-items"></div>
+        <div class="mos-total">
+          <span>Totaal</span>
+          <span id="modal-total">€0,00</span>
+        </div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <form id="final-form">
+        <div class="modal-field">
+          <label>Uw naam</label>
+          <input type="text" placeholder="Jan de Vries" required />
+        </div>
+        <div class="modal-field">
+          <label>E-mailadres</label>
+          <input type="email" placeholder="jan@voorbeeld.nl" required />
+        </div>
+        <div class="modal-field">
+          <label>Telefoonnummer</label>
+          <input type="tel" placeholder="06 12 34 56 78" required />
+        </div>
+        <div class="modal-field">
+          <label>Gewenste afhaaldatum</label>
+          <select required>
+            <option value="">Kies een datum...</option>
+            <option>Vrijdag (eerstvolgende)</option>
+            <option>Zaterdag (eerstvolgende)</option>
+            <option>Vrijdag (week erna)</option>
+            <option>Zaterdag (week erna)</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Opmerkingen (optioneel)</label>
+          <textarea placeholder="Bijv. specifieke snijwensen..."></textarea>
+        </div>
+        <button type="submit" class="btn-confirm">Bestelling bevestigen →</button>
+      </form>
+    </div>
+
+    <div class="success-wrap" id="modal-success">
+      <div class="success-icon">
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+        </svg>
+      </div>
+      <h2 class="modal-h">Bestelling ontvangen!</h2>
+      <p class="modal-sub">We nemen zo snel mogelijk contact met u op om de afhaalmoment te bevestigen. Tot dan!</p>
+      <p style="font-size:.8rem; color:rgba(27,42,30,.4); margin-top:1rem;">📞 0183-849980 · bestellen@vleesboerderijbarten.nl</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let cart: { id: string; name: string; price: number; qty: number }[] = [];
+
+  function fmt(n: number) {
+    return '€' + n.toFixed(2).replace('.', ',');
+  }
+
+  function updateCart() {
+    const active = cart.filter(i => i.qty > 0);
+    const total = active.reduce((s, i) => s + i.price * i.qty, 0);
+
+    // Panel items
+    const cartEl = document.getElementById('cart-items')!;
+    if (active.length === 0) {
+      cartEl.innerHTML = '<div class="empty-msg">Nog geen producten<br/>toegevoegd</div>';
+    } else {
+      cartEl.innerHTML = active.map(i => `
+        <div class="cart-item">
+          <div class="ci-left">
+            <div class="ci-qty">${i.qty}×</div>
+            <div class="ci-name">${i.name}</div>
+          </div>
+          <div class="ci-price">${fmt(i.price * i.qty)}</div>
+        </div>
+      `).join('');
     }
 
-    document.querySelectorAll('.qty-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const name = btn.dataset.name;
-        const price = parseFloat(btn.dataset.price);
-        const isPlus = btn.classList.contains('plus');
+    document.getElementById('grand-total')!.textContent = fmt(total);
 
-        let item = cart.find(i => i.id === id);
-        if (!item && isPlus) {
-          item = { id, name, price, qty: 0 };
-          cart.push(item);
-        }
+    const btn = document.getElementById('checkout-trigger') as HTMLButtonElement;
+    btn.disabled = active.length === 0;
 
-        if (item) {
-          item.qty = isPlus ? item.qty + 1 : Math.max(0, item.qty - 1);
-          document.getElementById(`qty-${id}`).innerText = item.qty;
-          document.getElementById(`total-${id}`).innerText = `€${(item.price * item.qty).toFixed(2)}`;
-          updateCart();
-        }
+    // Modal summary
+    document.getElementById('modal-items')!.innerHTML = active.map(i =>
+      `<div class="mos-item"><span>${i.qty}× ${i.name}</span><span>${fmt(i.price * i.qty)}</span></div>`
+    ).join('');
+    document.getElementById('modal-total')!.textContent = fmt(total);
+  }
+
+  // Quantity buttons
+  document.querySelectorAll<HTMLButtonElement>('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id!;
+      const name = btn.dataset.name!;
+      const price = parseFloat(btn.dataset.price!);
+      const isPlus = btn.classList.contains('plus');
+
+      let item = cart.find(i => i.id === id);
+      if (!item && isPlus) { item = { id, name, price, qty: 0 }; cart.push(item); }
+      if (!item) return;
+
+      item.qty = isPlus ? item.qty + 1 : Math.max(0, item.qty - 1);
+
+      const qtyEl = document.getElementById(`qty-${id}`)!;
+      const totEl = document.getElementById(`total-${id}`)!;
+      const card = document.querySelector(`.product-card[data-id="${id}"]`)!;
+
+      qtyEl.textContent = String(item.qty);
+      totEl.textContent = (item.price * item.qty).toFixed(2).replace('.', ',');
+      card.classList.toggle('in-cart', item.qty > 0);
+
+      updateCart();
+    });
+  });
+
+  // Category filter
+  document.querySelectorAll<HTMLButtonElement>('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelector('.cat-btn.active')?.classList.remove('active');
+      btn.classList.add('active');
+      const cat = btn.dataset.category!;
+      document.querySelectorAll<HTMLElement>('.product-card').forEach(card => {
+        const show = cat === 'Alle' || card.dataset.category === cat;
+        card.style.display = show ? '' : 'none';
       });
     });
+  });
 
-    // Modal
-    const modal = document.getElementById('checkout-modal');
-    checkoutTrigger.addEventListener('click', () => modal.style.display = 'flex');
-    document.getElementById('close-modal').addEventListener('click', () => modal.style.display = 'none');
+  // Modal open/close
+  const modal = document.getElementById('checkout-modal')!;
+  document.getElementById('checkout-trigger')!.addEventListener('click', () => modal.classList.add('open'));
+  document.getElementById('close-modal')!.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
 
-    // Filter
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelector('.cat-btn.active').classList.remove('active');
-        btn.classList.add('active');
-        const cat = btn.dataset.category;
-        document.querySelectorAll('.product-row').forEach(row => {
-          row.style.display = (cat === 'Alle' || row.dataset.category === cat) ? 'flex' : 'none';
-        });
-      });
-    });
-  </script>
+  // Form submit → success
+  document.getElementById('final-form')!.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('.btn-confirm')!;
+    btn.textContent = 'Versturen...';
+    btn.disabled = true;
+    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('modal-form-view')!.style.display = 'none';
+    document.getElementById('modal-success')!.classList.add('show');
+  });
+</script>
+
 </LayoutBarten>

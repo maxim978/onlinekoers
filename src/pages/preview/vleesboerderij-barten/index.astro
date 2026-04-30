@@ -24,25 +24,39 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
     </div>
   </section>
 
+  <!-- USP STRIP -->
+  <section style="background: var(--accent); padding: 0;">
+    <div class="container" style="display: flex; align-items: center; gap: 2.5rem; padding-top: 1rem; padding-bottom: 1rem; flex-wrap: wrap; justify-content: center;">
+      {[
+        ['✓', 'Direct van de boer'],
+        ['✓', 'Minimaal 3 weken gerijpt'],
+        ['✓', 'Kampioenswinnaar'],
+        ['✓', 'Afhalen in Meerkerk'],
+      ].map(([icon, txt]) => (
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;color:rgba(27,42,30,.85);">
+          <span style="width:20px;height:20px;background:rgba(27,42,30,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;">{icon}</span>
+          {txt}
+        </div>
+      ))}
+    </div>
+  </section>
+
   <!-- USPs -->
-  <section style="padding: 10rem 0; background: white;">
+  <section style="padding: 8rem 0; background: white;">
     <div class="container">
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem;">
-        <div class="reveal">
-          <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1.5rem;">01</div>
-          <h3 style="font-size: 1.75rem; margin-bottom: 1rem;">Eigen Keten</h3>
-          <p style="color: var(--text-dark); opacity: 0.6; line-height: 1.7;">Wij beheren het volledige proces. Van het kalfje dat bij ons wordt geboren tot het stukje vlees in de winkel.</p>
-        </div>
-        <div class="reveal" style="transition-delay: 0.2s;">
-          <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1.5rem;">02</div>
-          <h3 style="font-size: 1.75rem; margin-bottom: 1rem;">Vrije Uitloop</h3>
-          <p style="color: var(--text-dark); opacity: 0.6; line-height: 1.7;">Onze runderen grazen het grootste deel van het jaar in de weidse polders van de Alblasserwaard.</p>
-        </div>
-        <div class="reveal" style="transition-delay: 0.4s;">
-          <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1.5rem;">03</div>
-          <h3 style="font-size: 1.75rem; margin-bottom: 1rem;">3 Weken Rijping</h3>
-          <p style="color: var(--text-dark); opacity: 0.6; line-height: 1.7;">Voor een optimale smaak en malsheid laten wij ons rundvlees minimaal drie weken op ambachtelijke wijze rijpen.</p>
-        </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;">
+        {[
+          { num:'01', icon:'🌿', title:'Eigen Keten', desc:'Van het kalfje dat bij ons wordt geboren tot het stukje vlees op uw bord. Wij beheren het volledige proces.' },
+          { num:'02', icon:'🌾', title:'Vrije Uitloop', desc:'Onze runderen grazen het grootste deel van het jaar in de weidse polders van de Alblasserwaard.' },
+          { num:'03', icon:'⏱️', title:'3 Weken Rijping', desc:'Voor optimale smaak en malsheid laten wij ons rundvlees minimaal drie weken ambachtelijk rijpen.' },
+        ].map((u, i) => (
+          <div class="reveal" style={`transition-delay:${i*0.15}s`}>
+            <div style="width:56px;height:56px;border-radius:1rem;background:#f4f2ec;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.5rem;">{u.icon}</div>
+            <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);margin-bottom:.6rem;">{u.num}</div>
+            <h3 style="font-size:1.5rem;margin-bottom:.75rem;">{u.title}</h3>
+            <p style="color:var(--text-dark);opacity:.6;line-height:1.75;font-size:.95rem;">{u.desc}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -81,27 +95,23 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
         <p style="opacity: 0.6; max-width: 600px; margin: 0 auto;">Ontdek onze ambachtelijke producten, van malse biefstuk tot complete BBQ-pakketten.</p>
       </div>
       
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;">
-        <a href="/preview/vleesboerderij-barten/assortiment" class="reveal glass-card" style="padding: 3rem 2rem; text-align: center; text-decoration: none; color: white;">
-          <div style="font-size: 3rem; margin-bottom: 1.5rem;">🥩</div>
-          <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Rundvlees</h4>
-          <p style="font-size: 0.8rem; opacity: 0.5;">Mals & gerijpt</p>
-        </a>
-        <a href="/preview/vleesboerderij-barten/assortiment" class="reveal glass-card" style="padding: 3rem 2rem; text-align: center; text-decoration: none; color: white; transition-delay: 0.1s;">
-          <div style="font-size: 3rem; margin-bottom: 1.5rem;">🥓</div>
-          <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Varkensvlees</h4>
-          <p style="font-size: 0.8rem; opacity: 0.5;">Smaakvol & puur</p>
-        </a>
-        <a href="/preview/vleesboerderij-barten/assortiment" class="reveal glass-card" style="padding: 3rem 2rem; text-align: center; text-decoration: none; color: white; transition-delay: 0.2s;">
-          <div style="font-size: 3rem; margin-bottom: 1.5rem;">🍗</div>
-          <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Kip & Kalkoen</h4>
-          <p style="font-size: 0.8rem; opacity: 0.5;">Vers & eerlijk</p>
-        </a>
-        <a href="/preview/vleesboerderij-barten/assortiment" class="reveal glass-card" style="padding: 3rem 2rem; text-align: center; text-decoration: none; color: white; transition-delay: 0.3s;">
-          <div style="font-size: 3rem; margin-bottom: 1.5rem;">🔥</div>
-          <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">BBQ Specials</h4>
-          <p style="font-size: 0.8rem; opacity: 0.5;">Ambachtelijk gemarineerd</p>
-        </a>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;">
+        {[
+          { emoji:'🥩', title:'Rundvlees',     sub:'Mals & gerijpt',           delay:'0s'    },
+          { emoji:'🥓', title:'Varkensvlees',  sub:'Smaakvol & puur',          delay:'.1s'   },
+          { emoji:'🍗', title:'Kip & Kalkoen', sub:'Vers & eerlijk',            delay:'.2s'   },
+          { emoji:'🔥', title:'BBQ Specials',  sub:'Ambachtelijk gemarineerd',  delay:'.3s'   },
+        ].map(c => (
+          <a href="/preview/vleesboerderij-barten/bestellen"
+             class="reveal"
+             style={`transition-delay:${c.delay};display:flex;flex-direction:column;align-items:center;text-align:center;padding:2.5rem 1.5rem;border-radius:1.75rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:white;transition:background .3s,transform .3s;`}
+             onmouseover="this.style.background='rgba(255,255,255,.13)';this.style.transform='translateY(-4px)'"
+             onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.transform=''">
+            <div style="width:64px;height:64px;border-radius:1.25rem;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin-bottom:1.25rem;">{c.emoji}</div>
+            <h4 style="font-size:1.15rem;margin-bottom:.4rem;">{c.title}</h4>
+            <p style="font-size:.75rem;opacity:.45;">{c.sub}</p>
+          </a>
+        ))}
       </div>
     </div>
   </section>
