@@ -29,6 +29,7 @@ const { data: lead } = await supabaseAdmin
       --white:  #FFFFFF;
       --warm:   #F8F5F1;
       --warm-2: #F1EDE7;
+      --dark:   #111010;
       --border: rgba(20,16,12,0.09);
       --text:   #141210;
       --muted:  rgba(20,18,16,0.48);
@@ -45,24 +46,22 @@ const { data: lead } = await supabaseAdmin
     }
 
     h1, h2, h3, .serif { font-family: 'Cormorant Garamond', serif; }
-
-    /* shared container */
     .wrap { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
 
-    /* reveal */
     .r { opacity: 0; transform: translateY(28px); transition: opacity .85s cubic-bezier(.2,.8,.2,1), transform .85s cubic-bezier(.2,.8,.2,1); }
     .r.on { opacity: 1; transform: none; }
 
-    /* section tag */
     .stag {
       display: inline-flex; align-items: center; gap: .6rem;
       font-size: .62rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .28em;
-      color: var(--rose); margin-bottom: 1.25rem;
+      text-transform: uppercase; letter-spacing: .28em; color: var(--rose);
+      margin-bottom: 1.25rem;
     }
     .stag::before { content: ''; width: 24px; height: 1px; background: var(--rose); }
+    .stag-light { color: rgba(248,245,241,.5); }
+    .stag-light::before { background: rgba(248,245,241,.5); }
 
-    /* ═══ NAV ═══ */
+    /* ════ NAV ════ */
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 300;
       padding: 1.6rem 0;
@@ -79,7 +78,7 @@ const { data: lead } = await supabaseAdmin
     .nav-logo {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.3rem; font-weight: 700; font-style: italic;
-      color: var(--text); text-decoration: none; letter-spacing: .01em;
+      color: var(--text); text-decoration: none;
     }
     .nav-logo span { color: var(--rose); font-style: normal; }
     .nav-links { display: flex; align-items: center; gap: 2.25rem; }
@@ -98,88 +97,75 @@ const { data: lead } = await supabaseAdmin
     }
     .nav-cta:hover { background: var(--rose); transform: translateY(-1px); }
 
-    /* ═══ HERO ═══ */
+    /* ════ HERO ════ */
     .hero {
-      position: relative; min-height: 100vh;
-      background: var(--white); overflow: hidden;
-      display: flex; align-items: flex-end;
-    }
-
-    /* right-side photo panel */
-    .hero-photo {
-      position: absolute; top: 0; right: 0;
-      width: 44vw; height: 100%;
-      background: var(--warm-2);
+      min-height: 100vh; background: var(--white);
+      display: grid; grid-template-columns: 1fr 42vw;
       overflow: hidden;
     }
-    .hero-photo img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      opacity: 0; transition: opacity .6s;
-    }
-    .hero-photo img.on { opacity: 1; }
-    /* placeholder monogram shown when no image */
-    .hero-photo-mono {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22vw; font-weight: 700; font-style: italic;
-      color: rgba(20,18,16,.06); user-select: none; pointer-events: none;
-      line-height: 1;
-    }
-    /* thin rose stripe on photo left edge */
-    .hero-photo::before {
-      content: ''; position: absolute;
-      left: 0; top: 10%; bottom: 10%;
-      width: 3px; background: var(--rose);
-      z-index: 2;
-    }
 
-    /* left text */
-    .hero-text {
-      position: relative; z-index: 1;
-      padding-bottom: 7rem; padding-top: 12rem;
-      max-width: calc(56vw - 4rem);
+    /* LEFT: text side */
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 12rem clamp(2rem, 4vw, 4rem) 7rem clamp(1.5rem, max(3vw, calc((100vw - 1140px)/2 + 4rem)), 10rem);
     }
-
     .hero-eyebrow {
       display: flex; align-items: center; gap: .75rem;
       font-size: .65rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .3em;
-      color: var(--rose); margin-bottom: 1.5rem;
+      text-transform: uppercase; letter-spacing: .3em; color: var(--rose);
+      margin-bottom: 1.5rem;
     }
-    .hero-eyebrow::before {
-      content: ''; width: 30px; height: 1px; background: var(--rose);
-    }
+    .hero-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--rose); }
 
-    .hero-h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700; line-height: .9;
-      margin-bottom: 2.5rem;
-    }
+    .hero-h1 { font-family: 'Cormorant Garamond', serif; font-weight: 700; line-height: .88; margin-bottom: 2.5rem; }
     .h1-first {
-      display: block;
-      font-size: clamp(5rem, 11.5vw, 12rem);
-      font-style: italic; color: var(--text);
-      letter-spacing: -.02em;
+      display: block; font-style: italic; color: var(--text);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: -.02em;
     }
     .h1-last {
-      display: block;
-      font-size: clamp(5rem, 11.5vw, 12rem);
-      font-style: normal; font-weight: 700;
-      color: var(--rose); letter-spacing: .02em;
+      display: block; font-style: normal; font-weight: 700; color: var(--rose);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: .02em;
     }
-
     .hero-sub {
-      font-size: 1rem; color: var(--muted); line-height: 1.7;
-      max-width: 400px; margin-bottom: 2.75rem;
+      font-size: .98rem; color: var(--muted); line-height: 1.7;
+      max-width: 380px; margin-bottom: 2.5rem;
+    }
+    .hero-btns { display: flex; gap: .85rem; flex-wrap: wrap; }
+
+    /* RIGHT: photo panel – white bg to blend portrait edges */
+    .hero-right {
+      background: var(--white);
+      position: relative; overflow: hidden;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-top: 6rem;
+    }
+    .hero-right img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+      display: block;
+    }
+    /* thin rose stripe on left edge of photo panel */
+    .hero-right::before {
+      content: ''; position: absolute;
+      left: 0; top: 15%; bottom: 0;
+      width: 3px; background: var(--rose); z-index: 2;
     }
 
-    .hero-btns { display: flex; gap: .85rem; flex-wrap: wrap; }
+    /* scroll hint */
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      opacity: .3; pointer-events: none;
+    }
+    .hero-scroll span { font-size: .5rem; letter-spacing: .25em; text-transform: uppercase; }
+    .hero-scroll-line { width: 1px; height: 38px; background: linear-gradient(to bottom, var(--text), transparent); animation: spulse 2s ease-in-out infinite; }
+    @keyframes spulse { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
+    /* buttons */
     .btn {
       display: inline-flex; align-items: center; gap: .55rem;
-      font-size: .72rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
       padding: .9rem 2rem; border-radius: 99px;
       text-decoration: none; transition: all .25s; cursor: pointer; border: none;
     }
@@ -190,358 +176,218 @@ const { data: lead } = await supabaseAdmin
     .btn-rose { background: var(--rose); color: var(--white); }
     .btn-rose:hover { background: #b55d4b; transform: translateY(-2px); }
 
-    /* hero scroll hint */
-    .hero-scroll {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: .5rem;
-      opacity: .3;
-    }
-    .hero-scroll span { font-size: .5rem; letter-spacing: .25em; text-transform: uppercase; }
-    .hero-scroll-line {
-      width: 1px; height: 38px;
-      background: linear-gradient(to bottom, var(--text), transparent);
-      animation: spulse 2s ease-in-out infinite;
-    }
-    @keyframes spulse { 0%,100% { opacity:.3; } 50% { opacity:.8; } }
-
-    /* ═══ FACTS STRIP ═══ */
+    /* ════ FACTS STRIP ════ */
     .facts {
-      background: var(--warm);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
       padding: 1.75rem 0;
     }
-    .facts-inner {
-      display: flex; align-items: center; justify-content: center;
-      gap: 0; flex-wrap: wrap;
-    }
+    .facts-inner { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
     .fact {
-      display: flex; align-items: center;
-      padding: .5rem 2.5rem;
-      font-size: .75rem; font-weight: 600;
-      color: var(--muted); letter-spacing: .04em;
+      display: flex; align-items: center; padding: .5rem 2.25rem;
+      font-size: .73rem; font-weight: 600; color: var(--muted); letter-spacing: .04em;
       border-right: 1px solid var(--border);
     }
     .fact:last-child { border-right: none; }
     .fact strong { color: var(--text); margin-right: .35rem; }
 
-    /* ═══ ABOUT ═══ */
+    /* ════ ABOUT ════ */
     .about { padding: 9rem 0; background: var(--white); }
-    .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 7rem; align-items: center;
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+
+    .about-photo-wrap {
+      position: relative;
+      padding-right: 2rem; padding-bottom: 2rem;
     }
     .about-photo {
-      position: relative;
-      aspect-ratio: 4/5;
-      border-radius: .5rem;
-      overflow: hidden;
-      background: var(--warm-2);
+      aspect-ratio: 4/5; border-radius: .5rem; overflow: hidden;
+      background: var(--warm-2); position: relative;
     }
     .about-photo img {
-      width: 100%; height: 100%; object-fit: cover;
-      object-position: center top;
-    }
-    /* if no image, styled placeholder */
-    .about-photo-placeholder {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      justify-content: flex-end; padding: 2.5rem;
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
     }
     .about-photo::after {
-      content: ''; position: absolute;
-      bottom: 0; left: 0; right: 0; height: 45%;
-      background: linear-gradient(to top, rgba(20,18,16,.45), transparent);
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+      background: linear-gradient(to top, rgba(20,18,16,.4), transparent);
     }
     .about-photo-label {
-      position: relative; z-index: 1;
+      position: absolute; bottom: 1.75rem; left: 1.75rem; z-index: 1;
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem; font-style: italic;
-      color: var(--white);
+      font-size: 1.1rem; font-style: italic; color: var(--white);
     }
-    /* rose accent badge */
     .about-badge {
-      position: absolute; top: 2rem; right: -1.5rem; z-index: 2;
+      position: absolute; bottom: 0; right: 0; z-index: 2;
       background: var(--rose); color: var(--white);
-      padding: 1.25rem 1.5rem; border-radius: .5rem;
-      text-align: center;
+      padding: 1.25rem 1.5rem; border-radius: .5rem; text-align: center;
     }
-    .about-badge-n {
-      display: block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; font-weight: 700; line-height: 1;
-    }
-    .about-badge-l {
-      display: block; font-size: .58rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .15em;
-      opacity: .75; margin-top: .2rem;
-    }
+    .about-badge-n { display: block; font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; line-height: 1; }
+    .about-badge-l { display: block; font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; opacity: .75; margin-top: .2rem; }
 
     .about-h2 {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(2.25rem, 3.5vw, 3.5rem);
-      font-weight: 700; font-style: italic;
-      line-height: 1.15; color: var(--text); margin-bottom: 1.75rem;
+      font-weight: 700; font-style: italic; line-height: 1.15;
+      color: var(--text); margin-bottom: 1.75rem;
     }
     .about-p { font-size: .98rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.1rem; }
-
     .about-stats {
       display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1.5rem; margin-top: 3rem; padding-top: 3rem;
-      border-top: 1px solid var(--border);
+      gap: 1.5rem; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--border);
     }
-    .about-stat-n {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; font-weight: 700; color: var(--rose); line-height: 1;
-    }
-    .about-stat-l {
-      font-size: .65rem; text-transform: uppercase;
-      letter-spacing: .12em; color: var(--muted); margin-top: .3rem;
-    }
+    .about-stat-n { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--rose); line-height: 1; }
+    .about-stat-l { font-size: .65rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: .3rem; }
 
-    /* ═══ HOOGTEPUNTEN ═══ */
+    /* ════ HOOGTEPUNTEN ════ */
     .high { padding: 9rem 0; background: var(--warm); }
-    .high-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-end; flex-wrap: wrap;
-      gap: 2rem; margin-bottom: 4rem;
-    }
-    .high-h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.25rem, 4vw, 4rem);
-      font-weight: 700; line-height: 1.1; color: var(--text);
-    }
+    .high-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem; margin-bottom: 4rem; }
+    .high-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.25rem, 4vw, 4rem); font-weight: 700; line-height: 1.1; color: var(--text); }
     .high-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     .hcard {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: .5rem; padding: 3rem;
-      position: relative; overflow: hidden;
+      background: var(--white); border: 1px solid var(--border); border-radius: .5rem;
+      padding: 3rem; position: relative; overflow: hidden;
       transition: box-shadow .3s, transform .3s;
     }
     .hcard:hover { box-shadow: 0 16px 48px rgba(20,18,16,.07); transform: translateY(-4px); }
     .hcard-num {
-      position: absolute; top: 2.5rem; right: 2.5rem;
+      position: absolute; top: 2rem; right: 2.5rem;
       font-family: 'Cormorant Garamond', serif;
       font-size: 5rem; font-weight: 700; font-style: italic;
       color: rgba(20,18,16,.05); line-height: 1; user-select: none;
     }
-    .hcard-year {
-      display: inline-block;
-      font-size: .6rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .22em;
-      color: var(--rose); margin-bottom: 1.75rem;
-    }
-    .hcard-venue {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.25rem; font-weight: 700;
-      color: var(--text); line-height: 1; margin-bottom: .4rem;
-    }
+    .hcard-year { display: inline-block; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .22em; color: var(--rose); margin-bottom: 1.75rem; }
+    .hcard-venue { font-family: 'Cormorant Garamond', serif; font-size: 2.25rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: .4rem; }
     .hcard-with { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; }
     .hcard-desc { font-size: .9rem; color: var(--muted); line-height: 1.75; }
-    .hcard-tag {
-      display: inline-flex; align-items: center; gap: .4rem;
-      font-size: .6rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .16em;
-      color: var(--rose); margin-top: 1.75rem;
-      border-top: 1px solid var(--border); padding-top: 1.5rem; width: 100%;
+    .hcard-tag { display: inline-flex; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--rose); margin-top: 1.75rem; border-top: 1px solid var(--border); padding-top: 1.5rem; width: 100%; }
+
+    /* ════ LIVE GALLERY ════ */
+    .gallery { background: var(--dark); padding: 7rem 0; }
+    .gallery-header { margin-bottom: 3rem; }
+    .gallery-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      font-weight: 700; color: var(--white); line-height: 1.1;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      grid-template-rows: auto;
+      gap: 1rem;
+    }
+    .gallery-img {
+      border-radius: .4rem; overflow: hidden;
+      position: relative; background: #1a1818;
+    }
+    .gallery-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    }
+    .gallery-img:hover img { transform: scale(1.04); }
+
+    /* fire photo: landscape, left & tall */
+    .gallery-img-fire {
+      grid-column: 1; grid-row: 1 / 3;
+      aspect-ratio: 4/5;
+    }
+    /* stage photo: landscape, right top */
+    .gallery-img-stage {
+      grid-column: 2; grid-row: 1;
+      aspect-ratio: 1 / 1;
+    }
+    /* purple photo: right bottom */
+    .gallery-img-purple {
+      grid-column: 2; grid-row: 2;
+      aspect-ratio: 1 / 1;
     }
 
-    /* ═══ REPERTOIRE ═══ */
+    /* ════ REPERTOIRE ════ */
     .rep { padding: 9rem 0; background: var(--white); }
     .rep-head { margin-bottom: 5rem; }
-    .rep-h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.5rem, 4.5vw, 4.5rem);
-      font-weight: 700; font-style: italic;
-      line-height: 1.1; color: var(--text);
-      max-width: 700px;
-    }
-    .rep-sub {
-      font-size: .98rem; color: var(--muted); line-height: 1.75;
-      max-width: 520px; margin-top: 1rem;
-    }
+    .rep-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 4.5vw, 4.5rem); font-weight: 700; font-style: italic; line-height: 1.1; color: var(--text); max-width: 700px; }
+    .rep-sub { font-size: .98rem; color: var(--muted); line-height: 1.75; max-width: 520px; margin-top: 1rem; }
     .rep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-    .rcard {
-      border: 1px solid var(--border); border-radius: .5rem;
-      padding: 2.75rem 2.25rem;
-      transition: box-shadow .3s;
-    }
+    .rcard { border: 1px solid var(--border); border-radius: .5rem; padding: 2.75rem 2.25rem; transition: box-shadow .3s; }
     .rcard:hover { box-shadow: 0 12px 40px rgba(20,18,16,.06); }
-    .rcard-top {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 1.5rem;
-    }
-    .rcard-icon {
-      width: 48px; height: 48px; border-radius: .4rem;
-      background: var(--rose-l);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.35rem;
-    }
-    .rcard-n {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 3rem; font-weight: 700; font-style: italic;
-      color: rgba(20,18,16,.06); line-height: 1;
-    }
-    .rcard-cat {
-      font-size: .6rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .22em;
-      color: var(--rose); margin-bottom: .5rem;
-    }
-    .rcard-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem; font-weight: 700;
-      color: var(--text); margin-bottom: .75rem;
-    }
+    .rcard-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+    .rcard-icon { width: 48px; height: 48px; border-radius: .4rem; background: var(--rose-l); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; }
+    .rcard-n { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; font-style: italic; color: rgba(20,18,16,.06); line-height: 1; }
+    .rcard-cat { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .22em; color: var(--rose); margin-bottom: .5rem; }
+    .rcard-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--text); margin-bottom: .75rem; }
     .rcard-desc { font-size: .88rem; color: var(--muted); line-height: 1.75; }
     .rcard-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.5rem; }
-    .pill {
-      font-size: .62rem; font-weight: 600; color: var(--muted);
-      background: var(--warm); padding: .28rem .72rem; border-radius: 99px;
-      border: 1px solid var(--border);
-    }
+    .pill { font-size: .62rem; font-weight: 600; color: var(--muted); background: var(--warm); padding: .28rem .72rem; border-radius: 99px; border: 1px solid var(--border); }
 
-    /* ═══ QUOTE ═══ */
+    /* ════ QUOTE ════ */
     .quote-sec { padding: 8rem 0; background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .quote-inner { max-width: 860px; }
-    .quote-mark {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 5rem; font-weight: 700; font-style: italic;
-      color: var(--rose); line-height: .8; margin-bottom: 1rem;
-      display: block;
-    }
-    .quote-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.75rem, 3.5vw, 3rem);
-      font-weight: 600; font-style: italic;
-      color: var(--text); line-height: 1.35;
-      margin-bottom: 2rem;
-    }
-    .quote-attr {
-      font-size: .68rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .25em; color: var(--muted);
-    }
+    .quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 700; font-style: italic; color: var(--rose); line-height: .8; margin-bottom: 1rem; display: block; }
+    .quote-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.75rem, 3.5vw, 3rem); font-weight: 600; font-style: italic; color: var(--text); line-height: 1.35; margin-bottom: 2rem; }
+    .quote-attr { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .25em; color: var(--muted); }
 
-    /* ═══ CONTACT/BOOKING ═══ */
+    /* ════ CONTACT ════ */
     .contact { padding: 9rem 0; background: var(--white); }
-    .contact-grid {
-      display: grid; grid-template-columns: 5fr 6fr;
-      gap: 7rem; align-items: start;
-    }
-    .contact-h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.25rem, 4vw, 3.75rem);
-      font-weight: 700; font-style: italic;
-      line-height: 1.1; color: var(--text); margin-bottom: 1.5rem;
-    }
+    .contact-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 7rem; align-items: start; }
+    .contact-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.25rem, 4vw, 3.75rem); font-weight: 700; font-style: italic; line-height: 1.1; color: var(--text); margin-bottom: 1.5rem; }
     .contact-p { font-size: .95rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.5rem; }
     .cinfo { display: flex; flex-direction: column; gap: 1rem; }
-    .cinfo-item {
-      display: flex; align-items: center; gap: .9rem;
-      font-size: .88rem; color: var(--muted);
-    }
-    .cinfo-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--rose); flex-shrink: 0;
-    }
+    .cinfo-item { display: flex; align-items: center; gap: .9rem; font-size: .88rem; color: var(--muted); }
+    .cinfo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); flex-shrink: 0; }
     .cinfo-item a { color: inherit; text-decoration: none; }
     .cinfo-item a:hover { color: var(--rose); }
 
-    /* form */
     .form { display: flex; flex-direction: column; gap: 1rem; }
     .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .field { display: flex; flex-direction: column; gap: .35rem; }
-    .field label {
-      font-size: .6rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .16em; color: var(--muted);
-    }
-    .field input, .field select, .field textarea {
-      width: 100%; padding: .9rem 1.15rem;
-      border-radius: .4rem; border: 1.5px solid var(--border);
-      background: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: .92rem; color: var(--text); outline: none;
-      transition: border-color .2s;
-    }
+    .field label { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--muted); }
+    .field input, .field select, .field textarea { width: 100%; padding: .9rem 1.15rem; border-radius: .4rem; border: 1.5px solid var(--border); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: .92rem; color: var(--text); outline: none; transition: border-color .2s; }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--rose); }
     .field textarea { resize: vertical; min-height: 110px; }
     .field select { appearance: none; cursor: pointer; }
-    .form-submit {
-      width: 100%; padding: 1.1rem;
-      background: var(--text); color: var(--white);
-      border: none; border-radius: 99px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .72rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em;
-      cursor: pointer; transition: all .25s; margin-top: .5rem;
-    }
+    .form-submit { width: 100%; padding: 1.1rem; background: var(--text); color: var(--white); border: none; border-radius: 99px; font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; cursor: pointer; transition: all .25s; margin-top: .5rem; }
     .form-submit:hover { background: var(--rose); transform: translateY(-2px); }
     .form-submit:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-    .form-success {
-      display: none; text-align: center;
-      padding: 3rem 2rem; border-radius: .5rem;
-      border: 1.5px solid var(--border); background: var(--warm);
-    }
+    .form-success { display: none; text-align: center; padding: 3rem 2rem; border-radius: .5rem; border: 1.5px solid var(--border); background: var(--warm); }
     .form-success.on { display: block; }
-    .form-success-icon {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--rose-l); border: 1.5px solid rgba(197,107,88,.25);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.5rem; font-size: 1.1rem; color: var(--rose);
-    }
-    .form-success h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.75rem; color: var(--text); margin-bottom: .6rem;
-    }
+    .form-success-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--rose-l); border: 1.5px solid rgba(197,107,88,.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.1rem; color: var(--rose); }
+    .form-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--text); margin-bottom: .6rem; }
     .form-success p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
-    /* ═══ FOOTER ═══ */
-    .footer { background: var(--text); padding: 4rem 0 2.5rem; }
-    .footer-row {
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 2rem;
-      padding-bottom: 3rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .footer-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem; font-weight: 700; font-style: italic;
-      color: var(--white); text-decoration: none;
-    }
+    /* ════ FOOTER ════ */
+    .footer { background: var(--dark); padding: 4rem 0 2.5rem; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; font-style: italic; color: var(--white); text-decoration: none; }
     .footer-logo span { color: var(--rose); font-style: normal; }
     .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
-    .footer-link {
-      font-size: .72rem; color: rgba(255,255,255,.4);
-      text-decoration: none; transition: color .25s;
-    }
+    .footer-link { font-size: .72rem; color: rgba(255,255,255,.4); text-decoration: none; transition: color .25s; }
     .footer-link:hover { color: rgba(255,255,255,.9); }
-    .footer-copy {
-      padding-top: 2rem;
-      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-      font-size: .68rem; color: rgba(255,255,255,.3);
-    }
+    .footer-copy { padding-top: 2rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: .68rem; color: rgba(255,255,255,.3); }
 
-    /* ═══ RESPONSIVE ═══ */
+    /* ════ RESPONSIVE ════ */
     @media (max-width: 960px) {
-      .hero-photo { width: 100%; position: relative; height: 55vw; }
-      .hero { flex-direction: column-reverse; min-height: auto; }
-      .hero-text { max-width: 100%; padding-top: 3rem; padding-bottom: 5rem; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { height: 65vw; padding-top: 0; }
+      .hero-right img { object-fit: cover; object-position: center top; }
+      .hero-right::before { display: none; }
+      .hero-left { padding: 7rem 1.5rem 4rem; order: 2; }
+      .hero-right { order: 1; }
       .about-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .about-badge { right: 1rem; }
       .high-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-img-fire { grid-column: 1 / 3; grid-row: 1; aspect-ratio: 16/9; }
+      .gallery-img-stage { grid-column: 1; grid-row: 2; aspect-ratio: 1; }
+      .gallery-img-purple { grid-column: 2; grid-row: 2; aspect-ratio: 1; }
       .rep-grid { grid-template-columns: 1fr 1fr; }
       .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
       .nav-links { display: none; }
-      .hero-photo::before { display: none; }
     }
     @media (max-width: 600px) {
       .rep-grid { grid-template-columns: 1fr; }
       .about-stats { grid-template-columns: 1fr 1fr; }
       .frow { grid-template-columns: 1fr; }
-      .facts-inner { flex-direction: column; gap: 0; }
+      .facts-inner { flex-direction: column; }
       .fact { border-right: none; border-bottom: 1px solid var(--border); width: 100%; justify-content: center; }
       .fact:last-child { border-bottom: none; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-img-fire, .gallery-img-stage, .gallery-img-purple { grid-column: 1; grid-row: auto; aspect-ratio: 4/3; }
     }
   </style>
 </head>
@@ -562,39 +408,31 @@ const { data: lead } = await supabaseAdmin
 
 
 <!-- ════ HERO ════ -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" style="position:relative;">
 
-  <!-- Right: photo panel -->
-  <div class="hero-photo">
-    <div class="hero-photo-mono" aria-hidden="true">LM</div>
-    <!-- Voeg foto toe: public/images/lara-millaa/artist.jpg -->
+  <!-- LEFT: text -->
+  <div class="hero-left">
+    <div class="hero-eyebrow">Nederlandstalige Zangeres</div>
+    <h1 class="hero-h1">
+      <span class="h1-first">Lara</span>
+      <span class="h1-last">Millaa.</span>
+    </h1>
+    <p class="hero-sub">
+      Aanstekelijke flair op het podium. Warm stemgeluid, natuurlijke charme en een krachtige podiumpresentatie die elk publiek raakt — van feesttent tot uitverkocht stadion.
+    </p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn btn-dark" data-track="hero-cta-book">Boek Lara</a>
+      <a href="#over"    class="btn btn-ghost">Haar verhaal</a>
+    </div>
+  </div>
+
+  <!-- RIGHT: portrait photo (white bg blends with photo edges) -->
+  <div class="hero-right">
     <img
       src="/images/lara-millaa/artist.jpg"
       alt="Lara Millaa"
-      onload="this.classList.add('on')"
-      onerror="this.remove()"
+      onerror="this.closest('.hero-right').style.background='var(--warm-2)'"
     />
-  </div>
-
-  <!-- Left: text -->
-  <div class="wrap" style="width:100%; position:relative; z-index:1;">
-    <div class="hero-text">
-      <div class="hero-eyebrow">Nederlandstalige Zangeres</div>
-
-      <h1 class="hero-h1">
-        <span class="h1-first">Lara</span>
-        <span class="h1-last">Millaa.</span>
-      </h1>
-
-      <p class="hero-sub">
-        Aanstekelijke flair op het podium. Warm stemgeluid, natuurlijke charme en een krachtige podiumpresentatie die elk publiek raakt — van feesttent tot uitverkocht stadion.
-      </p>
-
-      <div class="hero-btns">
-        <a href="#contact" class="btn btn-dark" data-track="hero-cta-book">Boek Lara</a>
-        <a href="#over"    class="btn btn-ghost">Haar verhaal</a>
-      </div>
-    </div>
   </div>
 
   <div class="hero-scroll" aria-hidden="true">
@@ -621,15 +459,14 @@ const { data: lead } = await supabaseAdmin
   <div class="wrap">
     <div class="about-grid">
 
-      <div class="r" style="position:relative;">
+      <div class="r about-photo-wrap">
         <div class="about-photo">
-          <!-- Foto: public/images/lara-millaa/about.jpg -->
           <img
-            src="/images/lara-millaa/about.jpg"
-            alt="Lara Millaa"
+            src="/images/lara-millaa/live-stage.jpg"
+            alt="Lara Millaa op het podium"
             onerror="this.remove()"
           />
-          <div class="about-photo-label">Lara Millaa</div>
+          <div class="about-photo-label">Op het podium</div>
         </div>
         <div class="about-badge r" style="transition-delay:.2s;">
           <span class="about-badge-n">2022</span>
@@ -646,11 +483,9 @@ const { data: lead } = await supabaseAdmin
         <p class="about-p">
           Wat begon als een verjaardagscadeau in de studio groeide uit tot een volledige carrière. Met haar eerste single <em>Colors</em> (2022) bewees Lara dat ze meer is dan een coverartieste. Sindsdien staat ze op de grote podia van Nederland, reikt haar repertoire van André Hazes tot Monique Smit, en brengt ze altijd haar eigen stem en uitstraling mee.
         </p>
-
         <a href="#contact" class="btn btn-rose" style="margin-top:2rem;" data-track="about-cta">
           Boek Lara voor jouw evenement
         </a>
-
         <div class="about-stats">
           <div>
             <div class="about-stat-n">2024</div>
@@ -682,28 +517,62 @@ const { data: lead } = await supabaseAdmin
       </div>
       <a href="#contact" class="btn btn-dark" data-track="high-cta">Boek voor jouw event</a>
     </div>
-
     <div class="high-grid">
       <div class="hcard r">
         <span class="hcard-num" aria-hidden="true">01</span>
         <div class="hcard-year">November 2024</div>
         <div class="hcard-venue">GelreDome</div>
         <div class="hcard-with">Marco Schuitmaker Live Concert · Arnhem</div>
-        <p class="hcard-desc">
-          In november 2024 schitterde Lara op het grote podium van de GelreDome, waar ze samen met Marco Schuitmaker optrad tijdens zijn live concert. Een droommoment dat haar drive en talent als podiumartieste definitief onderstreepte voor duizenden bezoekers.
-        </p>
+        <p class="hcard-desc">In november 2024 schitterde Lara op het grote podium van de GelreDome, waar ze samen met Marco Schuitmaker optrad tijdens zijn live concert. Een droommoment dat haar drive en talent definitief onderstreepte voor duizenden bezoekers.</p>
         <div class="hcard-tag">Arena-optreden · 20.000+ bezoekers</div>
       </div>
-
       <div class="hcard r" style="transition-delay:.12s;">
         <span class="hcard-num" aria-hidden="true">02</span>
         <div class="hcard-year">2024</div>
         <div class="hcard-venue">De Bevers</div>
         <div class="hcard-with">Landelijke Theaterproductie</div>
-        <p class="hcard-desc">
-          Als onderdeel van de succesvolle theatershow van De Bevers liet Lara een nieuwe kant van zichzelf zien. Theaterpresentatie, timing en podiumspel — ze beheerst het allemaal. Een productie die haar veelzijdigheid als entertainer bewees.
-        </p>
+        <p class="hcard-desc">Als onderdeel van de succesvolle theatershow van De Bevers liet Lara een nieuwe kant van zichzelf zien. Theaterpresentatie, timing en podiumspel — ze beheerst het allemaal. Een productie die haar veelzijdigheid als entertainer bewees.</p>
         <div class="hcard-tag">Theatershow · Landelijk tour</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════ LIVE GALLERY ════ -->
+<section class="gallery" id="live">
+  <div class="wrap">
+    <div class="gallery-header r">
+      <span class="stag stag-light">Live</span>
+      <h2 class="gallery-h2">Op het podium.</h2>
+    </div>
+    <div class="gallery-grid r" style="transition-delay:.1s;">
+      <!-- fire stage photo – tall left -->
+      <div class="gallery-img gallery-img-fire">
+        <img
+          src="/images/lara-millaa/live-fire.jpg"
+          alt="Lara Millaa live met vuureffecten"
+          loading="lazy"
+          onerror="this.closest('.gallery-img').style.display='none'"
+        />
+      </div>
+      <!-- outdoor stage – right top -->
+      <div class="gallery-img gallery-img-stage">
+        <img
+          src="/images/lara-millaa/live-stage.jpg"
+          alt="Lara Millaa live op buitenpodium"
+          loading="lazy"
+          onerror="this.closest('.gallery-img').style.display='none'"
+        />
+      </div>
+      <!-- purple lighting – right bottom -->
+      <div class="gallery-img gallery-img-purple">
+        <img
+          src="/images/lara-millaa/live-purple.jpg"
+          alt="Lara Millaa live met paarse belichting"
+          loading="lazy"
+          onerror="this.closest('.gallery-img').style.display='none'"
+        />
       </div>
     </div>
   </div>
@@ -718,28 +587,12 @@ const { data: lead } = await supabaseAdmin
       <h2 class="rep-h2">Muziek die iedereen raakt — altijd met haar eigen stem.</h2>
       <p class="rep-sub">Van vrolijke feestnummers tot intieme levensliederen. Lara brengt een mix die elk publiek aanspreekt.</p>
     </div>
-
     <div class="rep-grid">
       {[
-        {
-          icon: '🎵', n: '01', cat: 'Levenslied',
-          title: 'Klassieke levensliederen',
-          desc: 'Van André Hazes tot Monique Smit. Tijdloze nummers gezongen met echte beleving, warme emotie en een stem die iets achterlaat.',
-          pills: ['André Hazes', 'Monique Smit', 'Nick & Simon', 'Gordon'],
-        },
-        {
-          icon: '🎉', n: '02', cat: 'Feestmuziek',
-          title: 'Aanstekelijke feesthits',
-          desc: 'Zaal vol energie, iedereen meezingend. Met haar aanstekelijke flair op het podium weet Lara elk feest van begin tot eind op te zwepen.',
-          pills: ['Feesttent', 'Carnaval', 'Party classics', 'Zomerfestivals'],
-        },
-        {
-          icon: '🎤', n: '03', cat: 'Eigen werk',
-          title: 'Originele nummers',
-          desc: 'Met haar eerste single "Colors" (2022) bewees Lara dat ze meer is dan een coverartieste. Eigen nummers met een persoonlijk verhaal.',
-          pills: ['Colors (2022)', 'Singer-songwriter', 'Neo Music'],
-        },
-      ].map((r, i) => (
+        { icon:'🎵', n:'01', cat:'Levenslied',   title:'Nederlandse klassiekers', desc:'Van André Hazes tot Monique Smit. Tijdloze nummers gezongen met echte beleving, warme emotie en een stem die iets achterlaat.', pills:['André Hazes','Monique Smit','Nick & Simon','Gordon'] },
+        { icon:'🎉', n:'02', cat:'Feestmuziek',  title:'Aanstekelijke feesthits', desc:'Zaal vol energie, iedereen meezingend. Met haar aanstekelijke flair op het podium weet Lara elk feest van begin tot eind op te zwepen.', pills:['Feesttent','Carnaval','Party classics','Zomerfestivals'] },
+        { icon:'🎤', n:'03', cat:'Eigen werk',   title:'Originele nummers',       desc:'Met haar eerste single "Colors" (2022) bewees Lara dat ze meer is dan een coverartieste. Eigen nummers met een persoonlijk verhaal.', pills:['Colors (2022)','Singer-songwriter','Neo Music'] },
+      ].map((r,i) => (
         <div class="rcard r" style={`transition-delay:${i*.1}s`}>
           <div class="rcard-top">
             <div class="rcard-icon">{r.icon}</div>
@@ -774,60 +627,29 @@ const { data: lead } = await supabaseAdmin
 <section class="contact" id="contact">
   <div class="wrap">
     <div class="contact-grid">
-
       <div class="r">
         <span class="stag">Boek Lara</span>
         <h2 class="contact-h2">Lara op jouw podium?</h2>
-        <p class="contact-p">
-          Of het nu gaat om een feesttent, bedrijfsfeest, bruiloft, theater of festival — Lara brengt altijd het beste van zichzelf mee. Vul het formulier in, we nemen snel contact op.
-        </p>
+        <p class="contact-p">Of het nu gaat om een feesttent, bedrijfsfeest, bruiloft, theater of festival — Lara brengt altijd het beste van zichzelf mee. Vul het formulier in, we nemen snel contact op.</p>
         <div class="cinfo">
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <span>Bovensmilde, Drenthe — door heel Nederland beschikbaar</span>
-          </div>
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <a href="https://www.instagram.com/lara_millaa/" target="_blank" rel="noopener">@lara_millaa op Instagram</a>
-          </div>
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <span>Levenslied · Feesthits · Eigen werk</span>
-          </div>
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <span>Beschikbaar voor: feesttent, bruiloft, bedrijfsfeest, festival, theater</span>
-          </div>
+          <div class="cinfo-item"><div class="cinfo-dot"></div><span>Bovensmilde, Drenthe — door heel Nederland beschikbaar</span></div>
+          <div class="cinfo-item"><div class="cinfo-dot"></div><a href="https://www.instagram.com/lara_millaa/" target="_blank" rel="noopener">@lara_millaa op Instagram</a></div>
+          <div class="cinfo-item"><div class="cinfo-dot"></div><span>Levenslied · Feesthits · Eigen werk</span></div>
+          <div class="cinfo-item"><div class="cinfo-dot"></div><span>Feesttent · Bruiloft · Bedrijfsfeest · Festival · Theater</span></div>
         </div>
       </div>
-
       <div class="r" style="transition-delay:.12s;">
         <form class="form" id="bookForm">
           <div class="frow">
-            <div class="field">
-              <label>Uw naam</label>
-              <input type="text" placeholder="Jan de Vries" required />
-            </div>
-            <div class="field">
-              <label>Organisatie</label>
-              <input type="text" placeholder="Evenement / bedrijf" />
-            </div>
+            <div class="field"><label>Uw naam</label><input type="text" placeholder="Jan de Vries" required /></div>
+            <div class="field"><label>Organisatie</label><input type="text" placeholder="Evenement / bedrijf" /></div>
           </div>
           <div class="frow">
-            <div class="field">
-              <label>E-mailadres</label>
-              <input type="email" placeholder="jan@voorbeeld.nl" required />
-            </div>
-            <div class="field">
-              <label>Telefoonnummer</label>
-              <input type="tel" placeholder="06 12 34 56 78" />
-            </div>
+            <div class="field"><label>E-mailadres</label><input type="email" placeholder="jan@voorbeeld.nl" required /></div>
+            <div class="field"><label>Telefoonnummer</label><input type="tel" placeholder="06 12 34 56 78" /></div>
           </div>
           <div class="frow">
-            <div class="field">
-              <label>Datum evenement</label>
-              <input type="date" />
-            </div>
+            <div class="field"><label>Datum evenement</label><input type="date" /></div>
             <div class="field">
               <label>Type optreden</label>
               <select>
@@ -841,22 +663,15 @@ const { data: lead } = await supabaseAdmin
               </select>
             </div>
           </div>
-          <div class="field">
-            <label>Bericht</label>
-            <textarea placeholder="Vertel meer over uw evenement, locatie, publiek en eventuele wensen..."></textarea>
-          </div>
-          <button type="submit" class="form-submit" data-track="form-submit">
-            Verstuur boekingsaanvraag →
-          </button>
+          <div class="field"><label>Bericht</label><textarea placeholder="Vertel meer over uw evenement, locatie, publiek en eventuele wensen..."></textarea></div>
+          <button type="submit" class="form-submit" data-track="form-submit">Verstuur boekingsaanvraag →</button>
         </form>
-
         <div class="form-success" id="bookSuccess">
           <div class="form-success-icon">✓</div>
           <h3>Aanvraag ontvangen!</h3>
           <p>We nemen zo snel mogelijk contact op over de beschikbaarheid van Lara voor jouw evenement.</p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -868,9 +683,9 @@ const { data: lead } = await supabaseAdmin
     <div class="footer-row">
       <a href="#" class="footer-logo">Lara <span>Millaa</span></a>
       <div class="footer-links">
-        <a href="#over"     class="footer-link">Over Lara</a>
-        <a href="#muziek"   class="footer-link">Muziek</a>
-        <a href="#contact"  class="footer-link">Contact</a>
+        <a href="#over"    class="footer-link">Over Lara</a>
+        <a href="#muziek"  class="footer-link">Muziek</a>
+        <a href="#contact" class="footer-link">Contact</a>
         <a href="https://www.instagram.com/lara_millaa/" class="footer-link" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
@@ -886,19 +701,16 @@ const { data: lead } = await supabaseAdmin
 
 
 <script>
-  // nav scroll state
   const nav = document.getElementById('mainNav')!;
   window.addEventListener('scroll', () => {
     nav.classList.toggle('s', window.scrollY > 60);
   }, { passive: true });
 
-  // scroll reveal
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.r').forEach(el => obs.observe(el));
 
-  // booking form
   document.getElementById('bookForm')?.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = (e.currentTarget as HTMLFormElement).querySelector<HTMLButtonElement>('.form-submit')!;
