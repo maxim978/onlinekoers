@@ -262,7 +262,7 @@ const { data: lead } = await supabaseAdmin
       font-family: 'Oswald', sans-serif;
       font-size: clamp(2rem, 3.2vw, 3.25rem);
       font-weight: 700; line-height: 1.1; letter-spacing: .02em;
-      color: var(--text); margin-bottom: 1.75rem;
+      color: var(--text); margin-bottom: 2.75rem;
       position: relative; padding-bottom: 1rem;
     }
     .about-h2::after {
@@ -377,7 +377,7 @@ const { data: lead } = await supabaseAdmin
     .contact-h2 {
       font-family: 'Oswald', sans-serif;
       font-size: clamp(2.25rem, 3.8vw, 3.5rem); font-weight: 700; line-height: 1.05;
-      letter-spacing: .02em; color: var(--text); margin-bottom: 1.5rem;
+      letter-spacing: .02em; color: var(--text); margin-bottom: 2.5rem;
       position: relative; padding-bottom: 1rem;
     }
     .contact-h2::after {
@@ -425,12 +425,38 @@ const { data: lead } = await supabaseAdmin
 
     /* ════ RESPONSIVE ════ */
     @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-right { height: 65vw; padding-top: 0; }
-      .hero-right img { object-fit: cover; object-position: center top; animation: none; }
+      .hero { 
+        grid-template-columns: 1fr; 
+        grid-template-rows: auto 1fr;
+        min-height: 100vh; 
+        height: 100svh;
+        display: grid;
+      }
+      .hero-left { 
+        padding: 6rem 1.5rem 1rem; 
+        order: 1; 
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+      }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-btns { justify-content: center; }
+      
+      .hero-right { 
+        order: 2; 
+        height: 100%; 
+        padding-top: 0;
+        display: flex;
+        align-items: flex-end;
+      }
+      .hero-right img { 
+        height: 100%; 
+        width: 100%; 
+        object-fit: contain; 
+        object-position: bottom center;
+        animation: none;
+      }
       .hero-right::before { display: none; }
-      .hero-left { padding: 7rem 1.5rem 4rem; order: 2; }
-      .hero-right { order: 1; }
       .about-grid { grid-template-columns: 1fr; gap: 4rem; }
       .high-grid { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
