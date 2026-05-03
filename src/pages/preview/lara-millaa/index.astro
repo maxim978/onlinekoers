@@ -19,7 +19,7 @@ const { data: lead } = await supabaseAdmin
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.13/dist/lenis.css">
 
@@ -37,22 +37,17 @@ const { data: lead } = await supabaseAdmin
       --muted:  rgba(20,18,16,0.48);
       --rose:   #C56B58;
       --rose-l: rgba(197,107,88,0.09);
-      
-      --font-display: 'Instrument Serif', serif;
-      --font-body:    'Plus Jakarta Sans', sans-serif;
-      --font-ui:      'Outfit', sans-serif;
     }
 
     body {
-      font-family: var(--font-body);
+      font-family: 'DM Sans', sans-serif;
       background: var(--white);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.2; }
-    .nav-logo, .btn, .stag, .nav-link, .about-stat-l, .hcard-year, .hcard-tag, .quote-attr, .field label, .footer-link, .footer-copy { font-family: var(--font-ui); }
+    h1, h2, h3 { font-family: 'Oswald', sans-serif; }
     .wrap { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
 
     .r { opacity: 0; transform: translateY(28px); transition: opacity .85s cubic-bezier(.2,.8,.2,1), transform .85s cubic-bezier(.2,.8,.2,1); }
@@ -125,29 +120,50 @@ const { data: lead } = await supabaseAdmin
     }
     .nav-cta:hover { background: var(--rose); transform: translateY(-1px); }
 
-    /* Hamburger Menu */
+    /* ════ NAV TOGGLE ════ */
     .nav-toggle {
       display: none;
-      background: none; border: none; cursor: pointer;
-      padding: .5rem; z-index: 400;
-      position: relative;
+      align-items: center; justify-content: center;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      cursor: pointer; border-radius: .5rem;
+      width: 46px; height: 46px;
+      color: var(--text);
+      transition: border-color .25s, background .25s, color .25s;
+      flex-shrink: 0;
     }
-    .nav-toggle svg { width: 32px; height: 32px; fill: var(--text); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-    .nav-toggle.on svg { transform: rotate(90deg); }
-    .nav-toggle .mic-part { transition: opacity .3s; }
-    .nav-toggle.on .mic-part { opacity: 0; }
-    .nav-toggle .close-part { opacity: 0; transition: opacity .3s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-    .nav-toggle.on .close-part { opacity: 1; }
+    .nav-toggle:hover { border-color: var(--rose); background: var(--rose-l); color: var(--rose); }
+    .nav-toggle.on { background: var(--text); border-color: var(--text); color: var(--white); }
+    .nav-toggle .icon-menu { display: block; }
+    .nav-toggle .icon-close { display: none; }
+    .nav-toggle.on .icon-menu { display: none; }
+    .nav-toggle.on .icon-close { display: block; }
 
+    /* ════ NAV OVERLAY ════ */
     .nav-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: var(--white); z-index: 350;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 2rem; transform: translateY(-100%); transition: transform .6s cubic-bezier(.2,.8,.2,1);
+      gap: 2rem; transform: translateY(-100%);
+      transition: transform .55s cubic-bezier(.2,.8,.2,1);
     }
     .nav-overlay.on { transform: translateY(0); }
-    .nav-overlay .nav-link { font-size: 1.5rem; }
-    .nav-overlay .nav-cta { font-size: 1.2rem; }
+    .nav-overlay .nav-link {
+      font-size: 1.4rem; font-weight: 500;
+      letter-spacing: .08em;
+    }
+    .nav-overlay .nav-link::after { display: none; }
+    .nav-overlay .nav-cta { font-size: 1rem; padding: 1rem 2.5rem; }
+
+    .nav-overlay-close {
+      position: absolute; top: 1.4rem; right: 1.25rem;
+      background: none; border: 1.5px solid var(--border);
+      cursor: pointer; border-radius: .5rem;
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text); transition: all .25s;
+    }
+    .nav-overlay-close:hover { background: var(--text); border-color: var(--text); color: var(--white); }
 
     /* ════ HERO ════ */
     .hero {
@@ -169,19 +185,18 @@ const { data: lead } = await supabaseAdmin
     }
     .hero-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--rose); }
 
-    .hero-h1 { line-height: 1.15; margin-bottom: 3rem; }
+    .hero-h1 { font-family: 'Oswald', sans-serif; font-weight: 700; line-height: .9; margin-bottom: 2.5rem; }
     .h1-first {
-      display: block; font-weight: 400; color: var(--text);
-      font-size: clamp(4rem, 8.5vw, 9.5rem); letter-spacing: -0.03em;
-      text-transform: uppercase; line-height: 1.2;
+      display: block; font-weight: 300; color: var(--text);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: .03em;
+      text-transform: uppercase;
       animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .3s both;
     }
     .h1-last {
-      display: block; font-weight: 400; color: var(--rose);
-      font-size: clamp(4rem, 8.5vw, 9.5rem); letter-spacing: -0.03em;
-      text-transform: uppercase; line-height: 1.2;
+      display: block; font-weight: 700; color: var(--rose);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: .03em;
+      text-transform: uppercase;
       animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .5s both;
-      font-style: italic; margin-top: -0.1em;
     }
     .hero-sub {
       font-size: .98rem; color: var(--muted); line-height: 1.7;
@@ -201,8 +216,7 @@ const { data: lead } = await supabaseAdmin
     }
     .hero-right img {
       width: 100%; height: 100%;
-      object-fit: contain;
-      object-position: center bottom;
+      object-fit: contain; object-position: center bottom;
       display: block;
       animation: float 6s ease-in-out 1.2s infinite;
     }
@@ -250,11 +264,6 @@ const { data: lead } = await supabaseAdmin
     .fact:hover { background: var(--warm-2); color: var(--text); }
     .fact strong { color: var(--text); margin-right: .35rem; }
 
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
     /* ════ ABOUT ════ */
     .about { padding: 9rem 0; background: var(--white); }
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
@@ -291,7 +300,7 @@ const { data: lead } = await supabaseAdmin
       font-family: 'Oswald', sans-serif;
       font-size: clamp(2rem, 3.2vw, 3.25rem);
       font-weight: 700; line-height: 1.1; letter-spacing: .02em;
-      color: var(--text); margin-bottom: 2.75rem;
+      color: var(--text); margin-bottom: 2rem;
       position: relative; padding-bottom: 1rem;
     }
     .about-h2::after {
@@ -302,12 +311,6 @@ const { data: lead } = await supabaseAdmin
     .r.on .about-h2::after { width: 2.5rem; }
 
     .about-p { font-size: .98rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.1rem; }
-    .about-stats {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1.5rem; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--border);
-    }
-    .about-stat-n { font-family: 'Oswald', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--rose); line-height: 1; }
-    .about-stat-l { font-size: .65rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: .3rem; }
 
     /* ════ HOOGTEPUNTEN ════ */
     .high { padding: 9rem 0; background: var(--warm); }
@@ -338,12 +341,7 @@ const { data: lead } = await supabaseAdmin
       transform: scaleY(0); transform-origin: bottom;
       transition: transform .4s cubic-bezier(.2,.8,.2,1);
     }
-    .hcard:hover { 
-      box-shadow: 0 40px 80px rgba(20,18,16,.12); 
-      transform: translateY(-8px); 
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px);
-    }
+    .hcard:hover { box-shadow: 0 20px 60px rgba(20,18,16,.09); transform: translateY(-4px); }
     .hcard:hover::before { transform: scaleY(1); }
     .hcard-num {
       position: absolute; top: 2rem; right: 2.5rem;
@@ -454,98 +452,79 @@ const { data: lead } = await supabaseAdmin
 
     /* ════ RESPONSIVE ════ */
     @media (max-width: 960px) {
-      .hero { 
-        grid-template-columns: 1fr; 
+      /* Facts strip: hide on mobile */
+      .facts { display: none; }
+
+      /* Hero stacks vertically */
+      .hero {
+        grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
-        min-height: 100vh; 
+        min-height: 100vh;
         height: 100svh;
-        display: grid;
       }
-      .hero-left { 
-        padding: 1rem 1.5rem 1rem; 
-        order: 1; 
-        justify-content: center;
+      /* Text below nav, starts from top */
+      .hero-left {
+        padding: 5.5rem 1.5rem 1.5rem;
+        order: 1;
+        justify-content: flex-start;
         text-align: center;
         align-items: center;
       }
-      .hero-eyebrow { margin-top: 6rem; margin-bottom: 1rem; }
+      .hero-eyebrow { margin-top: 0; margin-bottom: 1rem; }
       .hero-sub { margin-left: auto; margin-right: auto; }
       .hero-btns { justify-content: center; }
-      
-      .hero-right { 
-        order: 2; 
-        height: 100%; 
+
+      .hero-right {
+        order: 2;
+        height: 100%;
         padding-top: 0;
         display: flex;
         align-items: flex-end;
       }
-      .hero-right img { 
-        height: 100%; 
-        width: 100%; 
-        object-fit: contain; 
+      .hero-right img {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
         object-position: bottom center;
         animation: none;
       }
       .hero-right::before { display: none; }
+
+      /* About section */
       .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .about-photo-wrap { max-width: 80%; margin: 0 auto 2rem; padding-right: 0; }
+      /* Photo: never full-width on mobile */
+      .about-photo-wrap {
+        max-width: min(80vw, 300px);
+        margin: 0 auto 2rem;
+        padding-right: 0;
+        padding-bottom: 2rem;
+      }
       .about-badge { padding: 0.75rem 1rem; }
       .about-badge-n { font-size: 1.5rem; }
-      
+
+      /* Hoogtepunten: hide on mobile (already hidden) */
       .high { display: none; }
-      
       .high-grid { grid-template-columns: 1fr; }
+
+      /* Gallery */
       .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
       .gallery-img-fire { grid-column: 1 / 3; grid-row: 1; aspect-ratio: 16/9; }
       .gallery-img-stage { grid-column: 1; grid-row: 2; aspect-ratio: 1; }
       .gallery-img-purple { grid-column: 2; grid-row: 2; aspect-ratio: 1; }
+
+      /* Contact */
       .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
+
+      /* Nav */
       .nav-links { display: none; }
-      .nav-toggle { display: block; }
-      
-      .facts { overflow: hidden; white-space: nowrap; }
-      .facts-inner { 
-        flex-wrap: nowrap; 
-        justify-content: flex-start;
-        animation: marquee 20s linear infinite; 
-        width: fit-content;
-      }
-      .fact { border-right: 1px solid var(--border); flex-shrink: 0; }
-
-      .about-stats {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding-bottom: 1.5rem;
-        gap: 2rem;
-        border-top: 1px solid var(--border);
-        margin-top: 2rem;
-      }
-      .about-stats > div {
-        flex: 0 0 65%;
-        scroll-snap-align: center;
-        background: var(--warm);
-        padding: 1.5rem;
-        border-radius: .5rem;
-        text-align: center;
-      }
-      .about-stat-n { display: none; }
-      .about-stat-l { font-size: 0.75rem; margin-top: 0; color: var(--text); font-weight: 600; }
-
-      .gallery-grid { 
-        display: block;
-      }
-      .gallery-img { 
-        margin-bottom: 2.5rem; 
-        transform: rotate(var(--rot, 0deg));
-      }
-      .gallery-img:nth-child(1) { --rot: -2deg; margin-left: -1rem; }
-      .gallery-img:nth-child(2) { --rot: 2deg; margin-right: -1rem; width: 90%; margin-left: auto; }
-      .gallery-img:nth-child(3) { --rot: -1.5deg; width: 95%; }
+      .nav-toggle { display: flex; }
     }
     @media (max-width: 600px) {
       .frow { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-img-fire, .gallery-img-stage, .gallery-img-purple { grid-column: 1; grid-row: auto; aspect-ratio: 4/3; }
     }
+
     /* ════ EFFECTS ════ */
     .grain {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -556,16 +535,10 @@ const { data: lead } = await supabaseAdmin
     .cursor-dot {
       width: 8px; height: 8px; background: var(--rose);
       border-radius: 50%; position: fixed; top: 0; left: 0;
-      pointer-events: none; z-index: 10000; transition: transform 0.1s ease-out;
+      pointer-events: none; z-index: 10000;
       display: none;
     }
     @media (hover: hover) { .cursor-dot { display: block; } }
-
-    .reveal-text { overflow: hidden; padding-bottom: 0.6rem; }
-    .reveal-text span { display: inline-block; transform: translateY(120%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .reveal-text.on span { transform: translateY(0); }
-
-    .hero-right img { transition: transform 0.1s ease-out; }
   </style>
 </head>
 <body>
@@ -582,25 +555,38 @@ const { data: lead } = await supabaseAdmin
       <a href="#contact" class="nav-link">Contact</a>
       <a href="#contact" class="nav-cta">Boek Lara</a>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu">
-      <div style="position:relative; width:32px; height:32px;">
-        <svg class="mic-part" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="position:absolute; inset:0;">
-          <!-- Half Mic / Half Burger -->
-          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" clip-path="inset(0 50% 0 0)"/>
-          <rect x="13" y="4" width="8" height="2" rx="1"/>
-          <rect x="13" y="10" width="8" height="2" rx="1"/>
-          <rect x="13" y="16" width="8" height="2" rx="1"/>
-          <path d="M11 11H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c1.5-.22 2.85-.9 3.9-1.92" clip-path="inset(0 50% 0 0)"/>
-        </svg>
-        <svg class="close-part" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu openen">
+      <!-- Closed state: half handheld mic (left) + half hamburger (right) -->
+      <svg class="icon-menu" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
+        <!-- Left half: handheld microphone -->
+        <!-- Capsule/head (rounded rect centered at x=16, clipped to left half) -->
+        <rect x="11" y="2" width="10" height="14" rx="5" fill="currentColor" clip-path="inset(0 50% 0 0)"/>
+        <!-- Grip/handle (centered at x=16, clipped to left half) -->
+        <rect x="13.5" y="16" width="5" height="10" rx="2.5" fill="currentColor" clip-path="inset(0 50% 0 0)"/>
+        <!-- Base line (clipped to left half) -->
+        <rect x="11.5" y="27" width="9" height="2" rx="1" fill="currentColor" clip-path="inset(0 50% 0 0)" opacity="0.4"/>
+        <!-- Subtle center divider -->
+        <rect x="15.5" y="3" width="1" height="26" rx="0.5" fill="currentColor" opacity="0.12"/>
+        <!-- Right half: 3 hamburger lines -->
+        <rect x="18" y="7"    width="11" height="2.5" rx="1.25" fill="currentColor"/>
+        <rect x="18" y="14.75" width="11" height="2.5" rx="1.25" fill="currentColor"/>
+        <rect x="18" y="22.5"  width="11" height="2.5" rx="1.25" fill="currentColor"/>
+      </svg>
+      <!-- Open state: X to close -->
+      <svg class="icon-close" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+        <path d="M8 8L24 24M24 8L8 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
     </button>
   </div>
 </nav>
 
+<!-- Full-screen mobile menu overlay -->
 <div class="nav-overlay" id="navOverlay">
+  <button class="nav-overlay-close" id="navOverlayClose" aria-label="Sluiten">
+    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+    </svg>
+  </button>
   <a href="#over"    class="nav-link">Over Lara</a>
   <a href="#live"    class="nav-link">Live</a>
   <a href="#contact" class="nav-link">Contact</a>
@@ -614,8 +600,8 @@ const { data: lead } = await supabaseAdmin
   <div class="hero-left">
     <div class="hero-eyebrow">Nederlandstalige Zangeres</div>
     <h1 class="hero-h1">
-      <span class="h1-first reveal-text r"><span>Lara</span></span>
-      <span class="h1-last reveal-text r"><span>Millaa.</span></span>
+      <span class="h1-first">Lara</span>
+      <span class="h1-last">Millaa.</span>
     </h1>
     <p class="hero-sub">
       Aanstekelijke flair op het podium. Warm stemgeluid, natuurlijke charme en een krachtige podiumpresentatie die elk publiek raakt, van feesttent tot uitverkocht stadion.
@@ -643,13 +629,7 @@ const { data: lead } = await supabaseAdmin
 
 <!-- ════ FACTS STRIP ════ -->
 <div class="facts">
-  <div class="facts-inner" id="factsInner">
-    <div class="fact"><strong>2024</strong> Gelredome, Arnhem</div>
-    <div class="fact"><strong>Marco Schuitmaker</strong> Live concert</div>
-    <div class="fact"><strong>De Bevers</strong> Theatershow</div>
-    <div class="fact"><strong>2022</strong> Eerste single "Colors"</div>
-    <div class="fact"><strong>Neo Music</strong> Bovensmilde</div>
-    <!-- Duplicate for seamless loop -->
+  <div class="facts-inner">
     <div class="fact"><strong>2024</strong> Gelredome, Arnhem</div>
     <div class="fact"><strong>Marco Schuitmaker</strong> Live concert</div>
     <div class="fact"><strong>De Bevers</strong> Theatershow</div>
@@ -681,7 +661,7 @@ const { data: lead } = await supabaseAdmin
 
       <div class="r" style="transition-delay:.15s;">
         <span class="stag">Over Lara</span>
-        <h2 class="about-h2 reveal-text r"><span>Haar roeping gevonden, haar stem ontdekt.</span></h2>
+        <h2 class="about-h2">Haar roeping gevonden, haar stem ontdekt.</h2>
         <p class="about-p">
           Lara van Reenen groeide op in Bovensmilde met een diepe liefde voor muziek, maar het zelfvertrouwen om haar stem te laten horen moest nog groeien. Via Neo Music in Bovensmilde vond ze haar weg naar het podium.
         </p>
@@ -691,20 +671,6 @@ const { data: lead } = await supabaseAdmin
         <a href="#contact" class="btn btn-rose" style="margin-top:2rem;" data-track="about-cta">
           Boek Lara voor jouw evenement
         </a>
-        <div class="about-stats">
-          <div>
-            <div class="about-stat-n">2024</div>
-            <div class="about-stat-l">Gelredome</div>
-          </div>
-          <div>
-            <div class="about-stat-n">2+</div>
-            <div class="about-stat-l">Grote producties</div>
-          </div>
-          <div>
-            <div class="about-stat-n">100%</div>
-            <div class="about-stat-l">Eigen uitstraling</div>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -718,7 +684,7 @@ const { data: lead } = await supabaseAdmin
     <div class="high-header r">
       <div>
         <span class="stag">Hoogtepunten</span>
-        <h2 class="high-h2 reveal-text r"><span>Op de grootste podia<br/>van Nederland.</span></h2>
+        <h2 class="high-h2">Op de grootste podia<br/>van Nederland.</h2>
       </div>
       <a href="#contact" class="btn btn-dark" data-track="high-cta">Boek voor jouw event</a>
     </div>
@@ -749,7 +715,7 @@ const { data: lead } = await supabaseAdmin
   <div class="wrap">
     <div class="gallery-header r">
       <span class="stag stag-light">Live</span>
-      <h2 class="gallery-h2 reveal-text r"><span>Op het podium.</span></h2>
+      <h2 class="gallery-h2">Op het podium.</h2>
     </div>
     <div class="gallery-grid r" style="transition-delay:.1s;">
       <div class="gallery-img gallery-img-fire">
@@ -799,7 +765,7 @@ const { data: lead } = await supabaseAdmin
     <div class="contact-grid">
       <div class="r">
         <span class="stag">Boek Lara</span>
-        <h2 class="contact-h2 reveal-text r"><span>Lara op jouw podium?</span></h2>
+        <h2 class="contact-h2">Lara op jouw podium?</h2>
         <p class="contact-p">Of het nu gaat om een feesttent, bedrijfsfeest, bruiloft, theater of festival. Lara brengt altijd het beste van zichzelf mee. Vul het formulier in, we nemen snel contact op.</p>
         <div class="cinfo">
           <div class="cinfo-item"><div class="cinfo-dot"></div><span>Bovensmilde, Drenthe, door heel Nederland beschikbaar</span></div>
@@ -871,23 +837,31 @@ const { data: lead } = await supabaseAdmin
 
 
 <script>
-  const nav = document.getElementById('mainNav')!;
-  const navToggle = document.getElementById('navToggle')!;
-  const navOverlay = document.getElementById('navOverlay')!;
-  const navLinks = navOverlay.querySelectorAll('a');
+  const nav         = document.getElementById('mainNav')!;
+  const navToggle   = document.getElementById('navToggle')!;
+  const navOverlay  = document.getElementById('navOverlay')!;
+  const overlayClose = document.getElementById('navOverlayClose')!;
+
+  function openMenu() {
+    navToggle.classList.add('on');
+    navOverlay.classList.add('on');
+    document.body.style.overflow = 'hidden';
+    navToggle.setAttribute('aria-label', 'Menu sluiten');
+  }
+  function closeMenu() {
+    navToggle.classList.remove('on');
+    navOverlay.classList.remove('on');
+    document.body.style.overflow = '';
+    navToggle.setAttribute('aria-label', 'Menu openen');
+  }
 
   navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('on');
-    navOverlay.classList.toggle('on');
-    document.body.style.overflow = navOverlay.classList.contains('on') ? 'hidden' : '';
+    navOverlay.classList.contains('on') ? closeMenu() : openMenu();
   });
+  overlayClose.addEventListener('click', closeMenu);
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      navToggle.classList.remove('on');
-      navOverlay.classList.remove('on');
-      document.body.style.overflow = '';
-    });
+  navOverlay.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
   });
 
   window.addEventListener('scroll', () => {
@@ -899,28 +873,24 @@ const { data: lead } = await supabaseAdmin
   }, { threshold: 0.08 });
   document.querySelectorAll('.r').forEach(el => obs.observe(el));
 
-  // Lenis Smooth Scroll
+  // Lenis smooth scroll
   // @ts-ignore
   const lenis = new Lenis();
-  function raf(time: number) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
+  function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
 
-  // Parallax Hero
+  // Parallax on hero portrait
   const heroImg = document.querySelector('.hero-right img') as HTMLElement;
   window.addEventListener('scroll', () => {
-    const s = window.scrollY;
-    if (heroImg) heroImg.style.transform = `translateY(${s * 0.1}px)`;
+    if (heroImg && window.innerWidth > 960) {
+      heroImg.style.transform = `translateY(${window.scrollY * 0.08}px)`;
+    }
   }, { passive: true });
 
-  // Custom Cursor
+  // Custom cursor
   const dot = document.querySelector('.cursor-dot') as HTMLElement;
   window.addEventListener('mousemove', e => {
-    if (dot) {
-      dot.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
-    }
+    if (dot) dot.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
   });
 
   document.getElementById('bookForm')?.addEventListener('submit', async e => {
