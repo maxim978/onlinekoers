@@ -14,12 +14,14 @@ const { data: lead } = await supabaseAdmin
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Lara Millaa – Nederlandstalige zangeres. Warm stemgeluid, krachtige podiumpresentatie. Van feesttent tot Gelredome." />
+  <meta name="description" content="Lara Millaa. Nederlandstalige zangeres. Warm stemgeluid, krachtige podiumpresentatie. Van feesttent tot Gelredome." />
   <title>Lara Millaa | Nederlandstalige Zangeres</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.13/dist/lenis.css">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,17 +37,22 @@ const { data: lead } = await supabaseAdmin
       --muted:  rgba(20,18,16,0.48);
       --rose:   #C56B58;
       --rose-l: rgba(197,107,88,0.09);
+      
+      --font-display: 'Instrument Serif', serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --font-ui:      'Outfit', sans-serif;
     }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       background: var(--white);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    h1, h2, h3, .serif { font-family: 'Cormorant Garamond', serif; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+    .nav-logo, .btn, .stag, .nav-link, .about-stat-l, .hcard-year, .hcard-tag, .quote-attr, .field label, .footer-link, .footer-copy { font-family: var(--font-ui); }
     .wrap { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
 
     .r { opacity: 0; transform: translateY(28px); transition: opacity .85s cubic-bezier(.2,.8,.2,1), transform .85s cubic-bezier(.2,.8,.2,1); }
@@ -61,6 +68,17 @@ const { data: lead } = await supabaseAdmin
     .stag-light { color: rgba(248,245,241,.5); }
     .stag-light::before { background: rgba(248,245,241,.5); }
 
+    /* ════ KEYFRAMES ════ */
+    @keyframes heroIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-12px); }
+    }
+    @keyframes spulse { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
     /* ════ NAV ════ */
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 300;
@@ -69,25 +87,35 @@ const { data: lead } = await supabaseAdmin
       border-bottom: 1px solid transparent;
     }
     .nav.s {
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(18px);
+      background: rgba(255,255,255,.7);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       padding: 1rem 0;
       border-color: var(--border);
     }
     .nav-row { display: flex; align-items: center; justify-content: space-between; }
     .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem; font-weight: 700; font-style: italic;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.25rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
       color: var(--text); text-decoration: none;
     }
-    .nav-logo span { color: var(--rose); font-style: normal; }
+    .nav-logo span { color: var(--rose); }
     .nav-links { display: flex; align-items: center; gap: 2.25rem; }
     .nav-link {
       font-size: .73rem; font-weight: 500;
       text-transform: uppercase; letter-spacing: .12em;
       color: var(--muted); text-decoration: none; transition: color .25s;
+      position: relative;
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -.25rem; left: 0; right: 0;
+      height: 1px; background: var(--rose);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .25s cubic-bezier(.2,.8,.2,1);
     }
     .nav-link:hover { color: var(--text); }
+    .nav-link:hover::after { transform: scaleX(1); }
     .nav-cta {
       font-size: .7rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: .1em;
@@ -104,7 +132,6 @@ const { data: lead } = await supabaseAdmin
       overflow: hidden;
     }
 
-    /* LEFT: text side */
     .hero-left {
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 12rem clamp(2rem, 4vw, 4rem) 7rem clamp(1.5rem, max(3vw, calc((100vw - 1140px)/2 + 4rem)), 10rem);
@@ -114,25 +141,34 @@ const { data: lead } = await supabaseAdmin
       font-size: .65rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: .3em; color: var(--rose);
       margin-bottom: 1.5rem;
+      animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .1s both;
     }
     .hero-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--rose); }
 
-    .hero-h1 { font-family: 'Cormorant Garamond', serif; font-weight: 700; line-height: .88; margin-bottom: 2.5rem; }
+    .hero-h1 { font-family: 'Oswald', sans-serif; font-weight: 700; line-height: .9; margin-bottom: 2.5rem; }
     .h1-first {
-      display: block; font-style: italic; color: var(--text);
-      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: -.02em;
+      display: block; font-weight: 400; color: var(--text);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: -0.03em;
+      text-transform: uppercase; line-height: 0.85;
+      animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .3s both;
     }
     .h1-last {
-      display: block; font-style: normal; font-weight: 700; color: var(--rose);
-      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: .02em;
+      display: block; font-weight: 400; color: var(--rose);
+      font-size: clamp(5rem, 10vw, 11rem); letter-spacing: -0.03em;
+      text-transform: uppercase; line-height: 0.85;
+      animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .5s both;
+      font-style: italic; margin-top: -0.1em;
     }
     .hero-sub {
       font-size: .98rem; color: var(--muted); line-height: 1.7;
       max-width: 380px; margin-bottom: 2.5rem;
+      animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .65s both;
     }
-    .hero-btns { display: flex; gap: .85rem; flex-wrap: wrap; }
+    .hero-btns {
+      display: flex; gap: .85rem; flex-wrap: wrap;
+      animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .8s both;
+    }
 
-    /* RIGHT: photo panel – white bg to blend portrait edges */
     .hero-right {
       background: var(--white);
       position: relative; overflow: hidden;
@@ -144,15 +180,14 @@ const { data: lead } = await supabaseAdmin
       object-fit: contain;
       object-position: center bottom;
       display: block;
+      animation: float 6s ease-in-out 1.2s infinite;
     }
-    /* thin rose stripe on left edge of photo panel */
     .hero-right::before {
       content: ''; position: absolute;
       left: 0; top: 15%; bottom: 0;
       width: 3px; background: var(--rose); z-index: 2;
     }
 
-    /* scroll hint */
     .hero-scroll {
       position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: .5rem;
@@ -160,7 +195,6 @@ const { data: lead } = await supabaseAdmin
     }
     .hero-scroll span { font-size: .5rem; letter-spacing: .25em; text-transform: uppercase; }
     .hero-scroll-line { width: 1px; height: 38px; background: linear-gradient(to bottom, var(--text), transparent); animation: spulse 2s ease-in-out infinite; }
-    @keyframes spulse { 0%,100%{opacity:.3} 50%{opacity:.8} }
 
     /* buttons */
     .btn {
@@ -186,8 +220,10 @@ const { data: lead } = await supabaseAdmin
       display: flex; align-items: center; padding: .5rem 2.25rem;
       font-size: .73rem; font-weight: 600; color: var(--muted); letter-spacing: .04em;
       border-right: 1px solid var(--border);
+      transition: color .25s, background .25s; cursor: default;
     }
     .fact:last-child { border-right: none; }
+    .fact:hover { background: var(--warm-2); color: var(--text); }
     .fact strong { color: var(--text); margin-right: .35rem; }
 
     /* ════ ABOUT ════ */
@@ -211,50 +247,83 @@ const { data: lead } = await supabaseAdmin
     }
     .about-photo-label {
       position: absolute; bottom: 1.75rem; left: 1.75rem; z-index: 1;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem; font-style: italic; color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-style: italic; color: var(--white);
     }
     .about-badge {
       position: absolute; bottom: 0; right: 0; z-index: 2;
       background: var(--rose); color: var(--white);
       padding: 1.25rem 1.5rem; border-radius: .5rem; text-align: center;
     }
-    .about-badge-n { display: block; font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; line-height: 1; }
+    .about-badge-n { display: block; font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1; }
     .about-badge-l { display: block; font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; opacity: .75; margin-top: .2rem; }
 
     .about-h2 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Oswald', sans-serif;
       font-size: clamp(2.25rem, 3.5vw, 3.5rem);
-      font-weight: 700; font-style: italic; line-height: 1.15;
+      font-weight: 700; line-height: 1.1; letter-spacing: .02em;
       color: var(--text); margin-bottom: 1.75rem;
+      position: relative; padding-bottom: 1rem;
     }
+    .about-h2::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--rose);
+      transition: width .7s cubic-bezier(.2,.8,.2,1) .4s;
+    }
+    .r.on .about-h2::after { width: 2.5rem; }
+
     .about-p { font-size: .98rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.1rem; }
     .about-stats {
       display: grid; grid-template-columns: repeat(3,1fr);
       gap: 1.5rem; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--border);
     }
-    .about-stat-n { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--rose); line-height: 1; }
+    .about-stat-n { font-family: 'Oswald', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--rose); line-height: 1; }
     .about-stat-l { font-size: .65rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: .3rem; }
 
     /* ════ HOOGTEPUNTEN ════ */
     .high { padding: 9rem 0; background: var(--warm); }
     .high-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem; margin-bottom: 4rem; }
-    .high-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.25rem, 4vw, 4rem); font-weight: 700; line-height: 1.1; color: var(--text); }
+    .high-h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(2.25rem, 4vw, 4rem); font-weight: 700; line-height: 1.05;
+      letter-spacing: .02em; color: var(--text);
+      position: relative; padding-bottom: 1rem;
+    }
+    .high-h2::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--rose);
+      transition: width .7s cubic-bezier(.2,.8,.2,1) .4s;
+    }
+    .r.on .high-h2::after { width: 2.5rem; }
+
     .high-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     .hcard {
       background: var(--white); border: 1px solid var(--border); border-radius: .5rem;
       padding: 3rem; position: relative; overflow: hidden;
-      transition: box-shadow .3s, transform .3s;
+      transition: box-shadow .35s, transform .35s;
     }
-    .hcard:hover { box-shadow: 0 16px 48px rgba(20,18,16,.07); transform: translateY(-4px); }
+    .hcard::before {
+      content: ''; position: absolute;
+      left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--rose);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    }
+    .hcard:hover { 
+      box-shadow: 0 40px 80px rgba(20,18,16,.12); 
+      transform: translateY(-8px); 
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+    }
+    .hcard:hover::before { transform: scaleY(1); }
     .hcard-num {
       position: absolute; top: 2rem; right: 2.5rem;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 5rem; font-weight: 700; font-style: italic;
+      font-family: 'Oswald', sans-serif;
+      font-size: 5rem; font-weight: 700;
       color: rgba(20,18,16,.05); line-height: 1; user-select: none;
     }
     .hcard-year { display: inline-block; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .22em; color: var(--rose); margin-bottom: 1.75rem; }
-    .hcard-venue { font-family: 'Cormorant Garamond', serif; font-size: 2.25rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: .4rem; }
+    .hcard-venue { font-family: 'Oswald', sans-serif; font-size: 2.25rem; font-weight: 700; letter-spacing: .02em; color: var(--text); line-height: 1; margin-bottom: .4rem; }
     .hcard-with { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; }
     .hcard-desc { font-size: .9rem; color: var(--muted); line-height: 1.75; }
     .hcard-tag { display: inline-flex; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--rose); margin-top: 1.75rem; border-top: 1px solid var(--border); padding-top: 1.5rem; width: 100%; }
@@ -263,9 +332,9 @@ const { data: lead } = await supabaseAdmin
     .gallery { background: var(--dark); padding: 7rem 0; }
     .gallery-header { margin-bottom: 3rem; }
     .gallery-h2 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Oswald', sans-serif;
       font-size: clamp(2rem, 3.5vw, 3.5rem);
-      font-weight: 700; color: var(--white); line-height: 1.1;
+      font-weight: 700; letter-spacing: .03em; color: var(--white); line-height: 1.05;
     }
     .gallery-grid {
       display: grid;
@@ -281,40 +350,49 @@ const { data: lead } = await supabaseAdmin
       width: 100%; height: 100%; object-fit: cover;
       display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1);
     }
+    .gallery-img::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 3px;
+      background: var(--rose);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    }
     .gallery-img:hover img { transform: scale(1.04); }
+    .gallery-img:hover::after { transform: scaleX(1); }
 
-    /* fire photo: landscape, left & tall */
-    .gallery-img-fire {
-      grid-column: 1; grid-row: 1 / 3;
-      aspect-ratio: 4/5;
-    }
-    /* stage photo: landscape, right top */
-    .gallery-img-stage {
-      grid-column: 2; grid-row: 1;
-      aspect-ratio: 1 / 1;
-    }
-    /* purple photo: right bottom */
-    .gallery-img-purple {
-      grid-column: 2; grid-row: 2;
-      aspect-ratio: 1 / 1;
-    }
-
+    .gallery-img-fire  { grid-column: 1; grid-row: 1 / 3; aspect-ratio: 4/5; }
+    .gallery-img-stage { grid-column: 2; grid-row: 1;     aspect-ratio: 1 / 1; }
+    .gallery-img-purple{ grid-column: 2; grid-row: 2;     aspect-ratio: 1 / 1; }
 
     /* ════ QUOTE ════ */
     .quote-sec { padding: 8rem 0; background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .quote-inner { max-width: 860px; }
-    .quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 700; font-style: italic; color: var(--rose); line-height: .8; margin-bottom: 1rem; display: block; }
-    .quote-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.75rem, 3.5vw, 3rem); font-weight: 600; font-style: italic; color: var(--text); line-height: 1.35; margin-bottom: 2rem; }
+    .quote-mark { font-family: 'Oswald', sans-serif; font-size: 5rem; font-weight: 700; color: var(--rose); line-height: .8; margin-bottom: 1rem; display: block; }
+    .quote-text { font-family: 'DM Sans', sans-serif; font-size: clamp(1.5rem, 3vw, 2.75rem); font-weight: 400; font-style: italic; color: var(--text); line-height: 1.4; margin-bottom: 2rem; }
     .quote-attr { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .25em; color: var(--muted); }
 
     /* ════ CONTACT ════ */
     .contact { padding: 9rem 0; background: var(--white); }
     .contact-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 7rem; align-items: start; }
-    .contact-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.25rem, 4vw, 3.75rem); font-weight: 700; font-style: italic; line-height: 1.1; color: var(--text); margin-bottom: 1.5rem; }
+    .contact-h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(2.25rem, 4vw, 3.75rem); font-weight: 700; line-height: 1.05;
+      letter-spacing: .02em; color: var(--text); margin-bottom: 1.5rem;
+      position: relative; padding-bottom: 1rem;
+    }
+    .contact-h2::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--rose);
+      transition: width .7s cubic-bezier(.2,.8,.2,1) .4s;
+    }
+    .r.on .contact-h2::after { width: 2.5rem; }
+
     .contact-p { font-size: .95rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.5rem; }
     .cinfo { display: flex; flex-direction: column; gap: 1rem; }
-    .cinfo-item { display: flex; align-items: center; gap: .9rem; font-size: .88rem; color: var(--muted); }
-    .cinfo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); flex-shrink: 0; }
+    .cinfo-item { display: flex; align-items: center; gap: .9rem; font-size: .88rem; color: var(--muted); transition: color .25s; }
+    .cinfo-item:hover { color: var(--text); }
+    .cinfo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); flex-shrink: 0; transition: transform .25s; }
+    .cinfo-item:hover .cinfo-dot { transform: scale(1.6); }
     .cinfo-item a { color: inherit; text-decoration: none; }
     .cinfo-item a:hover { color: var(--rose); }
 
@@ -332,14 +410,14 @@ const { data: lead } = await supabaseAdmin
     .form-success { display: none; text-align: center; padding: 3rem 2rem; border-radius: .5rem; border: 1.5px solid var(--border); background: var(--warm); }
     .form-success.on { display: block; }
     .form-success-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--rose-l); border: 1.5px solid rgba(197,107,88,.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.1rem; color: var(--rose); }
-    .form-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--text); margin-bottom: .6rem; }
+    .form-success h3 { font-family: 'Oswald', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--text); margin-bottom: .6rem; }
     .form-success p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
     /* ════ FOOTER ════ */
     .footer { background: var(--dark); padding: 4rem 0 2.5rem; }
     .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; font-style: italic; color: var(--white); text-decoration: none; }
-    .footer-logo span { color: var(--rose); font-style: normal; }
+    .footer-logo { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--white); text-decoration: none; }
+    .footer-logo span { color: var(--rose); }
     .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
     .footer-link { font-size: .72rem; color: rgba(255,255,255,.4); text-decoration: none; transition: color .25s; }
     .footer-link:hover { color: rgba(255,255,255,.9); }
@@ -349,7 +427,7 @@ const { data: lead } = await supabaseAdmin
     @media (max-width: 960px) {
       .hero { grid-template-columns: 1fr; min-height: auto; }
       .hero-right { height: 65vw; padding-top: 0; }
-      .hero-right img { object-fit: cover; object-position: center top; }
+      .hero-right img { object-fit: cover; object-position: center top; animation: none; }
       .hero-right::before { display: none; }
       .hero-left { padding: 7rem 1.5rem 4rem; order: 2; }
       .hero-right { order: 1; }
@@ -359,12 +437,10 @@ const { data: lead } = await supabaseAdmin
       .gallery-img-fire { grid-column: 1 / 3; grid-row: 1; aspect-ratio: 16/9; }
       .gallery-img-stage { grid-column: 1; grid-row: 2; aspect-ratio: 1; }
       .gallery-img-purple { grid-column: 2; grid-row: 2; aspect-ratio: 1; }
-      .rep-grid { grid-template-columns: 1fr 1fr; }
       .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
       .nav-links { display: none; }
     }
     @media (max-width: 600px) {
-      .rep-grid { grid-template-columns: 1fr; }
       .about-stats { grid-template-columns: 1fr 1fr; }
       .frow { grid-template-columns: 1fr; }
       .facts-inner { flex-direction: column; }
@@ -373,9 +449,31 @@ const { data: lead } = await supabaseAdmin
       .gallery-grid { grid-template-columns: 1fr; }
       .gallery-img-fire, .gallery-img-stage, .gallery-img-purple { grid-column: 1; grid-row: auto; aspect-ratio: 4/3; }
     }
+    /* ════ EFFECTS ════ */
+    .grain {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 9999; pointer-events: none; opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .cursor-dot {
+      width: 8px; height: 8px; background: var(--rose);
+      border-radius: 50%; position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 10000; transition: transform 0.1s ease-out;
+      display: none;
+    }
+    @media (hover: hover) { .cursor-dot { display: block; } }
+
+    .reveal-text { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+    .reveal-text span { display: inline-block; transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .reveal-text.on span { transform: translateY(0); }
+
+    .hero-right img { transition: transform 0.1s ease-out; }
   </style>
 </head>
 <body>
+  <div class="grain"></div>
+  <div class="cursor-dot"></div>
 
 <!-- ════ NAV ════ -->
 <nav class="nav" id="mainNav">
@@ -394,15 +492,14 @@ const { data: lead } = await supabaseAdmin
 <!-- ════ HERO ════ -->
 <section class="hero" id="hero" style="position:relative;">
 
-  <!-- LEFT: text -->
   <div class="hero-left">
     <div class="hero-eyebrow">Nederlandstalige Zangeres</div>
     <h1 class="hero-h1">
-      <span class="h1-first">Lara</span>
-      <span class="h1-last">Millaa.</span>
+      <span class="h1-first reveal-text"><span>Lara</span></span>
+      <span class="h1-last reveal-text"><span>Millaa.</span></span>
     </h1>
     <p class="hero-sub">
-      Aanstekelijke flair op het podium. Warm stemgeluid, natuurlijke charme en een krachtige podiumpresentatie die elk publiek raakt — van feesttent tot uitverkocht stadion.
+      Aanstekelijke flair op het podium. Warm stemgeluid, natuurlijke charme en een krachtige podiumpresentatie die elk publiek raakt, van feesttent tot uitverkocht stadion.
     </p>
     <div class="hero-btns">
       <a href="#contact" class="btn btn-dark" data-track="hero-cta-book">Boek Lara</a>
@@ -410,7 +507,6 @@ const { data: lead } = await supabaseAdmin
     </div>
   </div>
 
-  <!-- RIGHT: portrait photo (white bg blends with photo edges) -->
   <div class="hero-right">
     <img
       src="/images/lara-millaa/artist.png"
@@ -460,12 +556,12 @@ const { data: lead } = await supabaseAdmin
 
       <div class="r" style="transition-delay:.15s;">
         <span class="stag">Over Lara</span>
-        <h2 class="about-h2">Haar roeping gevonden, haar stem ontdekt.</h2>
+        <h2 class="about-h2 reveal-text"><span>Haar roeping gevonden, haar stem ontdekt.</span></h2>
         <p class="about-p">
-          Lara van Reenen groeide op in Bovensmilde met een diepe liefde voor muziek — maar het zelfvertrouwen om haar stem te laten horen moest nog groeien. Via Neo Music in Bovensmilde vond ze haar weg naar het podium.
+          Lara van Reenen groeide op in Bovensmilde met een diepe liefde voor muziek, maar het zelfvertrouwen om haar stem te laten horen moest nog groeien. Via Neo Music in Bovensmilde vond ze haar weg naar het podium.
         </p>
         <p class="about-p">
-          Wat begon als een verjaardagscadeau in de studio groeide uit tot een volledige carrière. Met haar eerste single <em>Colors</em> (2022) bewees Lara dat ze meer is dan een coverartieste. Sindsdien staat ze op de grote podia van Nederland, reikt haar repertoire van André Hazes tot Monique Smit, en brengt ze altijd haar eigen stem en uitstraling mee.
+          Wat begon als een verjaardagscadeau in de studio groeide uit tot een volledige carrière. Met haar eerste single <em>Colors</em> (2022) bewees Lara dat ze meer is dan een coverartieste. Sindsdien staat ze op de grote podia van Nederland, reikt haar repertoire van André Hazes tot intieme levensliederen, en brengt ze altijd haar eigen stem en uitstraling mee.
         </p>
         <a href="#contact" class="btn btn-rose" style="margin-top:2rem;" data-track="about-cta">
           Boek Lara voor jouw evenement
@@ -497,7 +593,7 @@ const { data: lead } = await supabaseAdmin
     <div class="high-header r">
       <div>
         <span class="stag">Hoogtepunten</span>
-        <h2 class="high-h2">Op de grootste podia<br/>van Nederland.</h2>
+        <h2 class="high-h2 reveal-text"><span>Op de grootste podia<br/>van Nederland.</span></h2>
       </div>
       <a href="#contact" class="btn btn-dark" data-track="high-cta">Boek voor jouw event</a>
     </div>
@@ -515,7 +611,7 @@ const { data: lead } = await supabaseAdmin
         <div class="hcard-year">2024</div>
         <div class="hcard-venue">De Bevers</div>
         <div class="hcard-with">Landelijke Theaterproductie</div>
-        <p class="hcard-desc">Als onderdeel van de succesvolle theatershow van De Bevers liet Lara een nieuwe kant van zichzelf zien. Theaterpresentatie, timing en podiumspel — ze beheerst het allemaal. Een productie die haar veelzijdigheid als entertainer bewees.</p>
+        <p class="hcard-desc">Als onderdeel van de succesvolle theatershow van De Bevers liet Lara een nieuwe kant van zichzelf zien. Theaterpresentatie, timing en podiumspel. Ze beheerst het allemaal. Een productie die haar veelzijdigheid als entertainer bewees.</p>
         <div class="hcard-tag">Theatershow · Landelijk tour</div>
       </div>
     </div>
@@ -528,10 +624,9 @@ const { data: lead } = await supabaseAdmin
   <div class="wrap">
     <div class="gallery-header r">
       <span class="stag stag-light">Live</span>
-      <h2 class="gallery-h2">Op het podium.</h2>
+      <h2 class="gallery-h2 reveal-text"><span>Op het podium.</span></h2>
     </div>
     <div class="gallery-grid r" style="transition-delay:.1s;">
-      <!-- fire stage photo – tall left -->
       <div class="gallery-img gallery-img-fire">
         <img
           src="/images/lara-millaa/live-fire.jpg"
@@ -540,7 +635,6 @@ const { data: lead } = await supabaseAdmin
           onerror="this.closest('.gallery-img').style.display='none'"
         />
       </div>
-      <!-- outdoor stage – right top -->
       <div class="gallery-img gallery-img-stage">
         <img
           src="/images/lara-millaa/live-stage.jpg"
@@ -549,7 +643,6 @@ const { data: lead } = await supabaseAdmin
           onerror="this.closest('.gallery-img').style.display='none'"
         />
       </div>
-      <!-- purple lighting – right bottom -->
       <div class="gallery-img gallery-img-purple">
         <img
           src="/images/lara-millaa/live-purple.jpg"
@@ -563,15 +656,13 @@ const { data: lead } = await supabaseAdmin
 </section>
 
 
-
-
 <!-- ════ QUOTE ════ -->
 <section class="quote-sec">
   <div class="wrap r">
     <div class="quote-inner">
       <span class="quote-mark">"</span>
       <p class="quote-text">Het was een hobby, maar nu weet ik zeker dat ik er meer mee wil.</p>
-      <span class="quote-attr">— Lara Millaa &nbsp;·&nbsp; RTV Drenthe, 2022</span>
+      <span class="quote-attr">Lara Millaa &nbsp;·&nbsp; RTV Drenthe, 2022</span>
     </div>
   </div>
 </section>
@@ -583,10 +674,10 @@ const { data: lead } = await supabaseAdmin
     <div class="contact-grid">
       <div class="r">
         <span class="stag">Boek Lara</span>
-        <h2 class="contact-h2">Lara op jouw podium?</h2>
-        <p class="contact-p">Of het nu gaat om een feesttent, bedrijfsfeest, bruiloft, theater of festival — Lara brengt altijd het beste van zichzelf mee. Vul het formulier in, we nemen snel contact op.</p>
+        <h2 class="contact-h2 reveal-text"><span>Lara op jouw podium?</span></h2>
+        <p class="contact-p">Of het nu gaat om een feesttent, bedrijfsfeest, bruiloft, theater of festival. Lara brengt altijd het beste van zichzelf mee. Vul het formulier in, we nemen snel contact op.</p>
         <div class="cinfo">
-          <div class="cinfo-item"><div class="cinfo-dot"></div><span>Bovensmilde, Drenthe — door heel Nederland beschikbaar</span></div>
+          <div class="cinfo-item"><div class="cinfo-dot"></div><span>Bovensmilde, Drenthe, door heel Nederland beschikbaar</span></div>
           <div class="cinfo-item"><div class="cinfo-dot"></div><a href="https://www.instagram.com/lara_millaa/" target="_blank" rel="noopener">@lara_millaa op Instagram</a></div>
           <div class="cinfo-item"><div class="cinfo-dot"></div><span>Levenslied · Feesthits · Eigen werk</span></div>
           <div class="cinfo-item"><div class="cinfo-dot"></div><span>Feesttent · Bruiloft · Bedrijfsfeest · Festival · Theater</span></div>
@@ -638,7 +729,7 @@ const { data: lead } = await supabaseAdmin
       <a href="#" class="footer-logo">Lara <span>Millaa</span></a>
       <div class="footer-links">
         <a href="#over"    class="footer-link">Over Lara</a>
-        <a href="#muziek"  class="footer-link">Muziek</a>
+        <a href="#live"    class="footer-link">Live</a>
         <a href="#contact" class="footer-link">Contact</a>
         <a href="https://www.instagram.com/lara_millaa/" class="footer-link" target="_blank" rel="noopener">Instagram</a>
       </div>
@@ -664,6 +755,30 @@ const { data: lead } = await supabaseAdmin
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.r').forEach(el => obs.observe(el));
+
+  // Lenis Smooth Scroll
+  // @ts-ignore
+  const lenis = new Lenis();
+  function raf(time: number) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // Parallax Hero
+  const heroImg = document.querySelector('.hero-right img') as HTMLElement;
+  window.addEventListener('scroll', () => {
+    const s = window.scrollY;
+    if (heroImg) heroImg.style.transform = `translateY(${s * 0.1}px)`;
+  }, { passive: true });
+
+  // Custom Cursor
+  const dot = document.querySelector('.cursor-dot') as HTMLElement;
+  window.addEventListener('mousemove', e => {
+    if (dot) {
+      dot.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
+    }
+  });
 
   document.getElementById('bookForm')?.addEventListener('submit', async e => {
     e.preventDefault();
