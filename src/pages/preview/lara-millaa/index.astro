@@ -132,8 +132,12 @@ const { data: lead } = await supabaseAdmin
       padding: .5rem; z-index: 400;
       position: relative;
     }
-    .nav-toggle svg { width: 24px; height: 24px; fill: var(--text); transition: fill .3s; }
-    .nav-toggle:hover svg { fill: var(--rose); }
+    .nav-toggle svg { width: 32px; height: 32px; fill: var(--text); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+    .nav-toggle.on svg { transform: rotate(90deg); }
+    .nav-toggle .mic-part { transition: opacity .3s; }
+    .nav-toggle.on .mic-part { opacity: 0; }
+    .nav-toggle .close-part { opacity: 0; transition: opacity .3s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .nav-toggle.on .close-part { opacity: 1; }
 
     .nav-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -458,12 +462,13 @@ const { data: lead } = await supabaseAdmin
         display: grid;
       }
       .hero-left { 
-        padding: 3rem 1.5rem 1rem; 
+        padding: 1rem 1.5rem 1rem; 
         order: 1; 
         justify-content: center;
         text-align: center;
         align-items: center;
       }
+      .hero-eyebrow { margin-top: 6rem; margin-bottom: 1rem; }
       .hero-sub { margin-left: auto; margin-right: auto; }
       .hero-btns { justify-content: center; }
       
@@ -482,7 +487,13 @@ const { data: lead } = await supabaseAdmin
         animation: none;
       }
       .hero-right::before { display: none; }
-      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-photo-wrap { max-width: 80%; margin: 0 auto 2rem; padding-right: 0; }
+      .about-badge { padding: 0.75rem 1rem; }
+      .about-badge-n { font-size: 1.5rem; }
+      
+      .high { display: none; }
+      
       .high-grid { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
       .gallery-img-fire { grid-column: 1 / 3; grid-row: 1; aspect-ratio: 16/9; }
@@ -511,12 +522,15 @@ const { data: lead } = await supabaseAdmin
         margin-top: 2rem;
       }
       .about-stats > div {
-        flex: 0 0 70%;
+        flex: 0 0 65%;
         scroll-snap-align: center;
         background: var(--warm);
-        padding: 2rem;
+        padding: 1.5rem;
         border-radius: .5rem;
+        text-align: center;
       }
+      .about-stat-n { display: none; }
+      .about-stat-l { font-size: 0.75rem; margin-top: 0; color: var(--text); font-weight: 600; }
 
       .gallery-grid { 
         display: block;
@@ -569,10 +583,19 @@ const { data: lead } = await supabaseAdmin
       <a href="#contact" class="nav-cta">Boek Lara</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-      </svg>
+      <div style="position:relative; width:32px; height:32px;">
+        <svg class="mic-part" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="position:absolute; inset:0;">
+          <!-- Half Mic / Half Burger -->
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" clip-path="inset(0 50% 0 0)"/>
+          <rect x="13" y="4" width="8" height="2" rx="1"/>
+          <rect x="13" y="10" width="8" height="2" rx="1"/>
+          <rect x="13" y="16" width="8" height="2" rx="1"/>
+          <path d="M11 11H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c1.5-.22 2.85-.9 3.9-1.92" clip-path="inset(0 50% 0 0)"/>
+        </svg>
+        <svg class="close-part" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </div>
     </button>
   </div>
 </nav>
@@ -854,12 +877,14 @@ const { data: lead } = await supabaseAdmin
   const navLinks = navOverlay.querySelectorAll('a');
 
   navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('on');
     navOverlay.classList.toggle('on');
     document.body.style.overflow = navOverlay.classList.contains('on') ? 'hidden' : '';
   });
 
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
+      navToggle.classList.remove('on');
       navOverlay.classList.remove('on');
       document.body.style.overflow = '';
     });
