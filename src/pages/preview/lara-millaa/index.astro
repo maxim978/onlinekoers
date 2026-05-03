@@ -125,6 +125,26 @@ const { data: lead } = await supabaseAdmin
     }
     .nav-cta:hover { background: var(--rose); transform: translateY(-1px); }
 
+    /* Hamburger Menu */
+    .nav-toggle {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      padding: .5rem; z-index: 400;
+      position: relative;
+    }
+    .nav-toggle svg { width: 24px; height: 24px; fill: var(--text); transition: fill .3s; }
+    .nav-toggle:hover svg { fill: var(--rose); }
+
+    .nav-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--white); z-index: 350;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2rem; transform: translateY(-100%); transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    }
+    .nav-overlay.on { transform: translateY(0); }
+    .nav-overlay .nav-link { font-size: 1.5rem; }
+    .nav-overlay .nav-cta { font-size: 1.2rem; }
+
     /* ════ HERO ════ */
     .hero {
       min-height: 100vh; background: var(--white);
@@ -225,6 +245,11 @@ const { data: lead } = await supabaseAdmin
     .fact:last-child { border-right: none; }
     .fact:hover { background: var(--warm-2); color: var(--text); }
     .fact strong { color: var(--text); margin-right: .35rem; }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
 
     /* ════ ABOUT ════ */
     .about { padding: 9rem 0; background: var(--white); }
@@ -464,29 +489,48 @@ const { data: lead } = await supabaseAdmin
       .gallery-img-stage { grid-column: 1; grid-row: 2; aspect-ratio: 1; }
       .gallery-img-purple { grid-column: 2; grid-row: 2; aspect-ratio: 1; }
       .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .nav-links { 
-        display: flex; 
-        gap: 1rem;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(15px);
-        padding: 0.75rem 1rem;
-        justify-content: center;
-        border-bottom: 1px solid var(--border);
-        z-index: 1000;
+      .nav-links { display: none; }
+      .nav-toggle { display: block; }
+      
+      .facts { overflow: hidden; white-space: nowrap; }
+      .facts-inner { 
+        flex-wrap: nowrap; 
+        justify-content: flex-start;
+        animation: marquee 20s linear infinite; 
+        width: fit-content;
       }
-      .nav-link { font-size: 0.65rem; color: var(--text); }
-      .nav-cta { display: none; }
+      .fact { border-right: 1px solid var(--border); flex-shrink: 0; }
+
+      .about-stats {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 1.5rem;
+        gap: 2rem;
+        border-top: 1px solid var(--border);
+        margin-top: 2rem;
+      }
+      .about-stats > div {
+        flex: 0 0 70%;
+        scroll-snap-align: center;
+        background: var(--warm);
+        padding: 2rem;
+        border-radius: .5rem;
+      }
+
+      .gallery-grid { 
+        display: block;
+      }
+      .gallery-img { 
+        margin-bottom: 2.5rem; 
+        transform: rotate(var(--rot, 0deg));
+      }
+      .gallery-img:nth-child(1) { --rot: -2deg; margin-left: -1rem; }
+      .gallery-img:nth-child(2) { --rot: 2deg; margin-right: -1rem; width: 90%; margin-left: auto; }
+      .gallery-img:nth-child(3) { --rot: -1.5deg; width: 95%; }
     }
     @media (max-width: 600px) {
-      .about-stats { grid-template-columns: 1fr 1fr; }
       .frow { grid-template-columns: 1fr; }
-      .facts-inner { flex-direction: column; }
-      .fact { border-right: none; border-bottom: 1px solid var(--border); width: 100%; justify-content: center; }
-      .fact:last-child { border-bottom: none; }
-      .gallery-grid { grid-template-columns: 1fr; }
-      .gallery-img-fire, .gallery-img-stage, .gallery-img-purple { grid-column: 1; grid-row: auto; aspect-ratio: 4/3; }
     }
     /* ════ EFFECTS ════ */
     .grain {
@@ -524,8 +568,21 @@ const { data: lead } = await supabaseAdmin
       <a href="#contact" class="nav-link">Contact</a>
       <a href="#contact" class="nav-cta">Boek Lara</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+      </svg>
+    </button>
   </div>
 </nav>
+
+<div class="nav-overlay" id="navOverlay">
+  <a href="#over"    class="nav-link">Over Lara</a>
+  <a href="#live"    class="nav-link">Live</a>
+  <a href="#contact" class="nav-link">Contact</a>
+  <a href="#contact" class="nav-cta">Boek Lara</a>
+</div>
 
 
 <!-- ════ HERO ════ -->
@@ -563,7 +620,13 @@ const { data: lead } = await supabaseAdmin
 
 <!-- ════ FACTS STRIP ════ -->
 <div class="facts">
-  <div class="facts-inner">
+  <div class="facts-inner" id="factsInner">
+    <div class="fact"><strong>2024</strong> Gelredome, Arnhem</div>
+    <div class="fact"><strong>Marco Schuitmaker</strong> Live concert</div>
+    <div class="fact"><strong>De Bevers</strong> Theatershow</div>
+    <div class="fact"><strong>2022</strong> Eerste single "Colors"</div>
+    <div class="fact"><strong>Neo Music</strong> Bovensmilde</div>
+    <!-- Duplicate for seamless loop -->
     <div class="fact"><strong>2024</strong> Gelredome, Arnhem</div>
     <div class="fact"><strong>Marco Schuitmaker</strong> Live concert</div>
     <div class="fact"><strong>De Bevers</strong> Theatershow</div>
@@ -786,6 +849,22 @@ const { data: lead } = await supabaseAdmin
 
 <script>
   const nav = document.getElementById('mainNav')!;
+  const navToggle = document.getElementById('navToggle')!;
+  const navOverlay = document.getElementById('navOverlay')!;
+  const navLinks = navOverlay.querySelectorAll('a');
+
+  navToggle.addEventListener('click', () => {
+    navOverlay.classList.toggle('on');
+    document.body.style.overflow = navOverlay.classList.contains('on') ? 'hidden' : '';
+  });
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navOverlay.classList.remove('on');
+      document.body.style.overflow = '';
+    });
+  });
+
   window.addEventListener('scroll', () => {
     nav.classList.toggle('s', window.scrollY > 60);
   }, { passive: true });
