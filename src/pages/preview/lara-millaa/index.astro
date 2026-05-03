@@ -299,66 +299,6 @@ const { data: lead } = await supabaseAdmin
       aspect-ratio: 1 / 1;
     }
 
-    /* ════ REPERTOIRE ════ */
-    .rep { padding: 9rem 0; background: var(--warm); }
-    .rep-head {
-      display: flex; justify-content: space-between;
-      align-items: flex-end; flex-wrap: wrap; gap: 2rem;
-      margin-bottom: 4rem;
-    }
-    .rep-h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 4.5vw, 4.5rem); font-weight: 700; font-style: italic; line-height: 1.05; color: var(--text); }
-    .rep-sub { font-size: .95rem; color: var(--muted); line-height: 1.75; max-width: 400px; }
-
-    .rep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
-
-    /* each card has its own colour block at the top */
-    .rcard {
-      border-radius: .6rem; overflow: hidden;
-      background: var(--white);
-      box-shadow: 0 2px 12px rgba(20,18,16,.05);
-      transition: transform .3s, box-shadow .3s;
-      display: flex; flex-direction: column;
-    }
-    .rcard:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(20,18,16,.1); }
-
-    .rcard-band {
-      height: 6px;
-    }
-    .rcard-band-1 { background: linear-gradient(to right, #C56B58, #E8957E); }
-    .rcard-band-2 { background: linear-gradient(to right, #5B7FA6, #7AABCF); }
-    .rcard-band-3 { background: linear-gradient(to right, #7A9E6E, #A8C897); }
-
-    .rcard-body { padding: 2.5rem 2.25rem; flex: 1; display: flex; flex-direction: column; }
-
-    .rcard-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
-    .rcard-icon {
-      width: 52px; height: 52px; border-radius: .5rem;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; flex-shrink: 0;
-    }
-    .rcard-icon-1 { background: rgba(197,107,88,.12); }
-    .rcard-icon-2 { background: rgba(91,127,166,.12); }
-    .rcard-icon-3 { background: rgba(122,158,110,.12); }
-
-    .rcard-cat {
-      font-size: .58rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .24em;
-    }
-    .rcard-cat-1 { color: var(--rose); }
-    .rcard-cat-2 { color: #5B7FA6; }
-    .rcard-cat-3 { color: #6A9060; }
-
-    .rcard-title { font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 700; color: var(--text); margin-bottom: .8rem; line-height: 1.15; }
-    .rcard-desc { font-size: .88rem; color: var(--muted); line-height: 1.8; flex: 1; }
-
-    .rcard-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-    .pill {
-      font-size: .62rem; font-weight: 600;
-      padding: .3rem .8rem; border-radius: 99px;
-    }
-    .pill-1 { color: var(--rose); background: rgba(197,107,88,.09); }
-    .pill-2 { color: #5B7FA6; background: rgba(91,127,166,.09); }
-    .pill-3 { color: #6A9060; background: rgba(122,158,110,.1); }
 
     /* ════ QUOTE ════ */
     .quote-sec { padding: 8rem 0; background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -443,7 +383,7 @@ const { data: lead } = await supabaseAdmin
     <a href="#" class="nav-logo">Lara <span>Millaa</span></a>
     <div class="nav-links">
       <a href="#over"    class="nav-link">Over Lara</a>
-      <a href="#muziek"  class="nav-link">Muziek</a>
+      <a href="#live"    class="nav-link">Live</a>
       <a href="#contact" class="nav-link">Contact</a>
       <a href="#contact" class="nav-cta">Boek Lara</a>
     </div>
@@ -623,84 +563,6 @@ const { data: lead } = await supabaseAdmin
 </section>
 
 
-<!-- ════ REPERTOIRE ════ -->
-<section class="rep" id="muziek">
-  <div class="wrap">
-    <div class="rep-head r">
-      <div>
-        <span class="stag">Repertoire</span>
-        <h2 class="rep-h2">Muziek die iedereen raakt.</h2>
-      </div>
-      <p class="rep-sub">Van vrolijke feestnummers tot intieme levensliederen — altijd met haar eigen stem en uitstraling.</p>
-    </div>
-
-    <div class="rep-grid">
-
-      <!-- Card 1: Levenslied – rose -->
-      <div class="rcard r">
-        <div class="rcard-band rcard-band-1"></div>
-        <div class="rcard-body">
-          <div class="rcard-header">
-            <div class="rcard-icon rcard-icon-1">🎵</div>
-            <div>
-              <div class="rcard-cat rcard-cat-1">Levenslied</div>
-              <h3 class="rcard-title">Nederlandse klassiekers</h3>
-            </div>
-          </div>
-          <p class="rcard-desc">Van André Hazes tot Monique Smit. Tijdloze nummers gezongen met echte beleving, warme emotie en een stem die iets achterlaat bij het publiek.</p>
-          <div class="rcard-pills">
-            <span class="pill pill-1">André Hazes</span>
-            <span class="pill pill-1">Monique Smit</span>
-            <span class="pill pill-1">Nick & Simon</span>
-            <span class="pill pill-1">Gordon</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: Feestmuziek – blauw -->
-      <div class="rcard r" style="transition-delay:.1s;">
-        <div class="rcard-band rcard-band-2"></div>
-        <div class="rcard-body">
-          <div class="rcard-header">
-            <div class="rcard-icon rcard-icon-2">🎉</div>
-            <div>
-              <div class="rcard-cat rcard-cat-2">Feestmuziek</div>
-              <h3 class="rcard-title">Aanstekelijke feesthits</h3>
-            </div>
-          </div>
-          <p class="rcard-desc">Zaal vol energie, iedereen meezingend. Met haar aanstekelijke flair op het podium weet Lara elk feest van begin tot eind op te zwepen.</p>
-          <div class="rcard-pills">
-            <span class="pill pill-2">Feesttent</span>
-            <span class="pill pill-2">Carnaval</span>
-            <span class="pill pill-2">Party classics</span>
-            <span class="pill pill-2">Zomerfestivals</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Eigen werk – groen -->
-      <div class="rcard r" style="transition-delay:.2s;">
-        <div class="rcard-band rcard-band-3"></div>
-        <div class="rcard-body">
-          <div class="rcard-header">
-            <div class="rcard-icon rcard-icon-3">🎤</div>
-            <div>
-              <div class="rcard-cat rcard-cat-3">Eigen werk</div>
-              <h3 class="rcard-title">Originele nummers</h3>
-            </div>
-          </div>
-          <p class="rcard-desc">Met haar eerste single "Colors" (2022) bewees Lara dat ze meer is dan een coverartieste. Eigen nummers met een persoonlijk verhaal en een herkenbare stijl.</p>
-          <div class="rcard-pills">
-            <span class="pill pill-3">Colors (2022)</span>
-            <span class="pill pill-3">Singer-songwriter</span>
-            <span class="pill pill-3">Neo Music</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 
 <!-- ════ QUOTE ════ -->
