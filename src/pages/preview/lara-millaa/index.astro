@@ -51,7 +51,7 @@ const { data: lead } = await supabaseAdmin
       overflow-x: hidden;
     }
 
-    h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.2; }
     .nav-logo, .btn, .stag, .nav-link, .about-stat-l, .hcard-year, .hcard-tag, .quote-attr, .field label, .footer-link, .footer-copy { font-family: var(--font-ui); }
     .wrap { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
 
@@ -145,17 +145,17 @@ const { data: lead } = await supabaseAdmin
     }
     .hero-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--rose); }
 
-    .hero-h1 { line-height: 1; margin-bottom: 3.5rem; }
+    .hero-h1 { line-height: 1.15; margin-bottom: 3rem; }
     .h1-first {
       display: block; font-weight: 400; color: var(--text);
       font-size: clamp(4rem, 8.5vw, 9.5rem); letter-spacing: -0.03em;
-      text-transform: uppercase; line-height: 1;
+      text-transform: uppercase; line-height: 1.2;
       animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .3s both;
     }
     .h1-last {
       display: block; font-weight: 400; color: var(--rose);
       font-size: clamp(4rem, 8.5vw, 9.5rem); letter-spacing: -0.03em;
-      text-transform: uppercase; line-height: 1;
+      text-transform: uppercase; line-height: 1.2;
       animation: heroIn .9s cubic-bezier(.2,.8,.2,1) .5s both;
       font-style: italic; margin-top: -0.1em;
     }
@@ -433,7 +433,7 @@ const { data: lead } = await supabaseAdmin
         display: grid;
       }
       .hero-left { 
-        padding: 6rem 1.5rem 1rem; 
+        padding: 3rem 1.5rem 1rem; 
         order: 1; 
         justify-content: center;
         text-align: center;
@@ -464,7 +464,20 @@ const { data: lead } = await supabaseAdmin
       .gallery-img-stage { grid-column: 1; grid-row: 2; aspect-ratio: 1; }
       .gallery-img-purple { grid-column: 2; grid-row: 2; aspect-ratio: 1; }
       .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .nav-links { display: none; }
+      .nav-links { 
+        display: flex; 
+        gap: 1rem;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(15px);
+        padding: 0.75rem 1rem;
+        justify-content: center;
+        border-bottom: 1px solid var(--border);
+        z-index: 1000;
+      }
+      .nav-link { font-size: 0.65rem; color: var(--text); }
+      .nav-cta { display: none; }
     }
     @media (max-width: 600px) {
       .about-stats { grid-template-columns: 1fr 1fr; }
@@ -490,8 +503,8 @@ const { data: lead } = await supabaseAdmin
     }
     @media (hover: hover) { .cursor-dot { display: block; } }
 
-    .reveal-text { overflow: hidden; padding-bottom: 0.15em; margin-bottom: -0.15em; }
-    .reveal-text span { display: inline-block; transform: translateY(110%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .reveal-text { overflow: hidden; padding-bottom: 0.6rem; }
+    .reveal-text span { display: inline-block; transform: translateY(120%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .reveal-text.on span { transform: translateY(0); }
 
     .hero-right img { transition: transform 0.1s ease-out; }
