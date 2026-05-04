@@ -1,6 +1,6 @@
 ---
-import Tracker from '../../../components/Tracker.astro';
-import { supabaseAdmin } from '../../../lib/supabase';
+import Tracker from '../../components/Tracker.astro';
+import { supabaseAdmin } from '../../lib/supabase';
 
 const { data: lead } = await supabaseAdmin
   .from('leads')
