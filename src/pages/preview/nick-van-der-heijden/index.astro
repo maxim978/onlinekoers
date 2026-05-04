@@ -1,0 +1,927 @@
+---
+import Tracker from '../../../components/Tracker.astro';
+import { supabaseAdmin } from '../../../lib/supabase';
+
+const { data: lead } = await supabaseAdmin
+  .from('leads')
+  .select('id')
+  .eq('slug', 'nick-van-der-heijden')
+  .maybeSingle();
+---
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nick van der Heijden | Artiest</title>
+  <meta name="description" content="Nick van der Heijden — artiest en singer-songwriter. Eigentijdse muziek. Luister op Spotify." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:       #08080E;
+      --s1:       #0D0D1C;
+      --s2:       #141426;
+      --white:    #F5F4FF;
+      --muted:    rgba(245,244,255,0.42);
+      --faint:    rgba(245,244,255,0.10);
+      --accent:   #7C5CF4;
+      --accent-l: #A78BFA;
+      --glow:     rgba(124,92,244,0.22);
+      --green:    #1DB954;
+      --green-d:  #158a40;
+      --border:   rgba(245,244,255,0.08);
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
+
+    /* ══ REVEAL ══ */
+    .r {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1);
+    }
+    .r.on { opacity: 1; transform: none; }
+    .d1 { transition-delay: .1s; } .d2 { transition-delay: .22s; }
+    .d3 { transition-delay: .34s; } .d4 { transition-delay: .46s; }
+
+    /* ══ KEYFRAMES ══ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes pulse  { 0%,100% { opacity:.25; } 50% { opacity:.75; } }
+    @keyframes orb    { 0%,100% { transform: translate(0,0) scale(1); } 40% { transform: translate(24px,-18px) scale(1.05); } 70% { transform: translate(-14px,22px) scale(.97); } }
+    @keyframes marq   { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes wave   { 0%,100% { scaleY: 1; } 50% { scaleY: 0.3; } }
+    @keyframes barPulse {
+      0%,100% { transform: scaleY(0.3); }
+      50%     { transform: scaleY(1); }
+    }
+
+    /* ══ NAV ══ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 0;
+      transition: padding .4s, background .4s, border-color .4s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.s {
+      background: rgba(8,8,14,.75);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      padding: 1rem 0;
+      border-color: var(--border);
+    }
+    .nav-row { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem;
+      color: var(--white); text-decoration: none; letter-spacing: .01em;
+    }
+    .nav-logo span { color: var(--accent-l); }
+    .nav-links { display: flex; align-items: center; gap: 2.25rem; }
+    .nav-link {
+      font-size: .78rem; font-weight: 500; letter-spacing: .04em;
+      color: var(--muted); text-decoration: none; transition: color .2s;
+    }
+    .nav-link:hover { color: var(--white); }
+    .nav-cta {
+      font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--bg); background: var(--white);
+      padding: .62rem 1.4rem; border-radius: 2px;
+      text-decoration: none; transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--accent-l); }
+
+    /* mobile nav */
+    .nav-toggle {
+      display: none; background: none; border: 1px solid var(--border);
+      color: var(--white); cursor: pointer;
+      width: 40px; height: 40px; border-radius: 4px;
+      align-items: center; justify-content: center;
+      transition: border-color .2s;
+    }
+    .nav-toggle:hover { border-color: var(--accent-l); }
+    .nav-overlay {
+      position: fixed; inset: 0; background: var(--bg); z-index: 200;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2.5rem;
+      transform: translateX(100%);
+      transition: transform .5s cubic-bezier(.22,1,.36,1);
+    }
+    .nav-overlay.on { transform: translateX(0); }
+    .nav-overlay .nav-link {
+      font-size: 1.5rem; font-family: 'Syne', sans-serif; font-weight: 600; color: var(--muted);
+    }
+    .nav-overlay .nav-link:hover { color: var(--white); }
+    .nav-overlay-close {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      background: none; border: 1px solid var(--border); color: var(--white);
+      cursor: pointer; width: 44px; height: 44px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .nav-overlay-close:hover { background: var(--white); color: var(--bg); border-color: var(--white); }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh; min-height: 100svh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden;
+      padding: 9rem clamp(1.5rem, 5vw, 4rem) 6rem;
+    }
+
+    /* Background glow orbs */
+    .orb {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      animation: orb 14s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(124,92,244,.18) 0%, transparent 68%);
+      top: -180px; left: 50%; transform: translateX(-50%);
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(167,139,250,.1) 0%, transparent 70%);
+      bottom: 20px; left: -80px;
+      animation-delay: -5s;
+    }
+    .orb-3 {
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(124,92,244,.1) 0%, transparent 70%);
+      bottom: 60px; right: -60px;
+      animation-delay: -9s;
+    }
+
+    /* Grain texture overlay */
+    .hero-grain {
+      position: absolute; inset: 0; pointer-events: none; opacity: .048; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .65rem;
+      font-size: .63rem; font-weight: 600; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--accent-l); margin-bottom: 2.25rem;
+      animation: fadeUp .8s cubic-bezier(.22,1,.36,1) .2s both;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--accent-l);
+      animation: pulse 2.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      line-height: .9; letter-spacing: -.025em; margin-bottom: 1.75rem;
+    }
+    .hero-name-1 {
+      display: block;
+      font-size: clamp(5rem, 20vw, 17rem);
+      color: var(--white);
+      animation: fadeUp .95s cubic-bezier(.22,1,.36,1) .35s both;
+    }
+    .hero-name-2 {
+      display: block;
+      font-size: clamp(1.2rem, 4.2vw, 3.8rem);
+      font-weight: 400; letter-spacing: .24em; text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeUp .95s cubic-bezier(.22,1,.36,1) .52s both;
+    }
+
+    /* Animated waveform bars */
+    .hero-wave {
+      display: flex; align-items: center; justify-content: center; gap: 3px;
+      height: 32px; margin: 0 auto 1.75rem;
+      animation: fadeUp .8s cubic-bezier(.22,1,.36,1) .64s both;
+    }
+    .hero-wave-bar {
+      width: 3px; border-radius: 2px; background: var(--accent);
+      transform-origin: bottom;
+      animation: barPulse ease-in-out infinite;
+    }
+
+    .hero-sub {
+      font-size: .98rem; color: var(--muted); line-height: 1.75; max-width: 420px;
+      margin: 0 auto 2.75rem;
+      animation: fadeUp .8s cubic-bezier(.22,1,.36,1) .74s both;
+    }
+
+    .hero-btns {
+      display: flex; gap: .85rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .8s cubic-bezier(.22,1,.36,1) .88s both;
+    }
+
+    /* ══ BUTTONS ══ */
+    .btn {
+      display: inline-flex; align-items: center; gap: .55rem;
+      font-size: .73rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+      padding: .88rem 2rem; border-radius: 3px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all .25s;
+    }
+    .btn-spotify {
+      background: var(--green); color: #fff;
+    }
+    .btn-spotify:hover { background: #25d565; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(29,185,84,.3); }
+    .btn-ghost {
+      border: 1px solid var(--border); color: var(--white); background: transparent;
+    }
+    .btn-ghost:hover { border-color: rgba(245,244,255,.4); background: rgba(245,244,255,.04); }
+    .btn-accent {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 0 28px var(--glow);
+    }
+    .btn-accent:hover { background: var(--accent-l); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,92,244,.35); }
+
+    /* ══ MARQUEE ══ */
+    .marquee-wrap {
+      background: var(--white); overflow: hidden;
+      padding: 1.1rem 0;
+    }
+    .marquee-track {
+      display: flex; width: max-content;
+      animation: marq 26s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .68rem;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--bg); padding: 0 2.25rem;
+      display: flex; align-items: center; gap: 2.25rem;
+    }
+    .marquee-item::after {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+
+    /* ══ ABOUT ══ */
+    .about {
+      background: var(--s1); padding: 9rem 0;
+      position: relative; overflow: hidden;
+    }
+    .about-bg-name {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(10rem, 28vw, 24rem);
+      color: rgba(124,92,244,.035);
+      white-space: nowrap; pointer-events: none; user-select: none;
+      letter-spacing: -.05em; line-height: 1;
+    }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    .section-tag {
+      display: inline-flex; align-items: center; gap: .55rem;
+      font-size: .6rem; font-weight: 600; letter-spacing: .26em; text-transform: uppercase;
+      color: var(--accent-l); margin-bottom: 1.5rem;
+    }
+    .section-tag::before { content: '—'; opacity: .6; }
+
+    .section-h2 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.025em;
+      color: var(--white); margin-bottom: 2rem;
+    }
+    .section-h2 em { font-style: italic; font-weight: 400; color: var(--accent-l); }
+
+    .about-p { font-size: .95rem; line-height: 1.88; color: var(--muted); margin-bottom: 1.1rem; }
+
+    .about-links { display: flex; gap: .85rem; flex-wrap: wrap; margin-top: 2.25rem; }
+    .about-link {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .73rem; font-weight: 500; color: var(--muted);
+      border: 1px solid var(--border); padding: .55rem 1.1rem; border-radius: 3px;
+      text-decoration: none; transition: all .2s;
+    }
+    .about-link:hover { color: var(--white); border-color: rgba(167,139,250,.45); background: rgba(167,139,250,.06); }
+
+    /* Photo frame */
+    .about-photo-wrap { position: relative; }
+    .about-photo {
+      aspect-ratio: 3/4; border-radius: 6px; overflow: hidden;
+      background: var(--s2); position: relative;
+    }
+    .about-photo img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+      display: block;
+    }
+    .about-photo::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,13,28,.55) 0%, transparent 55%);
+    }
+    .about-photo-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--s2), #1C1C38);
+    }
+    .about-photo-fallback span {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 7rem;
+      color: rgba(124,92,244,.18); letter-spacing: -.05em; user-select: none;
+    }
+    /* Decorative offset border */
+    .about-photo-border {
+      position: absolute; inset: 0;
+      border: 1px solid rgba(124,92,244,.22); border-radius: 6px;
+      transform: translate(14px, 14px); pointer-events: none;
+    }
+    /* Accent corner mark */
+    .about-photo-accent {
+      position: absolute; bottom: -1px; left: -1px;
+      width: 48px; height: 3px; background: var(--accent);
+      border-radius: 0 0 0 6px;
+    }
+
+    /* ══ SPOTIFY / MUZIEK ══ */
+    .music-sec {
+      background: var(--bg); padding: 9rem 0;
+      position: relative; overflow: hidden;
+    }
+    /* Subtle background glow */
+    .music-sec::before {
+      content: '';
+      position: absolute; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,185,84,.06) 0%, transparent 70%);
+      top: 50%; left: 60%; transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .music-inner {
+      display: grid; grid-template-columns: 5fr 6fr; gap: 6.5rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    .spotify-tag { color: var(--green) !important; }
+    .spotify-tag::before { color: var(--green-d) !important; }
+
+    .music-p { font-size: .95rem; line-height: 1.88; color: var(--muted); margin-bottom: 2.25rem; }
+
+    /* Waveform decoration */
+    .music-wave {
+      display: flex; align-items: center; gap: 4px; margin-bottom: 1.75rem;
+    }
+    .mw-bar {
+      width: 3px; border-radius: 3px; background: var(--green); opacity: .5;
+    }
+
+    .spotify-embed {
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 0 60px rgba(29,185,84,.1), 0 24px 60px rgba(0,0,0,.45);
+    }
+
+    /* ══ LIVE ══ */
+    .live-sec {
+      background: var(--s1); padding: 9rem 0;
+    }
+    .live-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 2rem; margin-bottom: 4rem;
+    }
+    .live-h2 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(2.5rem, 5.5vw, 4.5rem); line-height: .95; letter-spacing: -.04em;
+      color: var(--white);
+    }
+    .live-h2 small {
+      display: block; font-size: .38em; font-weight: 400;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent-l); margin-bottom: .6rem;
+    }
+
+    .event-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .event-card {
+      background: var(--s2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 2.25rem 2rem; position: relative; overflow: hidden;
+      transition: border-color .3s, transform .35s;
+      cursor: default;
+    }
+    .event-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s cubic-bezier(.22,1,.36,1);
+    }
+    .event-card:hover { border-color: rgba(124,92,244,.4); transform: translateY(-5px); }
+    .event-card:hover::before { transform: scaleX(1); }
+    .event-date {
+      font-size: .58rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent-l); margin-bottom: 1.25rem;
+    }
+    .event-venue {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 1.35rem; color: var(--white); line-height: 1.2; margin-bottom: .4rem;
+    }
+    .event-location { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .event-badge {
+      display: inline-block;
+      font-size: .56rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--accent-l);
+      border: 1px solid rgba(124,92,244,.28); padding: .22rem .65rem; border-radius: 2px;
+      background: rgba(124,92,244,.08);
+    }
+
+    /* ══ CONTACT ══ */
+    .contact-sec { background: var(--bg); padding: 9rem 0; }
+    .contact-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 7rem; align-items: start; }
+    .contact-p { font-size: .95rem; line-height: 1.88; color: var(--muted); margin-bottom: 2.25rem; }
+    .c-info { display: flex; flex-direction: column; gap: .9rem; }
+    .c-item { display: flex; align-items: center; gap: .75rem; font-size: .87rem; color: var(--muted); }
+    .c-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent-l); flex-shrink: 0; }
+    .c-item a { color: inherit; text-decoration: none; transition: color .2s; }
+    .c-item a:hover { color: var(--accent-l); }
+
+    /* Form */
+    .form { display: flex; flex-direction: column; gap: 1rem; }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: .35rem; }
+    .field label {
+      font-size: .58rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input, .field select, .field textarea {
+      background: var(--s1); border: 1px solid var(--border); border-radius: 3px;
+      padding: .85rem 1rem; width: 100%;
+      font-family: 'Outfit', sans-serif; font-size: .9rem; color: var(--white);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow);
+    }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(245,244,255,.2); }
+    .field textarea { resize: vertical; min-height: 110px; }
+    .field select { appearance: none; cursor: pointer; }
+
+    .form-submit {
+      padding: 1rem; background: var(--accent); color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: .73rem; font-weight: 600;
+      letter-spacing: .09em; text-transform: uppercase;
+      border: none; border-radius: 3px; cursor: pointer;
+      box-shadow: 0 0 28px var(--glow);
+      transition: all .25s; margin-top: .5rem;
+    }
+    .form-submit:hover { background: var(--accent-l); transform: translateY(-2px); }
+    .form-submit:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .form-success {
+      display: none; text-align: center; padding: 3rem 2rem;
+      border: 1px solid rgba(124,92,244,.2); border-radius: 6px;
+      background: var(--s1);
+    }
+    .form-success.on { display: block; }
+    .form-success-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(124,92,244,.12); border: 1px solid rgba(124,92,244,.28);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem; color: var(--accent-l); font-size: 1.25rem;
+    }
+    .form-success h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.5rem;
+      color: var(--white); margin-bottom: .6rem;
+    }
+    .form-success p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+
+    /* ══ FOOTER ══ */
+    .footer {
+      background: var(--s1); border-top: 1px solid var(--border);
+      padding: 3.5rem 0 2.5rem;
+    }
+    .footer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem; border-bottom: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem;
+      color: var(--white); text-decoration: none;
+    }
+    .footer-logo span { color: var(--accent-l); }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .footer-link { font-size: .72rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-link:hover { color: var(--white); }
+    .footer-copy {
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      font-size: .68rem; color: rgba(245,244,255,.2);
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .about-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+      .about-photo-wrap { display: none; }
+      .music-inner { grid-template-columns: 1fr; gap: 3.5rem; }
+      .event-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .frow { grid-template-columns: 1fr; }
+      .live-head { flex-direction: column; gap: 1.5rem; }
+    }
+
+    @media (max-width: 640px) {
+      .hero-name-1 { font-size: clamp(3.8rem, 22vw, 8rem); }
+      .hero-name-2 { font-size: clamp(.9rem, 5vw, 1.8rem); letter-spacing: .14em; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav" id="mainNav">
+  <div class="wrap nav-row">
+    <a href="#" class="nav-logo">Nick <span>van der Heijden</span></a>
+    <div class="nav-links">
+      <a href="#over"     class="nav-link">Over Nick</a>
+      <a href="#muziek"   class="nav-link">Muziek</a>
+      <a href="#live"     class="nav-link">Live</a>
+      <a href="#contact"  class="nav-link">Contact</a>
+      <a href="#contact"  class="nav-cta">Boek Nick</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu openen">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile overlay -->
+<div class="nav-overlay" id="navOverlay">
+  <button class="nav-overlay-close" id="navClose" aria-label="Sluiten">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+  <a href="#over"    class="nav-link">Over Nick</a>
+  <a href="#muziek"  class="nav-link">Muziek</a>
+  <a href="#live"    class="nav-link">Live</a>
+  <a href="#contact" class="nav-link">Contact</a>
+  <a href="#contact" class="btn btn-accent" style="margin-top:.5rem">Boek Nick</a>
+</div>
+
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-grain"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Artiest &nbsp;·&nbsp; Singer-songwriter &nbsp;·&nbsp; Nederland
+    </div>
+
+    <h1 class="hero-name">
+      <span class="hero-name-1">NICK</span>
+      <span class="hero-name-2">VAN DER HEIJDEN</span>
+    </h1>
+
+    <!-- Animated waveform -->
+    <div class="hero-wave" id="heroWave" aria-hidden="true"></div>
+
+    <p class="hero-sub">
+      Eigentijdse muziek die raakt. Van studio tot podium brengt Nick van der Heijden zijn verhaal met elke noot die hij speelt.
+    </p>
+
+    <div class="hero-btns">
+      <a
+        href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz"
+        target="_blank" rel="noopener"
+        class="btn btn-spotify"
+        data-track="hero-spotify"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+        Luister op Spotify
+      </a>
+      <a href="#contact" class="btn btn-ghost" data-track="hero-book">Boek Nick &rarr;</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item">Muziek</div>
+    <div class="marquee-item">Singer-songwriter</div>
+    <div class="marquee-item">Live optredens</div>
+    <div class="marquee-item">Spotify artiest</div>
+    <div class="marquee-item">Nederland</div>
+    <div class="marquee-item">Eigentijds geluid</div>
+    <div class="marquee-item">Muziek</div>
+    <div class="marquee-item">Singer-songwriter</div>
+    <div class="marquee-item">Live optredens</div>
+    <div class="marquee-item">Spotify artiest</div>
+    <div class="marquee-item">Nederland</div>
+    <div class="marquee-item">Eigentijds geluid</div>
+  </div>
+</div>
+
+
+<!-- ══ OVER NICK ══ -->
+<section class="about" id="over">
+  <div class="about-bg-name" aria-hidden="true">NICK</div>
+  <div class="wrap">
+    <div class="about-grid">
+
+      <div class="r">
+        <div class="section-tag">Over Nick</div>
+        <h2 class="section-h2">Zijn verhaal,<br/><em>zijn muziek.</em></h2>
+        <p class="about-p">
+          Nick van der Heijden is een artiest die muziek niet zomaar maakt — hij beleeft het. Met een eigen geluid dat herkenbaar is en tegelijk verrassend, weet hij zijn luisteraars steeds opnieuw te raken.
+        </p>
+        <p class="about-p">
+          Zijn nummers zijn te vinden op Spotify, waar hij zijn muzikale verhaal direct met fans deelt. Van intieme studio-opnames tot energieke live optredens: Nick brengt altijd zijn eigen, onmiskenbare energie mee.
+        </p>
+        <p class="about-p">
+          Op zoek naar een artiest die meer doet dan zingen? Nick staat klaar voor jouw evenement, groot of klein, intiem of groots.
+        </p>
+        <div class="about-links">
+          <a href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz" target="_blank" rel="noopener" class="about-link" data-track="about-spotify">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Spotify
+          </a>
+        </div>
+      </div>
+
+      <div class="r d1 about-photo-wrap">
+        <div class="about-photo">
+          <img
+            src="/images/nick-van-der-heijden/artist.jpg"
+            alt="Nick van der Heijden"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="about-photo-fallback" style="display:none">
+            <span>N</span>
+          </div>
+        </div>
+        <div class="about-photo-border"></div>
+        <div class="about-photo-accent"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ MUZIEK / SPOTIFY ══ -->
+<section class="music-sec" id="muziek">
+  <div class="wrap">
+    <div class="music-inner">
+
+      <div class="r">
+        <div class="section-tag spotify-tag">Muziek</div>
+        <h2 class="section-h2" style="margin-bottom:1.25rem">Luister naar<br/><em style="color:var(--green)">Nicks muziek.</em></h2>
+
+        <!-- Static waveform decoration -->
+        <div class="music-wave" aria-hidden="true" id="musicWave"></div>
+
+        <p class="music-p">
+          Alle nummers van Nick staan rechtstreeks op Spotify. Ontdek zijn sound, laat je meevoeren en volg hem zodat je geen release mist.
+        </p>
+        <a
+          href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz"
+          target="_blank" rel="noopener"
+          class="btn btn-spotify"
+          data-track="music-spotify"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+          Volg op Spotify
+        </a>
+      </div>
+
+      <div class="r d1">
+        <div class="spotify-embed">
+          <iframe
+            src="https://open.spotify.com/embed/artist/1ANBnM9s6O4cvI2PllisJz?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0" allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ LIVE ══ -->
+<section class="live-sec" id="live">
+  <div class="wrap">
+    <div class="live-head r">
+      <div>
+        <h2 class="live-h2">
+          <small>Live optredens</small>
+          Op het<br/>podium.
+        </h2>
+      </div>
+      <a href="#contact" class="btn btn-accent" data-track="live-cta">Boek Nick</a>
+    </div>
+
+    <div class="event-grid">
+      <div class="event-card r">
+        <div class="event-date">2025 – 2026</div>
+        <div class="event-venue">Privéfeesten</div>
+        <div class="event-location">Door heel Nederland</div>
+        <span class="event-badge">Beschikbaar</span>
+      </div>
+      <div class="event-card r d1">
+        <div class="event-date">Op aanvraag</div>
+        <div class="event-venue">Bedrijfsevenementen</div>
+        <div class="event-location">Regio &amp; nationaal</div>
+        <span class="event-badge">Beschikbaar</span>
+      </div>
+      <div class="event-card r d2">
+        <div class="event-date">Op aanvraag</div>
+        <div class="event-venue">Festivals &amp; Podia</div>
+        <div class="event-location">Nederland &amp; België</div>
+        <span class="event-badge">Op aanvraag</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ CONTACT / BOOKING ══ -->
+<section class="contact-sec" id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+
+      <div class="r">
+        <div class="section-tag">Boek Nick</div>
+        <h2 class="section-h2">Neem contact<br/>op.</h2>
+        <p class="contact-p">
+          Wil je Nick boeken voor een optreden, samenwerking of een ander evenement? Vul het formulier in en we nemen zo snel mogelijk contact op.
+        </p>
+        <div class="c-info">
+          <div class="c-item"><div class="c-dot"></div><span>Nederland</span></div>
+          <div class="c-item"><div class="c-dot"></div><a href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz" target="_blank" rel="noopener">Nick op Spotify</a></div>
+          <div class="c-item"><div class="c-dot"></div><span>Privéfeest · Festival · Bedrijfsevenement · Live</span></div>
+        </div>
+      </div>
+
+      <div class="r d1">
+        <form class="form" id="bookForm">
+          <div class="frow">
+            <div class="field"><label>Uw naam</label><input type="text" placeholder="Jan de Vries" required /></div>
+            <div class="field"><label>Organisatie</label><input type="text" placeholder="Evenement / bedrijf" /></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>E-mailadres</label><input type="email" placeholder="jan@voorbeeld.nl" required /></div>
+            <div class="field"><label>Telefoonnummer</label><input type="tel" placeholder="06 12 34 56 78" /></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Datum evenement</label><input type="date" /></div>
+            <div class="field">
+              <label>Type optreden</label>
+              <select>
+                <option value="">Kies een type...</option>
+                <option>Privéfeest</option>
+                <option>Bedrijfsevenement</option>
+                <option>Bruiloft / Gala</option>
+                <option>Festival / Open podium</option>
+                <option>Anders</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Bericht</label><textarea placeholder="Vertel meer over uw evenement, locatie, publiek en wensen..."></textarea></div>
+          <button type="submit" class="form-submit" data-track="form-submit">Verstuur boekingsaanvraag &rarr;</button>
+        </form>
+        <div class="form-success" id="bookSuccess">
+          <div class="form-success-icon">✓</div>
+          <h3>Aanvraag ontvangen!</h3>
+          <p>We nemen zo snel mogelijk contact op over de beschikbaarheid van Nick voor jouw evenement.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-row">
+      <a href="#" class="footer-logo">Nick <span>van der Heijden</span></a>
+      <div class="footer-links">
+        <a href="#over"    class="footer-link">Over Nick</a>
+        <a href="#muziek"  class="footer-link">Muziek</a>
+        <a href="#live"    class="footer-link">Live</a>
+        <a href="#contact" class="footer-link">Contact</a>
+        <a href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz" target="_blank" rel="noopener" class="footer-link">Spotify</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <span>&copy; 2026 Nick van der Heijden</span>
+      <span>Exclusief voorstel door OnlineKoers</span>
+    </div>
+  </div>
+</footer>
+
+
+{lead?.id && <Tracker leadId={lead.id} />}
+
+
+<script>
+  /* ── Nav scroll ── */
+  const nav = document.getElementById('mainNav')!;
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('s', window.scrollY > 60);
+  }, { passive: true });
+
+  /* ── Mobile menu ── */
+  const navToggle  = document.getElementById('navToggle')!;
+  const navOverlay = document.getElementById('navOverlay')!;
+  const navClose   = document.getElementById('navClose')!;
+
+  function openMenu()  { navOverlay.classList.add('on');    document.body.style.overflow = 'hidden'; }
+  function closeMenu() { navOverlay.classList.remove('on'); document.body.style.overflow = ''; }
+
+  navToggle.addEventListener('click', openMenu);
+  navClose.addEventListener('click', closeMenu);
+  navOverlay.querySelectorAll('a').forEach(l => l.addEventListener('click', closeMenu));
+
+  /* ── Scroll reveal ── */
+  const io = new IntersectionObserver(
+    es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+  /* ── Hero animated waveform ── */
+  (function buildWave(containerId: string, count: number, minH: number, maxH: number, color: string) {
+    const wrap = document.getElementById(containerId);
+    if (!wrap) return;
+    const heights: number[] = [];
+    for (let i = 0; i < count; i++) {
+      // Symmetric bell-curve shape
+      const t = i / (count - 1);
+      const bell = Math.sin(t * Math.PI);
+      heights.push(minH + bell * (maxH - minH) + (Math.random() - .5) * 6);
+    }
+    heights.forEach((h, i) => {
+      const bar = document.createElement('div');
+      bar.style.cssText = `
+        width: 3px; height: ${h}px; border-radius: 3px;
+        background: ${color}; transform-origin: center;
+        animation: barPulse ${1.2 + Math.random() * 1.2}s ease-in-out ${(i / count) * 1.4}s infinite alternate;
+        flex-shrink: 0;
+      `;
+      wrap.appendChild(bar);
+    });
+  })('heroWave', 28, 4, 28, 'rgba(124,92,244,.55)');
+
+  /* ── Music section waveform (static) ── */
+  (function buildStaticWave(containerId: string, count: number) {
+    const wrap = document.getElementById(containerId);
+    if (!wrap) return;
+    const hts = [4,8,14,20,24,18,12,22,28,20,14,8,18,24,28,22,16,10,20,26,18,12,8,16,22,14,8,4];
+    hts.slice(0, count).forEach(h => {
+      const bar = document.createElement('div');
+      bar.className = 'mw-bar';
+      bar.style.cssText = `width: 3px; height: ${h}px; border-radius: 3px;`;
+      wrap.appendChild(bar);
+    });
+  })('musicWave', 28);
+
+  /* ── Booking form ── */
+  document.getElementById('bookForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = (e.currentTarget as HTMLFormElement).querySelector<HTMLButtonElement>('.form-submit')!;
+    btn.textContent = 'Versturen...';
+    btn.disabled = true;
+    await new Promise(r => setTimeout(r, 700));
+    (e.currentTarget as HTMLElement).style.display = 'none';
+    document.getElementById('bookSuccess')!.classList.add('on');
+  });
+</script>
+
+</body>
+</html>
