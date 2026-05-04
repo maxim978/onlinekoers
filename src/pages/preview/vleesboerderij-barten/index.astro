@@ -56,30 +56,33 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
 
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
         {[
-          { title: 'Riblappen', detail: '1 kilo', price: '14,00', tag: 'Populair' },
-          { title: 'Runderschnitzels', detail: '4 stuks', price: '9,00', tag: 'Mals' },
-          { title: '4 Verse worsten + 4 Slavinken', detail: 'Samen voordelig', price: '11,50', tag: 'BBQ Tip' },
-          { title: 'Boeren Kipdijen', detail: '1 kilo', price: '10,00', tag: 'Vers' },
-          { title: 'Varkensshoarma', detail: '1 kilo', price: '11,00', tag: 'Snel klaar' },
-          { title: 'Hamlappen', detail: '1 kilo', price: '9,50', tag: 'Zacht' },
-          { title: '1 Gekookte worst + 1 Leverworst', detail: 'Vleeswaren', price: '6,00', tag: 'Brood' },
-          { title: 'Vleeswaren Trio', detail: '3 soorten à 100g', price: '6,00', tag: 'Compleet' },
+          { title: 'Riblappen', detail: '1 kilo', price: '14,00', tag: 'Populair', img: '/images/barten/meat-carry.jpg' },
+          { title: 'Runderschnitzels', detail: '4 stuks', price: '9,00', tag: 'Mals', img: '/images/barten/hero-bbq.jpg' },
+          { title: '4 Verse worsten + 4 Slavinken', detail: 'Samen voordelig', price: '11,50', tag: 'BBQ Tip', img: '/images/barten/bbq.png' },
+          { title: 'Boeren Kipdijen', detail: '1 kilo', price: '10,00', tag: 'Vers', img: '/images/barten/meat-carry.jpg' },
+          { title: 'Varkensshoarma', detail: '1 kilo', price: '11,00', tag: 'Snel klaar', img: '/images/barten/hero-bbq.jpg' },
+          { title: 'Hamlappen', detail: '1 kilo', price: '9,50', tag: 'Zacht', img: '/images/barten/bbq.png' },
+          { title: '1 Gekookte worst + 1 Leverworst', detail: 'Vleeswaren', price: '6,00', tag: 'Brood', img: '/images/barten/meat-carry.jpg' },
+          { title: 'Vleeswaren Trio', detail: '3 soorten à 100g', price: '6,00', tag: 'Compleet', img: '/images/barten/hero-bbq.jpg' },
         ].map((item, i) => (
-          <div class="reveal" style={`transition-delay: ${i * 0.1}s; background: white; padding: 2.5rem; border-radius: 2rem; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; position: relative;`}
+          <div class="reveal" style={`transition-delay: ${i * 0.1}s; background: white; padding: 0; border-radius: 2rem; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; position: relative; overflow: hidden;`}
                onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 30px 60px rgba(0,0,0,0.08)'; this.style.borderColor='var(--accent)';"
                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='rgba(0,0,0,0.05)';">
-            <span style="position: absolute; top: 1.5rem; right: 1.5rem; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; background: #F4F2EC; color: var(--accent); padding: 0.4rem 0.8rem; border-radius: 99px;">{item.tag}</span>
-            <div>
-              <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem; line-height: 1.2;">{item.title}</h3>
-              <p style="font-size: 0.9rem; opacity: 0.5; margin-bottom: 2rem;">{item.detail}</p>
+            <div style="height: 180px; overflow: hidden; position: relative;">
+              <img src={item.img} alt={item.title} style="width: 100%; height: 100%; object-fit: cover;" />
+              <span style="position: absolute; top: 1rem; right: 1rem; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(255,255,255,0.9); color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 99px;">{item.tag}</span>
             </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05);">
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">
-                <span style="font-size: 0.9rem; font-weight: 400; vertical-align: top; margin-right: 0.2rem;">€</span>{item.price}
+            <div style="padding: 2rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 0.4rem; line-height: 1.2;">{item.title}</h3>
+              <p style="font-size: 0.85rem; opacity: 0.5; margin-bottom: 1.5rem;">{item.detail}</p>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1.25rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">
+                  <span style="font-size: 0.85rem; font-weight: 400; vertical-align: top; margin-right: 0.2rem;">€</span>{item.price}
+                </div>
+                <a href="/preview/vleesboerderij-barten/bestellen" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: background 0.3s;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </a>
               </div>
-              <a href="/preview/vleesboerderij-barten/bestellen" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: background 0.3s;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              </a>
             </div>
           </div>
         ))}
@@ -91,21 +94,33 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
     </div>
   </section>
 
-  <!-- USPs -->
-  <section style="padding: 8rem 0; background: white;">
+  <!-- HORIZONTAL TIMELINE USPs -->
+  <section style="padding: 10rem 0; background: white; overflow: hidden;">
     <div class="container">
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;">
-        {[
-          { num:'01', icon:'🌿', title:'Eigen Keten', desc:'Van het kalfje dat bij ons wordt geboren tot het stukje vlees op uw bord. Wij beheren het volledige proces.' },
-          { num:'02', icon:'🌾', title:'Vrije Uitloop', desc:'Onze runderen grazen het grootste deel van het jaar in de weidse polders van de Alblasserwaard.' },
-          { num:'03', icon:'⏱️', title:'3 Weken Rijping', desc:'Voor optimale smaak en malsheid laten wij ons rundvlees minimaal drie weken ambachtelijk rijpen.' },
-        ].map((u, i) => (
-          <div class="reveal" style={`transition-delay:${i*0.15}s`}>
-            <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);margin-bottom:.6rem;">{u.num}</div>
-            <h3 style="font-size:1.5rem;margin-bottom:.75rem;">{u.title}</h3>
-            <p style="color:var(--text-dark);opacity:.6;line-height:1.75;font-size:.95rem;">{u.desc}</p>
-          </div>
-        ))}
+      <div style="text-align: center; margin-bottom: 6rem;">
+        <span class="reveal" style="display: inline-block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 1.5rem; color: var(--accent);">Onze Werkwijze</span>
+        <h2 class="reveal" style="font-size: clamp(2.5rem, 4vw, 4rem); line-height: 1.1;">Van Kalf tot <span style="color: var(--accent);">Biefstuk</span></h2>
+      </div>
+
+      <div style="position: relative;">
+        <!-- Timeline line -->
+        <div style="position: absolute; top: 40px; left: 0; right: 0; height: 2px; background: rgba(27,42,30,0.08); z-index: 1;"></div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; position: relative; z-index: 2;">
+          {[
+            { num:'01', title:'Eigen Keten', desc:'Van het kalfje dat bij ons wordt geboren tot het stukje vlees op uw bord. Wij beheren het volledige proces.' },
+            { num:'02', title:'Vrije Uitloop', desc:'Onze runderen grazen het grootste deel van het jaar in de weidse polders van de Alblasserwaard.' },
+            { num:'03', title:'3 Weken Rijping', desc:'Voor optimale smaak en malsheid laten wij ons rundvlees minimaal drie weken ambachtelijk rijpen.' },
+          ].map((item, i) => (
+            <div class="reveal" style={`transition-delay: ${i * 0.2}s;`}>
+              <div style="width: 80px; height: 80px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 2.5rem; border: 8px solid white; box-shadow: 0 10px 30px rgba(27,42,30,0.1); margin-left: 0;">
+                {item.num}
+              </div>
+              <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--primary);">{item.title}</h3>
+              <p style="font-size: 1rem; opacity: 0.6; line-height: 1.7;">{item.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </section>
