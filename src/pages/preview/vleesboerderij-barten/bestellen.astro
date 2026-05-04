@@ -726,29 +726,6 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
     updatePricePreview(id);
   });
 
-  function getWeight(id: string) {
-    const select = document.querySelector(`.weight-select[data-id="${id}"]`) as HTMLSelectElement;
-    if (!select) return 1;
-    if (select.value === 'custom') {
-      const customInput = document.querySelector(`.custom-weight[data-id="${id}"]`) as HTMLInputElement;
-      return (parseFloat(customInput?.value) || 0) / 1000;
-    }
-    return parseFloat(select.value);
-  }
-
-  function updatePricePreview(id: string) {
-    const card = document.querySelector(`.product-card[data-id="${id}"]`) as HTMLElement;
-    if (!card) return;
-    
-    const basePrice = parseFloat(card.querySelector('.qty-btn.plus')?.dataset.price || '0');
-    const qty = parseInt(document.getElementById(`qty-${id}`)?.textContent || '0');
-    const weight = getWeight(id);
-    
-    const total = basePrice * weight * qty;
-    const totEl = document.getElementById(`total-${id}`);
-    if (totEl) totEl.textContent = total.toFixed(2).replace('.', ',');
-  }
-
   // Initial UI sync
   updateCartUI();
 
