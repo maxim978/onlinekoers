@@ -374,6 +374,41 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
   </div>
 </div>
 
+<!-- AANBIEDINGEN SECTION -->
+<section id="aanbiedingen" style="padding: 6rem 0; background: #F4F2EC; overflow: hidden;">
+  <div class="container">
+    <div style="margin-bottom: 3rem;">
+      <span class="reveal" style="display: inline-block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.5rem; color: var(--accent);">Direct profiteren</span>
+      <h2 class="reveal" style="font-size: 2.5rem; line-height: 1.1;">Huidige <span style="color: var(--accent);">Aanbiedingen</span></h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem;">
+      {[
+        { id: 'off-1', title: 'Riblappen', detail: '1 kilo', price: 14.00, tag: 'Populair' },
+        { id: 'off-2', title: 'Runderschnitzels', detail: '4 stuks', price: 9.00, tag: 'Mals' },
+        { id: 'off-3', title: '4 Verse worsten + 4 Slavinken', detail: 'Samen voordelig', price: 11.50, tag: 'BBQ Tip' },
+        { id: 'off-4', title: 'Boeren Kipdijen', detail: '1 kilo', price: 10.00, tag: 'Vers' },
+      ].map((item, i) => (
+        <div class="reveal" style={`transition-delay: ${i * 0.1}s; background: white; padding: 2rem; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; position: relative;`}>
+          <span style="position: absolute; top: 1rem; right: 1rem; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; background: #F4F2EC; color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 99px;">{item.tag}</span>
+          <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.4rem; line-height: 1.2;">{item.title}</h3>
+            <p style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 1.5rem;">{item.detail}</p>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">
+              <span style="font-size: 0.8rem; font-weight: 400; vertical-align: top; margin-right: 0.2rem;">€</span>{item.price.toFixed(2).replace('.',',')}
+            </div>
+            <button class="qty-btn plus" data-id={item.id} data-name={item.title} data-price={item.price} style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: transform 0.2s;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
 <!-- MAIN BODY -->
 <section class="bestel-body bestel-page">
   <div class="container">
@@ -510,13 +545,38 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 <script>
   let cart: { id: string; name: string; price: number; qty: number }[] = [];
 
+  // Load from localStorage
+  try {
+    const saved = localStorage.getItem('barten_cart');
+    if (saved) cart = JSON.parse(saved);
+  } catch(e) {}
+
   function fmt(n: number) {
     return '€' + n.toFixed(2).replace('.', ',');
   }
 
-  function updateCart() {
+  function saveCart() {
+    localStorage.setItem('barten_cart', JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  }
+
+  function updateCartUI() {
     const active = cart.filter(i => i.qty > 0);
     const total = active.reduce((s, i) => s + i.price * i.qty, 0);
+
+    // Update quantities in grid
+    document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
+    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('in-cart'));
+    
+    active.forEach(item => {
+      const qtyEl = document.getElementById(`qty-${item.id}`);
+      const totEl = document.getElementById(`total-${item.id}`);
+      const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
+      
+      if (qtyEl) qtyEl.textContent = String(item.qty);
+      if (totEl) totEl.textContent = (item.price * item.qty).toFixed(2).replace('.', ',');
+      if (card) card.classList.add('in-cart');
+    });
 
     // Panel items
     const cartEl = document.getElementById('cart-items')!;
@@ -547,30 +607,30 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
   }
 
   // Quantity buttons
-  document.querySelectorAll<HTMLButtonElement>('.qty-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.id!;
-      const name = btn.dataset.name!;
-      const price = parseFloat(btn.dataset.price!);
-      const isPlus = btn.classList.contains('plus');
+  document.addEventListener('click', e => {
+    const btn = (e.target as HTMLElement).closest('.qty-btn') as HTMLButtonElement;
+    if (!btn) return;
 
-      let item = cart.find(i => i.id === id);
-      if (!item && isPlus) { item = { id, name, price, qty: 0 }; cart.push(item); }
-      if (!item) return;
+    const id = btn.dataset.id!;
+    const name = btn.dataset.name!;
+    const price = parseFloat(btn.dataset.price!);
+    const isPlus = btn.classList.contains('plus');
 
-      item.qty = isPlus ? item.qty + 1 : Math.max(0, item.qty - 1);
+    let item = cart.find(i => i.id === id);
+    if (!item && isPlus) { 
+      item = { id, name, price, qty: 0 }; 
+      cart.push(item); 
+    }
+    if (!item) return;
 
-      const qtyEl = document.getElementById(`qty-${id}`)!;
-      const totEl = document.getElementById(`total-${id}`)!;
-      const card = document.querySelector(`.product-card[data-id="${id}"]`)!;
-
-      qtyEl.textContent = String(item.qty);
-      totEl.textContent = (item.price * item.qty).toFixed(2).replace('.', ',');
-      card.classList.toggle('in-cart', item.qty > 0);
-
-      updateCart();
-    });
+    item.qty = isPlus ? item.qty + 1 : Math.max(0, item.qty - 1);
+    
+    saveCart();
+    updateCartUI();
   });
+
+  // Initial UI sync
+  updateCartUI();
 
   // Category filter
   document.querySelectorAll<HTMLButtonElement>('.cat-btn').forEach(btn => {
@@ -600,6 +660,10 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
     await new Promise(r => setTimeout(r, 700));
     document.getElementById('modal-form-view')!.style.display = 'none';
     document.getElementById('modal-success')!.classList.add('show');
+    
+    // Clear cart on success
+    cart = [];
+    saveCart();
   });
 </script>
 
