@@ -23,7 +23,6 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
           </p>
           <div style="background: var(--secondary); padding: 3rem; border-radius: 2rem;">
             <div style="display: flex; gap: 1.5rem; align-items: center;">
-              <div style="font-size: 2.5rem;">🌾</div>
               <div>
                 <h4 style="margin-bottom: 0.5rem;">Puur Natuur</h4>
                 <p style="font-size: 0.9rem; opacity: 0.5;">Geen onnodige toevoegingen, alleen vers gras en natuurlijke voeding.</p>
@@ -47,15 +46,14 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
       
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-bottom: 8rem;">
         {[
-          { icon: '🐄', title: 'Geboorte', desc: 'Kalveren worden geboren op onze eigen boerderij.' },
-          { icon: '🌿', title: 'Opfok', desc: 'De runderen groeien op in de weide.' },
-          { icon: '🔪', title: 'Verwerking', desc: 'Vakkundige slacht en verwerking in eigen beheer.' },
-          { icon: '🧺', title: 'Winkel', desc: 'Directe verkoop in onze boerderijwinkel.' }
+          { title: 'Geboorte', desc: 'Kalveren worden geboren op onze eigen boerderij.' },
+          { title: 'Opfok', desc: 'De runderen groeien op in de weide.' },
+          { title: 'Verwerking', desc: 'Vakkundige slacht en verwerking in eigen beheer.' },
+          { title: 'Winkel', desc: 'Directe verkoop in onze boerderijwinkel.' }
         ].map((item, i) => (
-          <div class="reveal glass-card" style={`background: white; padding: 3rem 2rem; text-align: center; transition-delay: ${i * 0.1}s;`}>
-            <div style="font-size: 3rem; margin-bottom: 1.5rem;">{item.icon}</div>
-            <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">{item.title}</h4>
-            <p style="font-size: 0.85rem; opacity: 0.5; line-height: 1.6;">{item.desc}</p>
+          <div class="reveal glass-card" style={`background: white; padding: 3.5rem 2rem; text-align: center; transition-delay: ${i * 0.1}s;`}>
+            <h4 style="font-size: 1.4rem; margin-bottom: 1rem;">{item.title}</h4>
+            <p style="font-size: 0.95rem; opacity: 0.5; line-height: 1.6;">{item.desc}</p>
           </div>
         ))}
       </div>
