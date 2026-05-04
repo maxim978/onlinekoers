@@ -121,7 +121,9 @@ const { data: lead } = await supabaseAdmin
   <body>
     <nav id="navbar">
       <div class="container nav-inner">
-        <a href="/preview/vleesboerderij-barten" class="nav-logo serif">BARTEN<span>.</span></a>
+        <a href="/preview/vleesboerderij-barten" class="nav-logo">
+          <img src="/images/barten/logo.png" alt="Vleesboerderij Barten" style="height: 50px; width: auto;" />
+        </a>
         
         <div class="nav-links">
           <a href="/preview/vleesboerderij-barten" class={`nav-link ${activePage === 'home' ? 'active' : ''}`}>Home</a>
@@ -141,7 +143,7 @@ const { data: lead } = await supabaseAdmin
       <div class="container">
         <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem;">
           <div>
-            <h3 class="serif" style="font-size: 2rem; margin-bottom: 1.5rem;">Vleesboerderij Barten</h3>
+            <img src="/images/barten/logo.png" alt="Vleesboerderij Barten" style="height: 60px; width: auto; margin-bottom: 1.5rem; filter: brightness(0) invert(1);" />
             <p style="opacity: 0.6; line-height: 1.8; max-width: 400px;">
               Eerlijk vlees uit de Alblasserwaard, met liefde voor het dier en passie voor het vak. Direct van de boer naar uw bord.
             </p>
