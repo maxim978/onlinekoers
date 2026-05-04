@@ -391,10 +391,13 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
       ].map((item, i) => (
         <div class="reveal" style={`transition-delay: ${i * 0.1}s; background: white; padding: 2rem; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; position: relative;`}>
           <span style="position: absolute; top: 1rem; right: 1rem; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; background: #F4F2EC; color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 99px;">{item.tag}</span>
-          <div>
-            <h3 style="font-size: 1.2rem; margin-bottom: 0.4rem; line-height: 1.2;">{item.title}</h3>
-            <p style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 1.5rem;">{item.detail}</p>
-          </div>
+            <div style="aspect-ratio: 16/9; overflow: hidden; border-radius: 1rem; margin-bottom: 1.5rem;">
+              <img src={['/images/barten/hero-bbq.jpg', '/images/barten/meat-carry.jpg', '/images/barten/team.jpg', '/images/barten/cows.jpg'][i % 4]} alt={item.title} style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div>
+              <h3 style="font-size: 1.2rem; margin-bottom: 0.4rem; line-height: 1.2;">{item.title}</h3>
+              <p style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 1.5rem;">{item.detail}</p>
+            </div>
           <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
             <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">
               <span style="font-size: 0.8rem; font-weight: 400; vertical-align: top; margin-right: 0.2rem;">€</span>{item.price.toFixed(2).replace('.',',')}
@@ -416,11 +419,19 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 
       <!-- LEFT: products -->
       <div>
-        <!-- Category filter -->
-        <div class="cat-tabs">
-          {categories.map((cat, i) => (
-            <button class={`cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat}>{cat}</button>
-          ))}
+        <!-- Search & Category filter -->
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap;">
+          <div class="cat-tabs" style="margin-bottom: 0;">
+            {categories.map((cat, i) => (
+              <button class={`cat-btn ${i === 0 ? 'active' : ''}`} data-category={cat}>{cat}</button>
+            ))}
+          </div>
+          <div style="position: relative; flex: 1; min-width: 250px;">
+            <input type="text" id="product-search" placeholder="Zoek een product..." style="width: 100%; padding: 0.7rem 1.25rem 0.7rem 3rem; border-radius: 99px; border: 1.5px solid rgba(27,42,30,0.1); outline: none; font-size: 0.85rem;" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(27,42,30,0.3)" stroke-width="2.5" style="position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%);">
+              <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
         </div>
 
         <!-- Product grid -->
@@ -432,7 +443,20 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
               </div>
               <div class="p-body">
                 <div class="p-name">{p.name}</div>
-                <div class="p-unit">Per {p.unit} · €{p.price.toFixed(2)}</div>
+                <div class="p-unit">Basis prijs: €{p.price.toFixed(2)} / {p.unit}</div>
+                
+                <div style="margin-bottom: 1.25rem;">
+                  <label style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; display: block; margin-bottom: 0.4rem;">Kies gewicht</label>
+                  <select class="weight-select" data-id={p.id} style="width: 100%; padding: 0.5rem; border-radius: 0.6rem; border: 1px solid rgba(0,0,0,0.1); font-size: 0.8rem; outline: none; background: #fdfcfb;">
+                    <option value="0.1">100 gram</option>
+                    <option value="0.25">250 gram</option>
+                    <option value="0.5" selected>500 gram</option>
+                    <option value="1">1000 gram</option>
+                    <option value="custom">Eigen gewicht...</option>
+                  </select>
+                  <input type="number" class="custom-weight" data-id={p.id} placeholder="Aantal gram..." style="width: 100%; padding: 0.5rem; border-radius: 0.6rem; border: 1px solid rgba(0,0,0,0.1); font-size: 0.8rem; outline: none; margin-top: 0.5rem; display: none;" />
+                </div>
+
                 <div class="p-bottom">
                   <div class="p-price">€<span id={`total-${p.id}`}>0.00</span></div>
                   <div class="qty-wrap">
@@ -543,7 +567,7 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 </div>
 
 <script>
-  let cart: { id: string; name: string; price: number; qty: number }[] = [];
+  let cart: { cartId: string; id: string; name: string; price: number; qty: number; weightLabel: string }[] = [];
 
   // Load from localStorage
   try {
@@ -564,18 +588,21 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
     const active = cart.filter(i => i.qty > 0);
     const total = active.reduce((s, i) => s + i.price * i.qty, 0);
 
-    // Update quantities in grid
+    // Update quantities in grid (sum of all weights for this product ID)
     document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
     document.querySelectorAll('.product-card').forEach(c => c.classList.remove('in-cart'));
     
     active.forEach(item => {
       const qtyEl = document.getElementById(`qty-${item.id}`);
-      const totEl = document.getElementById(`total-${item.id}`);
       const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
-      
-      if (qtyEl) qtyEl.textContent = String(item.qty);
-      if (totEl) totEl.textContent = (item.price * item.qty).toFixed(2).replace('.', ',');
+      if (qtyEl) {
+        const current = parseInt(qtyEl.textContent || '0');
+        qtyEl.textContent = String(current + item.qty);
+      }
       if (card) card.classList.add('in-cart');
+      
+      // Update price preview for this card if it's the "current" one
+      updatePricePreview(item.id);
     });
 
     // Panel items
@@ -587,7 +614,10 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
         <div class="cart-item">
           <div class="ci-left">
             <div class="ci-qty">${i.qty}×</div>
-            <div class="ci-name">${i.name}</div>
+            <div>
+              <div class="ci-name">${i.name}</div>
+              <div style="font-size: 0.65rem; opacity: 0.5;">Gewicht: ${i.weightLabel}</div>
+            </div>
           </div>
           <div class="ci-price">${fmt(i.price * i.qty)}</div>
         </div>
@@ -601,7 +631,7 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 
     // Modal summary
     document.getElementById('modal-items')!.innerHTML = active.map(i =>
-      `<div class="mos-item"><span>${i.qty}× ${i.name}</span><span>${fmt(i.price * i.qty)}</span></div>`
+      `<div class="mos-item"><span>${i.qty}× ${i.name} (${i.weightLabel})</span><span>${fmt(i.price * i.qty)}</span></div>`
     ).join('');
     document.getElementById('modal-total')!.textContent = fmt(total);
   }
@@ -613,12 +643,17 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
 
     const id = btn.dataset.id!;
     const name = btn.dataset.name!;
-    const price = parseFloat(btn.dataset.price!);
+    const basePrice = parseFloat(btn.dataset.price!);
     const isPlus = btn.classList.contains('plus');
+    const weight = getWeight(id);
+    const weightLabel = getWeightLabel(id);
 
-    let item = cart.find(i => i.id === id);
+    // Use a unique ID for cart items based on product ID + weight to allow different weights of same product
+    const cartId = `${id}-${weight}`;
+
+    let item = cart.find(i => i.cartId === cartId);
     if (!item && isPlus) { 
-      item = { id, name, price, qty: 0 }; 
+      item = { cartId, id, name, price: basePrice * weight, qty: 0, weightLabel }; 
       cart.push(item); 
     }
     if (!item) return;
@@ -628,6 +663,91 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
     saveCart();
     updateCartUI();
   });
+
+  function getWeightLabel(id: string) {
+    const select = document.querySelector(`.weight-select[data-id="${id}"]`) as HTMLSelectElement;
+    if (!select) return '500g';
+    if (select.value === 'custom') {
+      const customInput = document.querySelector(`.custom-weight[data-id="${id}"]`) as HTMLInputElement;
+      return (customInput?.value || '0') + 'g';
+    }
+    return select.options[select.selectedIndex].text;
+  }
+
+  function getWeight(id: string) {
+    const select = document.querySelector(`.weight-select[data-id="${id}"]`) as HTMLSelectElement;
+    if (!select) return 0.5;
+    if (select.value === 'custom') {
+      const customInput = document.querySelector(`.custom-weight[data-id="${id}"]`) as HTMLInputElement;
+      return (parseFloat(customInput?.value) || 0) / 1000;
+    }
+    return parseFloat(select.value);
+  }
+
+  function updatePricePreview(id: string) {
+    const card = document.querySelector(`.product-card[data-id="${id}"]`) as HTMLElement;
+    if (!card) return;
+    
+    const basePrice = parseFloat(card.querySelector('.qty-btn.plus')?.dataset.price || '0');
+    const weight = getWeight(id);
+    
+    const totEl = document.getElementById(`total-${id}`);
+    if (totEl) totEl.textContent = (basePrice * weight).toFixed(2).replace('.', ',');
+  }
+
+
+  // Search function
+  const searchInput = document.getElementById('product-search') as HTMLInputElement;
+  searchInput?.addEventListener('input', () => {
+    const term = searchInput.value.toLowerCase();
+    document.querySelectorAll<HTMLElement>('.product-card').forEach(card => {
+      const name = card.querySelector('.p-name')?.textContent?.toLowerCase() || '';
+      const visible = name.includes(term);
+      card.style.display = visible ? '' : 'none';
+    });
+  });
+
+  // Weight dropdown logic
+  document.addEventListener('change', e => {
+    const select = (e.target as HTMLElement).closest('.weight-select') as HTMLSelectElement;
+    if (!select) return;
+    
+    const id = select.dataset.id!;
+    const customInput = document.querySelector(`.custom-weight[data-id="${id}"]`) as HTMLInputElement;
+    
+    if (select.value === 'custom') {
+      if (customInput) customInput.style.display = 'block';
+    } else {
+      if (customInput) customInput.style.display = 'none';
+    }
+    
+    // Reset quantity if weight changes to avoid confusion? Or just recalculate.
+    // For now, let's just make sure the price preview is correct.
+    updatePricePreview(id);
+  });
+
+  function getWeight(id: string) {
+    const select = document.querySelector(`.weight-select[data-id="${id}"]`) as HTMLSelectElement;
+    if (!select) return 1;
+    if (select.value === 'custom') {
+      const customInput = document.querySelector(`.custom-weight[data-id="${id}"]`) as HTMLInputElement;
+      return (parseFloat(customInput?.value) || 0) / 1000;
+    }
+    return parseFloat(select.value);
+  }
+
+  function updatePricePreview(id: string) {
+    const card = document.querySelector(`.product-card[data-id="${id}"]`) as HTMLElement;
+    if (!card) return;
+    
+    const basePrice = parseFloat(card.querySelector('.qty-btn.plus')?.dataset.price || '0');
+    const qty = parseInt(document.getElementById(`qty-${id}`)?.textContent || '0');
+    const weight = getWeight(id);
+    
+    const total = basePrice * weight * qty;
+    const totEl = document.getElementById(`total-${id}`);
+    if (totEl) totEl.textContent = total.toFixed(2).replace('.', ',');
+  }
 
   // Initial UI sync
   updateCartUI();

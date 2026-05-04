@@ -62,6 +62,20 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
                   <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(27,42,30,0.4);">Telefoonnummer</label>
                   <input type="tel" name="phone" required style="width: 100%; padding: 1rem 1.25rem; border-radius: 1rem; border: 1px solid rgba(27,42,30,0.1); outline: none;" />
                 </div>
+                <div style="display: grid; gap: 0.5rem;">
+                  <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(27,42,30,0.4);">Gewenste afhaaldatum</label>
+                  <select name="pickup_date" required style="width: 100%; padding: 1rem 1.25rem; border-radius: 1rem; border: 1px solid rgba(27,42,30,0.1); outline: none; background: white;">
+                    <option value="">Kies een datum...</option>
+                    <option>Vrijdag (eerstvolgende)</option>
+                    <option>Zaterdag (eerstvolgende)</option>
+                    <option>Vrijdag (week erna)</option>
+                    <option>Zaterdag (week erna)</option>
+                  </select>
+                </div>
+                <div style="display: grid; gap: 0.5rem;">
+                  <label style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(27,42,30,0.4);">Opmerkingen (optioneel)</label>
+                  <textarea name="comments" placeholder="Bijv. specifieke snijwensen..." style="width: 100%; padding: 1rem 1.25rem; border-radius: 1rem; border: 1px solid rgba(27,42,30,0.1); outline: none; min-height: 80px; resize: vertical;"></textarea>
+                </div>
                 <button type="submit" class="btn-premium btn-cta" style="width: 100%; justify-content: center; padding: 1.25rem;">Bestelling Plaatsen</button>
               </div>
             </form>
@@ -127,14 +141,14 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
               <div style="width: 80px; height: 80px; background: #f4f2ec; border-radius: 1rem; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🥩</div>
               <div>
                 <h4 style="font-size: 1.2rem; margin-bottom: 0.25rem;">${item.name}</h4>
-                <p style="font-size: 0.8rem; opacity: 0.4;">Per eenheid · ${fmt(item.price)}</p>
+                <p style="font-size: 0.8rem; opacity: 0.4;">Gewicht: ${item.weightLabel} · ${fmt(item.price)}</p>
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 2.5rem;">
               <div style="display: flex; align-items: center; gap: 1rem; background: #f4f2ec; padding: 0.5rem; border-radius: 1rem;">
-                <button class="qty-btn" onclick="window.updateQty('${item.id}', -1)" style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">−</button>
+                <button class="qty-btn" onclick="window.updateQty('${item.cartId}', -1)" style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">−</button>
                 <span style="font-weight: 800; min-width: 20px; text-align: center;">${item.qty}</span>
-                <button class="qty-btn" onclick="window.updateQty('${item.id}', 1)" style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">+</button>
+                <button class="qty-btn" onclick="window.updateQty('${item.cartId}', 1)" style="width: 32px; height: 32px; border-radius: 0.75rem; border: none; background: white; cursor: pointer; font-weight: 900;">+</button>
               </div>
               <div style="font-weight: 800; font-size: 1.1rem; width: 80px; text-align: right;">${fmt(item.price * item.qty)}</div>
             </div>
@@ -149,8 +163,8 @@ import LayoutBarten from '../../../layouts/LayoutBarten.astro';
       if (totalAmountEl) totalAmountEl.textContent = fmt(total);
     }
 
-    window.updateQty = (id, delta) => {
-      const item = cart.find(i => i.id === id);
+    window.updateQty = (cartId, delta) => {
+      const item = cart.find(i => i.cartId === cartId);
       if (item) {
         item.qty = Math.max(0, item.qty + delta);
         saveCart();
