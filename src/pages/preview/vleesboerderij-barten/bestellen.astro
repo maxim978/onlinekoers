@@ -613,9 +613,9 @@ const categories = ['Alle', 'Rund', 'Varken', 'Kip', 'BBQ'];
       cartEl.innerHTML = active.map(i => `
         <div class="cart-item">
           <div class="ci-left">
-            <div class="ci-qty" style="cursor: pointer;" onclick={`window.updateQty('${i.cartId}', -1)`}>${i.qty}×</div>
+            <div class="ci-qty" style="cursor: pointer;" onclick="window.updateQty('${i.cartId}', -1)">${i.qty}×</div>
             <div>
-              <div class="ci-name" style="cursor: pointer;" onclick={`window.updateQty('${i.cartId}', -1)`}>${i.name}</div>
+              <div class="ci-name" style="cursor: pointer;" onclick="window.updateQty('${i.cartId}', -1)">${i.name}</div>
               <div style="font-size: 0.65rem; opacity: 0.5;">Gewicht: ${i.weightLabel}</div>
             </div>
           </div>
