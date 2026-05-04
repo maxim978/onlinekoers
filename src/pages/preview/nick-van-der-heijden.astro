@@ -27,20 +27,20 @@ const { data: lead } = await supabaseAdmin
     html { scroll-behavior: smooth; }
 
     :root {
-      --bg:       #FCFCFD;
+      --bg:       #F8F8F7;
       --s1:       #FFFFFF;
-      --s2:       #F2F4F7;
-      --text:     #0F172A;
+      --s2:       #F0F0EF;
+      --text:     #0C0C0D;
       --white:    #FFFFFF;
-      --muted:    #64748B;
-      --faint:    rgba(15, 23, 42, 0.05);
-      --accent:   #7C5CF4;
-      --accent-l: #A78BFA;
-      --glow:     rgba(124, 92, 244, 0.15);
+      --muted:    #636366;
+      --faint:    rgba(12, 12, 13, 0.05);
+      --accent:   #0C0C0D;
+      --accent-l: #3A3A3C;
+      --glow:     rgba(12, 12, 13, 0.05);
       --green:    #1DB954;
       --green-d:  #158a40;
-      --border:   #E2E8F0;
-      --hero-bg:  #08080E;
+      --border:   #E5E5E5;
+      --hero-bg:  #F8F8F7;
     }
 
     body {
@@ -103,12 +103,12 @@ const { data: lead } = await supabaseAdmin
     }
     .nav-link:hover { color: var(--white); }
     .nav-cta {
-      font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
       color: #fff; background: var(--text);
-      padding: .62rem 1.4rem; border-radius: 2px;
-      text-decoration: none; transition: background .2s;
+      padding: .75rem 1.6rem; border-radius: 0;
+      text-decoration: none; transition: all .3s;
     }
-    .nav-cta:hover { background: var(--accent); }
+    .nav-cta:hover { background: #333; transform: translateY(-2px); }
 
     /* mobile nav */
     .nav-toggle {
@@ -151,16 +151,23 @@ const { data: lead } = await supabaseAdmin
     }
 
     .hero-img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center;
-      opacity: 0.85;
-      z-index: 1;
+      position: absolute; right: 0; bottom: 0;
+      width: 60%; height: 90%;
+      object-fit: contain; object-position: right bottom;
+      z-index: 2;
     }
     .hero::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(8,8,14,0.4) 0%, rgba(8,8,14,0.1) 60%, var(--bg) 100%);
-      z-index: 2;
+      background: linear-gradient(90deg, var(--bg) 30%, transparent 70%);
+      z-index: 3;
+    }
+    .hero-bg-text {
+      position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(10rem, 35vw, 40rem);
+      color: rgba(12, 12, 13, 0.03);
+      white-space: nowrap; z-index: 1; pointer-events: none;
+      letter-spacing: -.05em;
     }
 
     /* Background glow orbs */
@@ -209,19 +216,19 @@ const { data: lead } = await supabaseAdmin
 
     .hero-name {
       font-family: 'Syne', sans-serif; font-weight: 800;
-      line-height: .9; letter-spacing: -.025em; margin-bottom: 1.75rem;
+      line-height: .85; letter-spacing: -.04em; margin-bottom: 2rem;
     }
     .hero-name-1 {
       display: block;
-      font-size: clamp(5rem, 20vw, 17rem);
-      color: var(--white);
+      font-size: clamp(4rem, 15vw, 12rem);
+      color: var(--text);
       animation: fadeUp .95s cubic-bezier(.22,1,.36,1) .35s both;
     }
     .hero-name-2 {
       display: block;
-      font-size: clamp(1.2rem, 4.2vw, 3.8rem);
-      font-weight: 400; letter-spacing: .24em; text-transform: uppercase;
-      color: var(--muted);
+      font-size: clamp(1rem, 3.5vw, 3rem);
+      font-weight: 400; letter-spacing: .4em; text-transform: uppercase;
+      color: var(--muted); margin-top: 1rem;
       animation: fadeUp .95s cubic-bezier(.22,1,.36,1) .52s both;
     }
 
@@ -251,35 +258,34 @@ const { data: lead } = await supabaseAdmin
     /* ══ BUTTONS ══ */
     .btn {
       display: inline-flex; align-items: center; gap: .55rem;
-      font-size: .73rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-      padding: .88rem 2rem; border-radius: 3px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: 1rem 2.2rem; border-radius: 0;
       text-decoration: none; border: none; cursor: pointer;
-      transition: all .25s;
+      transition: all .3s cubic-bezier(.22,1,.36,1);
     }
     .btn-spotify {
       background: var(--green); color: #fff;
     }
-    .btn-spotify:hover { background: #25d565; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(29,185,84,0.3); }
+    .btn-spotify:hover { background: #1ed760; transform: translateY(-3px); box-shadow: 0 12px 30px rgba(29,185,84,0.25); }
     .btn-ghost {
-      border: 1px solid rgba(255,255,255,0.25); color: #fff; background: transparent;
+      border: 1px solid var(--border); color: var(--text); background: transparent;
     }
-    .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+    .btn-ghost:hover { border-color: var(--text); background: var(--text); color: #fff; }
     .btn-accent {
-      background: var(--accent); color: #fff;
-      box-shadow: 0 0 28px rgba(124,92,244,0.3);
+      background: var(--text); color: #fff;
     }
-    .btn-accent:hover { background: var(--accent-l); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,92,244,0.35); }
+    .btn-accent:hover { background: #333; transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
 
     /* ══ VIDEOS ══ */
-    .video-sec { background: var(--bg); padding: 9rem 0; }
-    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+    .video-sec { background: var(--s1); padding: 10rem 0; border-top: 1px solid var(--border); }
+    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 5rem; }
     .video-card {
-      aspect-ratio: 16/9; border-radius: 8px; overflow: hidden;
+      aspect-ratio: 16/9; border-radius: 0; overflow: hidden;
       background: var(--s2); border: 1px solid var(--border);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.04);
-      transition: transform .3s;
+      transition: all .4s cubic-bezier(.22,1,.36,1);
+      position: relative;
     }
-    .video-card:hover { transform: translateY(-8px); }
+    .video-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.08); z-index: 10; }
     .video-card iframe { width: 100%; height: 100%; border: none; }
 
     /* ══ MARQUEE ══ */
@@ -345,41 +351,35 @@ const { data: lead } = await supabaseAdmin
       border: 1px solid var(--border); padding: .55rem 1.1rem; border-radius: 3px;
       text-decoration: none; transition: all .2s;
     }
-    .about-link:hover { color: var(--white); border-color: rgba(167,139,250,.45); background: rgba(167,139,250,.06); }
+    .about-link:hover { color: var(--text); border-color: var(--text); background: rgba(0,0,0,0.03); }
 
     /* Photo frame */
     .about-photo-wrap { position: relative; }
     .about-photo {
-      aspect-ratio: 3/4; border-radius: 6px; overflow: hidden;
+      aspect-ratio: 4/5; border-radius: 0; overflow: hidden;
       background: var(--s2); position: relative;
     }
     .about-photo img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top center;
-      display: block;
+      width: 100%; height: 100%; object-fit: cover; object-position: center;
+      display: block; filter: grayscale(1); transition: filter .5s;
     }
+    .about-photo:hover img { filter: grayscale(0); }
     .about-photo::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(13,13,28,.55) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(0,0,0,.2) 0%, transparent 50%);
     }
     .about-photo-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--s2), #1C1C38);
+      background: var(--s2);
     }
     .about-photo-fallback span {
       font-family: 'Syne', sans-serif; font-weight: 800; font-size: 7rem;
-      color: rgba(124,92,244,.18); letter-spacing: -.05em; user-select: none;
+      color: rgba(0,0,0,.05); letter-spacing: -.05em; user-select: none;
     }
-    /* Decorative offset border */
-    .about-photo-border {
-      position: absolute; inset: 0;
-      border: 1px solid rgba(124,92,244,.22); border-radius: 6px;
-      transform: translate(14px, 14px); pointer-events: none;
-    }
-    /* Accent corner mark */
+    /* Decorative line */
     .about-photo-accent {
-      position: absolute; bottom: -1px; left: -1px;
-      width: 48px; height: 3px; background: var(--accent);
-      border-radius: 0 0 0 6px;
+      position: absolute; bottom: -2rem; left: 0;
+      width: 60px; height: 1px; background: var(--text);
     }
 
     /* ══ SPOTIFY / MUZIEK ══ */
@@ -439,34 +439,26 @@ const { data: lead } = await supabaseAdmin
 
     .event-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
     .event-card {
-      background: var(--s2); border: 1px solid var(--border); border-radius: 6px;
-      padding: 2.25rem 2rem; position: relative; overflow: hidden;
-      transition: border-color .3s, transform .35s;
+      background: var(--white); border: 1px solid var(--border); border-radius: 0;
+      padding: 3rem 2.5rem; position: relative; overflow: hidden;
+      transition: all .3s cubic-bezier(.22,1,.36,1);
       cursor: default;
     }
-    .event-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(to right, var(--accent), transparent);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform .4s cubic-bezier(.22,1,.36,1);
-    }
-    .event-card:hover { border-color: rgba(124,92,244,.4); transform: translateY(-5px); }
-    .event-card:hover::before { transform: scaleX(1); }
+    .event-card:hover { border-color: var(--text); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
     .event-date {
-      font-size: .58rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--accent-l); margin-bottom: 1.25rem;
+      font-size: .6rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.5rem;
     }
     .event-venue {
       font-family: 'Syne', sans-serif; font-weight: 700;
-      font-size: 1.35rem; color: var(--text); line-height: 1.2; margin-bottom: .4rem;
+      font-size: 1.5rem; color: var(--text); line-height: 1.1; margin-bottom: .5rem;
     }
-    .event-location { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .event-location { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; }
     .event-badge {
       display: inline-block;
-      font-size: .56rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--accent-l);
-      border: 1px solid rgba(124,92,244,.28); padding: .22rem .65rem; border-radius: 2px;
-      background: rgba(124,92,244,.08);
+      font-size: .55rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--text);
+      border: 1px solid var(--text); padding: .3rem .8rem; border-radius: 0;
     }
 
     /* ══ CONTACT ══ */
@@ -609,12 +601,12 @@ const { data: lead } = await supabaseAdmin
 
 <!-- ══ HERO ══ -->
 <section class="hero" id="hero">
+  <div class="hero-bg-text">NICK</div>
   <img src="/images/nick-van-der-heijden/artist.jpg" class="hero-img" alt="Nick van der Heijden" />
 
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <span class="eyebrow-dot"></span>
-      Artiest &nbsp;·&nbsp; Singer-songwriter &nbsp;·&nbsp; Nederland
+  <div class="hero-content wrap" style="width:100%; text-align:left; align-items:flex-start;">
+    <div class="hero-eyebrow" style="color:var(--text); letter-spacing:.4em;">
+      Singer-songwriter &nbsp;·&nbsp; Nederland
     </div>
 
     <h1 class="hero-name">
@@ -622,23 +614,22 @@ const { data: lead } = await supabaseAdmin
       <span class="hero-name-2">VAN DER HEIJDEN</span>
     </h1>
 
-    <!-- Animated waveform -->
-    <div class="hero-wave" id="heroWave" aria-hidden="true"></div>
+    <div class="hero-wave" id="heroWave" aria-hidden="true" style="margin:0; margin-bottom:2rem; justify-content:flex-start;"></div>
 
-    <p class="hero-sub">
-      Eigentijdse muziek die raakt. Van studio tot podium brengt Nick van der Heijden zijn verhaal met elke noot die hij speelt.
+    <p class="hero-sub" style="margin:0; margin-bottom:3rem; max-width:480px;">
+      Eigentijdse muziek die raakt. Nick van der Heijden brengt een uniek geluid naar de Nederlandse podia.
     </p>
 
-    <div class="hero-btns">
+    <div class="hero-btns" style="justify-content:flex-start;">
+      <a href="#contact" class="btn btn-accent" data-track="hero-book">Boekingen &rarr;</a>
       <a
         href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz"
         target="_blank" rel="noopener"
-        class="btn btn-spotify"
+        class="btn btn-ghost"
         data-track="hero-spotify"
       >
-        Luister op Spotify
+        Spotify
       </a>
-      <a href="#contact" class="btn btn-ghost" data-track="hero-book">Boek Nick &rarr;</a>
     </div>
   </div>
 </section>
@@ -665,29 +656,20 @@ const { data: lead } = await supabaseAdmin
 
 <!-- ══ OVER NICK ══ -->
 <section class="about" id="over">
-  <div class="about-bg-name" aria-hidden="true">NICK</div>
   <div class="wrap">
     <div class="about-grid">
 
       <div class="r">
-        <div class="section-tag">Over Nick</div>
-        <h2 class="section-h2">Zijn verhaal,<br/><em>zijn muziek.</em></h2>
+        <div class="section-tag" style="color:var(--text)">Biografie</div>
+        <h2 class="section-h2">Zijn verhaal, <em>zijn muziek.</em></h2>
         <p class="about-p">
           Nick van der Heijden is een artiest die muziek niet zomaar maakt — hij beleeft het. Met een eigen geluid dat herkenbaar is en tegelijk verrassend, weet hij zijn luisteraars steeds opnieuw te raken.
         </p>
         <p class="about-p">
           Zijn nummers zijn te vinden op Spotify, waar hij zijn muzikale verhaal direct met fans deelt. Van intieme studio-opnames tot energieke live optredens: Nick brengt altijd zijn eigen, onmiskenbare energie mee.
         </p>
-        <p class="about-p">
-          Op zoek naar een artiest die meer doet dan zingen? Nick staat klaar voor jouw evenement, groot of klein, intiem of groots.
-        </p>
         <div class="about-links">
-          <a href="https://open.spotify.com/artist/1ANBnM9s6O4cvI2PllisJz" target="_blank" rel="noopener" class="about-link" data-track="about-spotify">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-            </svg>
-            Spotify
-          </a>
+          <a href="#contact" class="about-link" data-track="about-book">Aanvragen</a>
         </div>
       </div>
 
@@ -696,13 +678,8 @@ const { data: lead } = await supabaseAdmin
           <img
             src="/images/nick-van-der-heijden/artist.jpg"
             alt="Nick van der Heijden"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
           />
-          <div class="about-photo-fallback" style="display:none">
-            <span>N</span>
-          </div>
         </div>
-        <div class="about-photo-border"></div>
         <div class="about-photo-accent"></div>
       </div>
 
