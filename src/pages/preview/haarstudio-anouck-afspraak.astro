@@ -214,20 +214,48 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
       color: var(--muted); padding: .3rem 0; margin-bottom: .25rem;
     }
     .cal-day {
-      aspect-ratio: 1; border-radius: 2px;
-      display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 1; border-radius: 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       font-size: .82rem; font-weight: 500; cursor: pointer;
       border: 1.5px solid transparent;
       transition: all .15s; user-select: none;
+      gap: 2px; position: relative;
     }
-    .cal-day.empty     { cursor: default; }
-    .cal-day.past      { color: rgba(14,12,12,.2); cursor: not-allowed; }
-    .cal-day.closed    { color: rgba(14,12,12,.2); cursor: not-allowed; }
-    .cal-day.available { color: var(--black); }
-    .cal-day.available:hover { border-color: var(--rose); color: var(--rose); background: #fdf0ef; }
-    .cal-day.today     { font-weight: 700; }
-    .cal-day.today.available { border-color: var(--border); }
-    .cal-day.selected  { background: var(--rose); color: #fff !important; border-color: var(--rose) !important; font-weight: 700; }
+    .cal-day.empty  { cursor: default; }
+    .cal-day.past   { color: rgba(14,12,12,.2); cursor: not-allowed; }
+    .cal-day.closed { color: rgba(14,12,12,.2); cursor: not-allowed; }
+
+    /* Availability dot under day number */
+    .cal-day .avail-dot {
+      width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* Full — rood */
+    .cal-day.avail-full { background: #fef0f0; border-color: #fbc8c8; }
+    .cal-day.avail-full .avail-dot { background: #e03131; }
+    .cal-day.avail-full:hover { background: #fde0e0; border-color: #e03131; }
+
+    /* Weinig beschikbaar — oranje */
+    .cal-day.avail-few  { background: #fff7ed; border-color: #fcd19c; }
+    .cal-day.avail-few .avail-dot { background: #e67700; }
+    .cal-day.avail-few:hover  { background: #feefd8; border-color: #e67700; }
+
+    /* Ruim beschikbaar — groen */
+    .cal-day.avail-many { background: #f0fdf4; border-color: #a3d9b1; }
+    .cal-day.avail-many .avail-dot { background: #2f9e44; }
+    .cal-day.avail-many:hover { background: #dcfce8; border-color: #2f9e44; }
+
+    .cal-day.today { font-weight: 700; outline: 2px solid var(--black); outline-offset: -3px; }
+
+    /* Geselecteerd — overschrijft alles */
+    .cal-day.selected {
+      background: var(--rose) !important;
+      border-color: var(--rose-d) !important;
+      color: #fff !important;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(196,130,127,.4);
+    }
+    .cal-day.selected .avail-dot { background: rgba(255,255,255,.55) !important; }
 
     /* Time slots */
     .slots-panel { padding: 1.5rem; }
@@ -248,18 +276,32 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
       display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem;
     }
     .slot-btn {
-      padding: .65rem .5rem; border-radius: 2px;
-      border: 1.5px solid var(--border);
+      padding: .65rem .5rem; border-radius: 4px;
+      border: 1.5px solid transparent;
       font-size: .82rem; font-weight: 600; text-align: center;
-      cursor: pointer; transition: all .15s; background: var(--white);
-      color: var(--black);
+      cursor: pointer; transition: all .15s;
     }
+    /* Vol — rood */
     .slot-btn.taken {
-      background: var(--off); color: rgba(14,12,12,.3);
-      cursor: not-allowed; border-color: var(--border); text-decoration: line-through;
+      background: #fef0f0; border-color: #fbc8c8;
+      color: #c92a2a; cursor: not-allowed;
     }
-    .slot-btn.available:hover { border-color: var(--rose); color: var(--rose); background: #fdf0ef; }
-    .slot-btn.selected { background: var(--rose); border-color: var(--rose); color: #fff; }
+    /* Beschikbaar — groen */
+    .slot-btn.available {
+      background: #f0fdf4; border-color: #a3d9b1; color: #2f7a3a;
+    }
+    .slot-btn.available:hover {
+      background: #dcfce8; border-color: #2f9e44;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(47,158,68,.18);
+    }
+    /* Geselecteerd — rose brand */
+    .slot-btn.selected {
+      background: var(--rose) !important; border-color: var(--rose-d) !important;
+      color: #fff !important; font-weight: 700;
+      box-shadow: 0 2px 10px rgba(196,130,127,.4);
+      transform: translateY(-1px);
+    }
 
     /* ── STEP 3: FORM ───────────────────────── */
     .summary-bar {
@@ -776,19 +818,49 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
 
   // ── Step 2: Calendar ─────────────────────────────────────────────
   function isWorkDay(d: Date) {
-    const day = d.getDay(); // 0=Sun
+    const day = d.getDay();
     return day >= 2 && day <= 6; // Tue–Sat
   }
-
   function isPast(d: Date) {
-    const today = new Date(); today.setHours(0,0,0,0);
-    return d < today;
+    const t = new Date(); t.setHours(0,0,0,0);
+    return d < t;
+  }
+  function isTooFarAhead(d: Date) {
+    const lim = new Date(); lim.setDate(lim.getDate() + 60);
+    return d > lim;
   }
 
-  function isTooFarAhead(d: Date) {
-    const limit = new Date();
-    limit.setDate(limit.getDate() + 60);
-    return d > limit;
+  // Shared slot computation — returns array of {time, blocked}
+  function computeSlots(date: Date, dur: number) {
+    const start = 9 * 60;
+    const end   = 17 * 60 - dur;
+    const now   = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const slots: { time: string; blocked: boolean }[] = [];
+
+    for (let m = start; m <= end; m += 30) {
+      const h   = Math.floor(m / 60);
+      const min = m % 60;
+      const time = `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
+
+      // Deterministic occupancy simulation (~33% taken)
+      const seed = date.getDate() * 3 + date.getMonth() * 7 + h * 11 + Math.floor(min / 30) * 5;
+      const taken = seed % 9 < 3;
+      const past  = isToday && (h < now.getHours() || (h === now.getHours() && min <= now.getMinutes()));
+
+      slots.push({ time, blocked: taken || past });
+    }
+    return slots;
+  }
+
+  // Returns 'full' | 'few' | 'many' based on available slot count
+  function dayAvailability(date: Date): 'unavailable' | 'full' | 'few' | 'many' {
+    if (!isWorkDay(date) || isPast(date) || isTooFarAhead(date)) return 'unavailable';
+    const dur = selectedService!.dur;
+    const free = computeSlots(date, dur).filter(s => !s.blocked).length;
+    if (free === 0) return 'full';
+    if (free <= 3)  return 'few';
+    return 'many';
   }
 
   function renderCalendar() {
@@ -808,43 +880,47 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
 
     const today = new Date(); today.setHours(0,0,0,0);
     const firstOfMonth = new Date(calYear, calMonth, 1);
-    // JS: 0=Sun, we want Mon=0
-    let startOffset = (firstOfMonth.getDay() + 6) % 7;
-    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const startOffset  = (firstOfMonth.getDay() + 6) % 7; // Mon=0
+    const daysInMonth  = new Date(calYear, calMonth + 1, 0).getDate();
 
     for (let i = 0; i < startOffset; i++) {
-      const el = document.createElement('div');
-      el.className = 'cal-day empty';
+      const el = document.createElement('div'); el.className = 'cal-day empty';
       grid.appendChild(el);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(calYear, calMonth, day);
-      const el   = document.createElement('div');
-      const isT  = date.toDateString() === today.toDateString();
+      const date  = new Date(calYear, calMonth, day);
+      const isT   = date.toDateString() === today.toDateString();
+      const avail = dayAvailability(date);
+
+      const el = document.createElement('div');
+
+      // Day number span
+      const numSpan = document.createElement('span');
+      numSpan.textContent = String(day);
+      el.appendChild(numSpan);
 
       let cls = 'cal-day';
-      const past     = isPast(date) && !isT;
-      const work     = isWorkDay(date);
-      const tooFar   = isTooFarAhead(date);
-      const avail    = work && !past && !tooFar;
-
       if (isT) cls += ' today';
-      if (!avail) cls += past ? ' past' : tooFar ? ' closed' : ' closed';
-      else cls += ' available';
 
-      if (selectedDate && date.toDateString() === selectedDate.toDateString()) cls += ' selected';
+      if (avail === 'unavailable') {
+        cls += isPast(date) ? ' past' : ' closed';
+      } else {
+        cls += ` avail-${avail}`;
+        // Availability dot
+        const dot = document.createElement('span');
+        dot.className = 'avail-dot';
+        el.appendChild(dot);
 
-      el.className = cls;
-      el.textContent = String(day);
-
-      if (avail) {
         el.addEventListener('click', () => selectDate(date));
       }
+
+      if (selectedDate && date.toDateString() === selectedDate.toDateString()) cls += ' selected';
+      el.className = cls;
       grid.appendChild(el);
     }
 
-    // Prev button: disable if showing current month
+    // Disable prev button when already at current month
     const prevBtn = document.getElementById('calPrev') as HTMLButtonElement;
     const now = new Date();
     prevBtn.disabled = calYear === now.getFullYear() && calMonth === now.getMonth();
@@ -873,50 +949,29 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
     placeholder.style.display = 'none';
     content.style.display = 'block';
 
-    const dow = (selectedDate.getDay() + 6) % 7; // Mon=0
+    const dow = (selectedDate.getDay() + 6) % 7;
     dateLabel.textContent = `${NL_DAYS_FULL[dow]} ${selectedDate.getDate()} ${NL_MONTHS[selectedDate.getMonth()]}`;
-
-    const dur   = selectedService!.dur;
-    const start = 9 * 60;
-    const end   = 17 * 60 - dur;
-    const now   = new Date();
-    const isToday = selectedDate.toDateString() === now.toDateString();
 
     grid.innerHTML = '';
 
-    for (let m = start; m <= end; m += 30) {
-      const h   = Math.floor(m / 60);
-      const min = m % 60;
-      const timeStr = `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
-
-      // Deterministic "taken" simulation
-      const seed = selectedDate.getDate() * 3 + selectedDate.getMonth() * 7 + h * 11 + Math.floor(min / 30) * 5;
-      const taken = seed % 9 < 3; // ~33% taken
-
-      // Past time today?
-      const pastTime = isToday && (h < now.getHours() || (h === now.getHours() && min <= now.getMinutes()));
-
+    computeSlots(selectedDate, selectedService!.dur).forEach(({ time, blocked }) => {
       const btn = document.createElement('button');
-      btn.className = 'slot-btn ' + (taken || pastTime ? 'taken' : 'available');
-      btn.textContent = timeStr;
-      btn.disabled = taken || pastTime;
+      btn.className = 'slot-btn ' + (blocked ? 'taken' : 'available');
+      btn.textContent = time;
+      btn.disabled = blocked;
 
-      if (!taken && !pastTime) {
+      if (!blocked) {
         btn.addEventListener('click', () => {
           document.querySelectorAll<HTMLElement>('.slot-btn.selected').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          selectedTime = timeStr;
+          selectedTime = time;
           (document.getElementById('btn2next') as HTMLButtonElement).disabled = false;
         });
-      }
-
-      // Re-select if previously picked
-      if (selectedTime === timeStr && !taken && !pastTime) {
-        btn.classList.add('selected');
+        if (selectedTime === time) btn.classList.add('selected');
       }
 
       grid.appendChild(btn);
-    }
+    });
   }
 
   document.getElementById('calPrev')!.addEventListener('click', () => {
