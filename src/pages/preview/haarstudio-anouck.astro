@@ -22,566 +22,676 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Haarstudio Anouck — jouw persoonlijke haarstudio voor knippen, kleuren en styling." />
+  <meta name="description" content="Haarstudio Anouck — persoonlijke haarstudio voor knippen, kleuren en styling op maat." />
   <meta name="robots" content="noindex, nofollow" />
   <title>Haarstudio Anouck | OnlineKoers voorstel</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,500;0,700;0,800;0,900;1,300;1,700;1,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
     :root {
-      --rose:     #C4827F;
-      --rose-d:   #A86360;
-      --rose-bg:  #F2C5C3;
-      --rose-10:  rgba(196,130,127,0.1);
-      --rose-20:  rgba(196,130,127,0.2);
-      --cream:    #FAF8F6;
-      --cream2:   #F3EDE9;
-      --dark:     #1A1315;
-      --dark2:    #221619;
-      --text:     #2A1A1C;
-      --muted:    rgba(42,26,28,0.52);
-      --border:   rgba(42,26,28,0.1);
+      --black:   #0E0C0C;
+      --black2:  #1A1617;
+      --white:   #FAFAF8;
+      --off:     #F3EEEB;
+      --rose:    #C4827F;
+      --rose-d:  #A8605D;
+      --rose-bg: #F2C5C3;
+      --muted-l: rgba(250,250,248,.5);
+      --muted-d: rgba(14,12,12,.5);
+      --border-l: rgba(250,250,248,.1);
+      --border-d: rgba(14,12,12,.1);
     }
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--text);
+      background: var(--white);
+      color: var(--black);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    .serif { font-family: 'Cormorant Garant', Georgia, serif; }
-    .wrap  { max-width: 1140px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
+    .display { font-family: 'Barlow Condensed', sans-serif; }
+    .wrap    { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 5vw, 4rem); }
 
     /* ── Reveal ───────────────────────────────── */
-    .r { opacity: 0; transform: translateY(24px); transition: opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1); }
+    .r { opacity: 0; transform: translateY(28px); transition: opacity .75s cubic-bezier(.2,.8,.2,1), transform .75s cubic-bezier(.2,.8,.2,1); }
     .r.on { opacity: 1; transform: none; }
-    .d1 { transition-delay: .12s; } .d2 { transition-delay: .22s; }
-    .d3 { transition-delay: .34s; } .d4 { transition-delay: .46s; }
+    .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.32s}
 
-    /* ── Eyebrow label ────────────────────────── */
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: .65rem;
-      font-size: .6rem; font-weight: 700;
+    /* ── Label ────────────────────────────────── */
+    .lbl {
+      display: inline-block;
+      font-size: .58rem; font-weight: 700;
       letter-spacing: .3em; text-transform: uppercase;
       color: var(--rose);
+      margin-bottom: 1.25rem;
     }
-    .eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--rose); }
+    .lbl-light { color: var(--rose-bg); }
 
-    /* ── NAV ──────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════ */
     .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-      padding: 1.4rem 0;
-      transition: padding .4s, background .4s, border-color .4s;
-      border-bottom: 1px solid transparent;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+      padding: 0;
+      transition: background .35s, box-shadow .35s;
     }
     .nav.s {
-      background: rgba(250,248,246,.88);
-      backdrop-filter: blur(20px) saturate(160%);
-      padding: 1rem 0;
-      border-color: var(--border);
+      background: rgba(14,12,12,.97);
+      box-shadow: 0 1px 0 rgba(255,255,255,.06);
     }
-    .nav-row { display: flex; align-items: center; justify-content: space-between; }
+    .nav-inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 72px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      transition: border-color .35s;
+    }
+    .nav.s .nav-inner { border-color: transparent; }
 
     .nav-logo {
-      display: flex; align-items: center; gap: .75rem;
+      display: flex; align-items: center; gap: .65rem;
       text-decoration: none;
     }
-    .nav-logo img { height: 42px; width: 42px; object-fit: contain; border-radius: 50%; }
-    .nav-logo-text {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 1.1rem; font-weight: 600;
-      color: var(--text); letter-spacing: .04em; line-height: 1.1;
+    .nav-logo img {
+      height: 38px; width: 38px;
+      border-radius: 50%; object-fit: cover;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .nav-logo-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--white); line-height: 1;
     }
     .nav-logo-sub {
-      font-family: 'DM Sans', sans-serif;
-      font-size: .5rem; font-weight: 700;
-      letter-spacing: .3em; text-transform: uppercase;
-      color: var(--rose); display: block; margin-top: 1px;
+      display: block; font-family: 'DM Sans', sans-serif;
+      font-size: .5rem; font-weight: 500;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--rose-bg); margin-top: 2px;
     }
 
-    .nav-links { display: flex; align-items: center; gap: 2.25rem; }
+    .nav-links {
+      display: flex; align-items: center; gap: 2.5rem;
+      justify-content: center;
+    }
     .nav-link {
-      font-size: .72rem; font-weight: 500;
-      letter-spacing: .08em; color: var(--muted);
-      text-decoration: none; transition: color .2s;
-      position: relative;
-    }
-    .nav-link::after {
-      content: ''; position: absolute; bottom: -.25rem; left: 0; right: 0;
-      height: 1px; background: var(--rose);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform .25s;
-    }
-    .nav-link:hover { color: var(--text); }
-    .nav-link:hover::after { transform: scaleX(1); }
-
-    .nav-cta {
-      font-size: .68rem; font-weight: 700;
+      font-size: .68rem; font-weight: 500;
       letter-spacing: .1em; text-transform: uppercase;
-      color: #fff; background: var(--rose);
-      padding: .65rem 1.5rem; border-radius: 99px;
-      text-decoration: none; transition: background .2s, transform .2s;
+      color: rgba(250,250,248,.55); text-decoration: none;
+      transition: color .2s;
     }
-    .nav-cta:hover { background: var(--rose-d); transform: translateY(-1px); }
+    .nav-link:hover { color: var(--white); }
+
+    .nav-right {
+      display: flex; align-items: center; gap: 1.25rem; justify-content: flex-end;
+    }
+    .nav-phone {
+      font-size: .7rem; color: rgba(250,250,248,.4);
+      text-decoration: none; transition: color .2s;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .nav-phone:hover { color: var(--white); }
+    .nav-cta {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .8rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      background: var(--rose); color: var(--white);
+      padding: .6rem 1.5rem; border-radius: 2px;
+      text-decoration: none; transition: background .2s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--rose-d); }
 
     .nav-toggle {
-      display: none; background: none; border: none; cursor: pointer;
-      color: var(--text); padding: .3rem;
+      display: none; background: none; border: none;
+      cursor: pointer; color: var(--white); padding: .25rem;
     }
 
+    /* Mobile overlay */
     .nav-overlay {
-      position: fixed; inset: 0; background: var(--cream); z-index: 350;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
-      transform: translateY(-100%); transition: transform .5s cubic-bezier(.2,.8,.2,1);
+      position: fixed; inset: 0;
+      background: var(--black2); z-index: 450;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2.5rem;
+      transform: translateX(100%);
+      transition: transform .45s cubic-bezier(.2,.8,.2,1);
     }
     .nav-overlay.on { transform: none; }
-    .nav-overlay .nav-link { font-size: 1.4rem; letter-spacing: .04em; }
-    .nav-overlay .nav-link::after { display: none; }
-    .nav-overlay .nav-cta { font-size: .9rem; padding: 1rem 2.5rem; }
+    .nav-overlay .nav-link {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem; font-weight: 700; letter-spacing: .1em;
+      color: rgba(250,250,248,.6);
+    }
+    .nav-overlay .nav-link:hover { color: var(--white); }
+    .nav-overlay .nav-cta { font-size: 1rem; padding: .9rem 2.5rem; }
     .nav-overlay-close {
-      position: absolute; top: 1.25rem; right: 1.25rem;
-      background: none; border: 1.5px solid var(--border);
-      cursor: pointer; border-radius: .4rem; width: 44px; height: 44px;
+      position: absolute; top: 1.1rem; right: 1.1rem;
+      background: none; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 2px; width: 44px; height: 44px;
       display: flex; align-items: center; justify-content: center;
-      color: var(--text); transition: all .2s;
+      cursor: pointer; color: var(--white); transition: all .2s;
     }
-    .nav-overlay-close:hover { background: var(--dark); border-color: var(--dark); color: #fff; }
+    .nav-overlay-close:hover { background: var(--rose); border-color: var(--rose); }
 
-    /* ── HERO ─────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ */
     .hero {
-      min-height: 100svh;
-      display: grid; grid-template-columns: 1fr 42vw;
-      overflow: hidden; background: var(--cream);
+      height: 100svh; min-height: 640px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--black);
+      position: relative; overflow: hidden;
     }
+
     .hero-left {
       display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 11rem clamp(2rem, 4vw, 4rem) 7rem clamp(1.5rem, max(3vw, calc((100vw - 1140px)/2 + 4rem)), 10rem);
+      padding: 10rem clamp(2rem, 4vw, 5rem) 5rem clamp(1.5rem, max(3vw, calc((100vw - 1200px)/2 + 4rem)), 10rem);
+      position: relative; z-index: 2;
     }
-    .hero-eyebrow {
-      margin-bottom: 1.25rem;
-      animation: fadeUp .9s cubic-bezier(.2,.8,.2,1) .1s both;
-    }
+
     .hero-h1 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(3.2rem, 7vw, 6rem);
-      font-weight: 600; line-height: .96; letter-spacing: .01em;
-      color: var(--text);
-      animation: fadeUp .9s cubic-bezier(.2,.8,.2,1) .3s both;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(4rem, 8vw, 7.5rem);
+      font-weight: 900; line-height: .92;
+      letter-spacing: -.01em;
+      color: var(--white);
+      text-transform: uppercase;
     }
     .hero-h1 em {
       display: block; font-style: italic;
-      font-weight: 300; color: var(--rose);
-      font-size: .8em;
+      color: var(--rose-bg); font-weight: 300;
+      font-size: .62em; letter-spacing: .03em;
+      text-transform: none;
     }
+
     .hero-sub {
-      font-size: 1rem; color: var(--muted); line-height: 1.72;
-      max-width: 380px; margin-top: 1.5rem; margin-bottom: 2.5rem;
-      animation: fadeUp .9s cubic-bezier(.2,.8,.2,1) .5s both;
+      font-size: .95rem; line-height: 1.7;
+      color: var(--muted-l); max-width: 360px;
+      margin-top: 2rem; margin-bottom: 2.5rem;
     }
-    .hero-btns {
-      display: flex; gap: .85rem; flex-wrap: wrap;
-      animation: fadeUp .9s cubic-bezier(.2,.8,.2,1) .65s both;
-    }
+    .hero-btns { display: flex; gap: .85rem; flex-wrap: wrap; }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: none; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      padding: .85rem 2.2rem; border-radius: 2px;
+      text-decoration: none; transition: all .2s; border: none; cursor: pointer;
     }
+    .btn-rose  { background: var(--rose); color: var(--white); }
+    .btn-rose:hover  { background: var(--rose-d); }
+    .btn-outline { border: 1.5px solid rgba(255,255,255,.25); color: var(--white); background: transparent; }
+    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.05); }
+    .btn-dark  { background: var(--black); color: var(--white); }
+    .btn-dark:hover  { background: var(--black2); }
+    .btn-rose-solid { background: var(--rose); color: var(--white); }
+    .btn-rose-solid:hover { background: var(--rose-d); transform: translateY(-1px); }
 
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .45rem;
+      color: rgba(250,250,248,.25); pointer-events: none; z-index: 2;
+    }
+    .hero-scroll span { font-size: .5rem; letter-spacing: .3em; text-transform: uppercase; }
+    .hero-scroll-bar { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--rose), transparent); animation: scpulse 2s ease-in-out infinite; }
+    @keyframes scpulse { 0%,100%{opacity:.25} 50%{opacity:.8} }
+
+    /* Photo right */
     .hero-right {
       position: relative; overflow: hidden;
-      background: var(--rose-bg);
     }
     .hero-right::before {
       content: ''; position: absolute;
-      left: 0; top: 0; bottom: 0; width: 60px;
-      background: linear-gradient(to right, var(--cream), transparent);
-      z-index: 2;
+      left: 0; top: 0; bottom: 0; width: 100px;
+      background: linear-gradient(to right, var(--black), transparent);
+      z-index: 1;
     }
     .hero-right img {
       width: 100%; height: 100%;
       object-fit: cover; object-position: center top;
-      display: block;
+      display: block; filter: grayscale(15%);
+    }
+    /* Rose tint overlay */
+    .hero-right::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(196,130,127,.15), transparent 50%);
+      z-index: 2; pointer-events: none;
     }
 
-    .hero-scroll {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: .5rem;
-      color: var(--muted); pointer-events: none;
-    }
-    .hero-scroll span { font-size: .5rem; letter-spacing: .25em; text-transform: uppercase; }
-    .hero-scroll-line {
-      width: 1px; height: 38px;
-      background: linear-gradient(to bottom, var(--rose), transparent);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
-
-    /* ── Buttons ──────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-size: .72rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: .9rem 2rem; border-radius: 99px;
-      text-decoration: none; transition: all .25s; cursor: pointer; border: none;
-    }
-    .btn-rose { background: var(--rose); color: #fff; }
-    .btn-rose:hover { background: var(--rose-d); transform: translateY(-2px); }
-    .btn-ghost { border: 1.5px solid var(--border); color: var(--text); background: transparent; }
-    .btn-ghost:hover { border-color: var(--rose); color: var(--rose); }
-
-    /* ── STRIP ────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       TAGLINE STRIP (zwart, vette quote)
+    ══════════════════════════════════════════ */
     .strip {
-      background: var(--dark2);
-      padding: 4rem 0;
-      text-align: center;
-      position: relative; overflow: hidden;
-    }
-    .strip::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: repeating-linear-gradient(-45deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 1px, transparent 8px);
-    }
-    .strip-text {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(1.4rem, 3vw, 2.1rem);
-      font-style: italic; font-weight: 300;
-      color: rgba(250,248,246,.85);
-      max-width: 780px; margin: 0 auto;
-      line-height: 1.5; position: relative; z-index: 1;
-    }
-    .strip-text strong { font-weight: 600; color: var(--rose-bg); font-style: normal; }
-
-    /* ── OVER ANOUCK ──────────────────────────── */
-    .about { padding: 9rem 0; background: var(--cream); }
-    .about-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 7rem; align-items: center; }
-
-    .about-photo-wrap { position: relative; }
-    .about-photo {
-      aspect-ratio: 3/4; border-radius: .75rem; overflow: hidden;
-      background: var(--rose-bg);
-      box-shadow: 0 30px 80px rgba(42,26,28,.12);
-    }
-    .about-photo img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top center;
-      display: block;
-    }
-    .about-photo-accent {
-      position: absolute; bottom: -1.5rem; right: -1.5rem;
       background: var(--rose);
-      border-radius: .5rem;
-      padding: 1.5rem 2rem; text-align: center;
-      color: #fff; box-shadow: 0 12px 40px rgba(196,130,127,.35);
+      padding: 2.5rem 0;
+      overflow: hidden;
+      position: relative;
     }
-    .about-photo-accent-n {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 2.5rem; font-weight: 700; line-height: 1; display: block;
+    .strip-track {
+      display: flex; gap: 3rem; white-space: nowrap;
+      animation: marquee 18s linear infinite;
     }
-    .about-photo-accent-l {
-      font-size: .55rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
-      opacity: .8; margin-top: .2rem; display: block;
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .strip-item {
+      display: inline-flex; align-items: center; gap: 3rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--white); flex-shrink: 0;
+    }
+    .strip-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,.5); flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       OVER ANOUCK (wit)
+    ══════════════════════════════════════════ */
+    .about { background: var(--white); padding: 8rem 0; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center; }
+
+    .about-img-wrap { position: relative; }
+    .about-img {
+      aspect-ratio: 4/5; overflow: hidden; border-radius: 2px;
+      background: var(--rose-bg);
+    }
+    .about-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center top; display: block;
+      transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    }
+    .about-img:hover img { transform: scale(1.03); }
+    /* Decoratief hoekje */
+    .about-img-wrap::before {
+      content: '';
+      position: absolute; top: -1.25rem; left: -1.25rem;
+      width: 60px; height: 60px;
+      border-top: 3px solid var(--rose);
+      border-left: 3px solid var(--rose);
+    }
+    .about-img-wrap::after {
+      content: '';
+      position: absolute; bottom: -1.25rem; right: -1.25rem;
+      width: 60px; height: 60px;
+      border-bottom: 3px solid var(--rose);
+      border-right: 3px solid var(--rose);
     }
 
     .about-h2 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(2rem, 3.2vw, 3rem);
-      font-weight: 600; line-height: 1.15; color: var(--text);
-      margin-bottom: 1.75rem; margin-top: 1rem;
-      position: relative; padding-bottom: 1rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 800; line-height: .95;
+      text-transform: uppercase; color: var(--black);
+      margin-bottom: 1.75rem; margin-top: .5rem;
     }
-    .about-h2::after {
-      content: ''; position: absolute; bottom: 0; left: 0;
-      width: 0; height: 1.5px; background: var(--rose);
-      transition: width .7s cubic-bezier(.2,.8,.2,1) .4s;
-    }
-    .r.on .about-h2::after { width: 2.5rem; }
-    .about-h2 em { font-style: italic; font-weight: 300; color: var(--rose); }
+    .about-h2 em { font-style: italic; color: var(--rose); font-weight: 300; text-transform: none; }
+    .about-p { font-size: .98rem; line-height: 1.82; color: var(--muted-d); margin-bottom: 1rem; }
 
-    .about-p { font-size: .98rem; line-height: 1.82; color: var(--muted); margin-bottom: 1.1rem; }
-    .about-social { display: flex; gap: .75rem; margin-top: 2rem; flex-wrap: wrap; }
-    .social-btn {
-      display: inline-flex; align-items: center; gap: .55rem;
-      font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--text); border: 1.5px solid var(--border);
-      padding: .65rem 1.2rem; border-radius: 99px;
+    .about-socials { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2rem; }
+    .social-pill {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: .6rem 1.1rem; border-radius: 2px;
+      border: 1.5px solid var(--border-d); color: var(--black);
       text-decoration: none; transition: all .2s;
     }
-    .social-btn:hover { border-color: var(--rose); color: var(--rose); }
-    .social-btn svg { flex-shrink: 0; }
+    .social-pill:hover { border-color: var(--rose); color: var(--rose); }
+    .social-pill svg { flex-shrink: 0; }
 
-    /* ── PRIJZEN ──────────────────────────────── */
-    .prices {
-      padding: 9rem 0;
-      background: var(--dark2);
+    /* ══════════════════════════════════════════
+       DIENSTEN — KNIPPEN (donker links, foto rechts)
+    ══════════════════════════════════════════ */
+    .dienst {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+    .dienst-content {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6rem clamp(2rem,4vw,5rem);
+    }
+    .dienst-content.dark { background: var(--black2); }
+    .dienst-content.light { background: var(--off); }
+
+    .dienst-h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 900; line-height: .92;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem; margin-top: .5rem;
+    }
+    .dienst-content.dark .dienst-h2 { color: var(--white); }
+    .dienst-content.light .dienst-h2 { color: var(--black); }
+    .dienst-h2 em { display:block; font-style:italic; color:var(--rose-bg); font-weight:300; text-transform:none; font-size:.65em; }
+    .dienst-content.light .dienst-h2 em { color: var(--rose); }
+
+    /* Prijslijst items */
+    .price-list { list-style: none; margin-bottom: 2.5rem; }
+    .price-list li {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: .9rem 0; gap: 1rem;
+      border-bottom: 1px solid;
+    }
+    .dienst-content.dark .price-list li { border-color: rgba(255,255,255,.07); }
+    .dienst-content.light .price-list li { border-color: rgba(14,12,12,.08); }
+    .price-list li:first-child { border-top: 1px solid; }
+    .dienst-content.dark .price-list li:first-child { border-color: rgba(255,255,255,.07); }
+    .dienst-content.light .price-list li:first-child { border-color: rgba(14,12,12,.08); }
+
+    .price-name {
+      font-size: .9rem;
+    }
+    .dienst-content.dark .price-name { color: rgba(250,250,248,.6); }
+    .dienst-content.light .price-name { color: var(--muted-d); }
+
+    .price-amt {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .dienst-content.dark .price-amt { color: var(--rose-bg); }
+    .dienst-content.light .price-amt { color: var(--rose); }
+
+    .dienst-note {
+      font-size: .72rem; font-style: italic;
+    }
+    .dienst-content.dark .dienst-note { color: rgba(250,250,248,.25); }
+    .dienst-content.light .dienst-note { color: var(--muted-d); }
+
+    /* Dienst foto */
+    .dienst-photo {
+      position: relative; overflow: hidden;
+      background: var(--rose-bg);
+    }
+    .dienst-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    }
+    .dienst-photo:hover img { transform: scale(1.04); }
+
+    /* ══════════════════════════════════════════
+       SALON — full-bleed foto
+    ══════════════════════════════════════════ */
+    .salon-section {
+      height: 70vh; min-height: 450px;
       position: relative; overflow: hidden;
     }
-    .prices::before {
-      content: '';
+    .salon-section img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .salon-overlay {
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 80% 30%, rgba(196,130,127,.07), transparent 70%);
+      background: linear-gradient(to top, rgba(14,12,12,.75) 0%, rgba(14,12,12,.1) 50%, transparent 100%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 4rem clamp(1.5rem,5vw,5rem);
+    }
+    .salon-overlay h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); line-height: .92;
+      max-width: 700px;
+    }
+    .salon-overlay h2 em { font-style:italic; font-weight:300; color:var(--rose-bg); text-transform:none; display:block; }
+
+    /* ══════════════════════════════════════════
+       INSTAGRAM CTA STRIP
+    ══════════════════════════════════════════ */
+    .ig-strip {
+      background: var(--off);
+      padding: 5rem 0;
+      text-align: center;
+    }
+    .ig-strip-inner { max-width: 680px; margin: 0 auto; }
+    .ig-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      margin-bottom: 1.5rem;
+    }
+    .ig-h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800; text-transform: uppercase;
+      color: var(--black); margin-bottom: 1rem;
+    }
+    .ig-p { font-size: .92rem; color: var(--muted-d); line-height: 1.7; margin-bottom: 2rem; }
+
+    /* ══════════════════════════════════════════
+       CONTACT (zwart links + form rechts)
+    ══════════════════════════════════════════ */
+    .contact { display: grid; grid-template-columns: 1fr 1fr; }
+
+    .contact-left {
+      background: var(--black2);
+      padding: 7rem clamp(2rem,4vw,5rem);
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .contact-left::before {
+      content: '';
+      position: absolute; top: -100px; right: -100px;
+      width: 350px; height: 350px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,130,127,.15), transparent 70%);
       pointer-events: none;
     }
-    .prices-header { margin-bottom: 4rem; }
-    .prices-h2 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(2.5rem, 4vw, 3.8rem);
-      font-weight: 600; line-height: 1.05; color: #FAF8F6;
-      margin-top: .75rem;
-    }
-    .prices-h2 em { font-style: italic; font-weight: 300; color: var(--rose-bg); }
-    .prices-sub { font-size: .88rem; color: rgba(250,248,246,.38); margin-top: .75rem; }
-
-    .prices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .price-cat {
-      background: rgba(250,248,246,.03);
-      border: 1px solid rgba(250,248,246,.07);
-      border-radius: .6rem; padding: 2.5rem;
-      transition: border-color .3s, background .3s;
-    }
-    .price-cat:hover { background: rgba(196,130,127,.06); border-color: rgba(196,130,127,.3); }
-    .price-cat-title {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 1.4rem; font-weight: 600; color: #FAF8F6;
-      margin-bottom: 1.75rem; padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(250,248,246,.07);
-      letter-spacing: .02em;
-    }
-    .price-item {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: .7rem 0;
-      border-bottom: 1px solid rgba(250,248,246,.04);
-      gap: 1rem;
-    }
-    .price-item:last-child { border-bottom: none; }
-    .price-name { font-size: .9rem; color: rgba(250,248,246,.6); }
-    .price-val {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 1.1rem; font-weight: 600;
-      color: var(--rose-bg); white-space: nowrap; flex-shrink: 0;
-    }
-    .price-note {
-      grid-column: 1 / -1;
-      font-size: .72rem; color: rgba(250,248,246,.25);
-      letter-spacing: .04em; margin-top: .5rem;
-    }
-    .price-note em { font-style: italic; }
-
-    /* ── SALON FOTO ───────────────────────────── */
-    .gallery { padding: 9rem 0; background: var(--cream2); }
-    .gallery-h2 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(2.5rem, 4vw, 3.8rem);
-      font-weight: 600; color: var(--text);
-      margin-top: .75rem; margin-bottom: 3rem;
-    }
-    .gallery-h2 em { font-style: italic; font-weight: 300; color: var(--rose); }
-
-    .gallery-img {
-      border-radius: .75rem; overflow: hidden;
-      background: var(--rose-bg);
-      box-shadow: 0 20px 60px rgba(42,26,28,.1);
-      aspect-ratio: 16/9;
-    }
-    .gallery-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1);
-    }
-    .gallery-img:hover img { transform: scale(1.03); }
-
-    /* ── CONTACT ──────────────────────────────── */
-    .contact { padding: 9rem 0; background: var(--cream); }
-    .contact-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 7rem; align-items: start; }
 
     .contact-h2 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: clamp(2rem, 3.2vw, 3rem);
-      font-weight: 600; line-height: 1.15; color: var(--text);
-      margin-top: .75rem; margin-bottom: 1.5rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.8rem, 4vw, 4.2rem);
+      font-weight: 900; text-transform: uppercase;
+      color: var(--white); line-height: .92;
+      margin-bottom: 1.5rem; margin-top: .5rem;
     }
-    .contact-h2 em { font-style: italic; font-weight: 300; color: var(--rose); }
-    .contact-p { font-size: .95rem; color: var(--muted); line-height: 1.75; margin-bottom: 2.5rem; }
+    .contact-h2 em { font-style:italic; font-weight:300; color:var(--rose-bg); text-transform:none; display:block; font-size:.7em; }
+
+    .contact-p { font-size: .9rem; color: var(--muted-l); line-height: 1.75; margin-bottom: 2.5rem; }
 
     .cinfo { display: flex; flex-direction: column; gap: 1rem; }
     .cinfo-item {
-      display: flex; align-items: flex-start; gap: .85rem;
-      font-size: .88rem; color: var(--muted); line-height: 1.5;
+      display: flex; align-items: center; gap: .85rem;
+      font-size: .88rem; color: var(--muted-l);
     }
-    .cinfo-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--rose); flex-shrink: 0; margin-top: .45rem;
-      transition: transform .2s;
-    }
-    .cinfo-item:hover .cinfo-dot { transform: scale(1.6); }
+    .cinfo-item svg { color: var(--rose-bg); flex-shrink: 0; }
     .cinfo-item a { color: inherit; text-decoration: none; transition: color .2s; }
-    .cinfo-item a:hover { color: var(--rose); }
+    .cinfo-item a:hover { color: var(--white); }
 
     /* Form */
+    .contact-right {
+      background: var(--white);
+      padding: 7rem clamp(2rem,4vw,5rem);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .form-h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem; font-weight: 800; text-transform: uppercase;
+      color: var(--black); margin-bottom: .4rem;
+    }
+    .form-sub { font-size: .85rem; color: var(--muted-d); margin-bottom: 2rem; line-height: 1.6; }
+
     .form { display: flex; flex-direction: column; gap: 1rem; }
     .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .field { display: flex; flex-direction: column; gap: .35rem; }
-    .field label {
-      font-size: .58rem; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
-    }
+    .field { display: flex; flex-direction: column; gap: .3rem; }
+    .field label { font-size: .58rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-d); }
     .field input, .field select, .field textarea {
-      width: 100%; padding: .9rem 1.15rem;
-      border-radius: .4rem; border: 1.5px solid var(--border);
-      background: var(--cream2); font-family: 'DM Sans', sans-serif;
-      font-size: .92rem; color: var(--text); outline: none;
+      padding: .9rem 1rem; border-radius: 2px;
+      border: 1.5px solid var(--border-d);
+      background: var(--off); font-family: 'DM Sans', sans-serif;
+      font-size: .92rem; color: var(--black); outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
     .field input:focus, .field select:focus, .field textarea:focus {
       border-color: var(--rose);
       box-shadow: 0 0 0 3px rgba(196,130,127,.12);
     }
-    .field textarea { resize: vertical; min-height: 110px; }
+    .field textarea { resize: vertical; min-height: 100px; }
     .field select { appearance: none; cursor: pointer; }
 
-    .form-submit {
+    .form-btn {
       width: 100%; padding: 1.1rem;
-      background: var(--rose); color: #fff;
-      border: none; border-radius: 99px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .72rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      cursor: pointer; transition: all .25s; margin-top: .5rem;
+      background: var(--black); color: var(--white);
+      border: none; border-radius: 2px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .88rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      cursor: pointer; transition: all .2s; margin-top: .25rem;
     }
-    .form-submit:hover { background: var(--rose-d); transform: translateY(-2px); }
-    .form-submit:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .form-btn:hover { background: var(--rose); }
+    .form-btn:disabled { opacity: .4; cursor: not-allowed; }
 
     .form-success {
-      display: none; text-align: center; padding: 3rem 2rem;
-      border-radius: .5rem; border: 1.5px solid var(--border);
-      background: var(--cream2);
+      display: none; padding: 3rem 2rem; text-align: center;
+      border: 1.5px solid var(--border-d); border-radius: 2px;
+      background: var(--off);
     }
     .form-success.on { display: block; }
-    .form-success-icon {
+    .form-success-check {
       width: 52px; height: 52px; border-radius: 50%;
-      background: var(--rose-10); border: 1.5px solid var(--rose-20);
+      background: rgba(196,130,127,.12); border: 1.5px solid rgba(196,130,127,.3);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.5rem; color: var(--rose); font-size: 1.2rem;
+      margin: 0 auto 1.25rem; color: var(--rose); font-size: 1.2rem;
     }
     .form-success h3 {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 1.8rem; font-weight: 600; color: var(--text); margin-bottom: .6rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem; font-weight: 800; text-transform: uppercase; color: var(--black);
     }
-    .form-success p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+    .form-success p { font-size: .88rem; color: var(--muted-d); line-height: 1.7; margin-top: .5rem; }
 
-    /* ── FOOTER ───────────────────────────────── */
-    .footer { background: var(--dark2); padding: 4rem 0 2.5rem; }
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    .footer {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 3rem 0 2rem;
+    }
     .footer-row {
       display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 2rem;
-      padding-bottom: 3rem; border-bottom: 1px solid rgba(250,248,246,.07);
+      flex-wrap: wrap; gap: 1.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
     .footer-logo {
-      display: flex; align-items: center; gap: .75rem; text-decoration: none;
+      display: flex; align-items: center; gap: .65rem; text-decoration: none;
     }
-    .footer-logo img { height: 38px; width: 38px; object-fit: contain; border-radius: 50%; }
+    .footer-logo img { height: 34px; width: 34px; border-radius: 50%; object-fit: cover; }
     .footer-logo-name {
-      font-family: 'Cormorant Garant', serif;
-      font-size: 1.1rem; font-weight: 600; color: rgba(250,248,246,.8);
-      letter-spacing: .04em;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .95rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(250,250,248,.6);
     }
     .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
     .footer-link {
-      font-size: .72rem; color: rgba(250,248,246,.35);
-      text-decoration: none; transition: color .2s;
+      font-size: .65rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(250,250,248,.3); text-decoration: none; transition: color .2s;
     }
-    .footer-link:hover { color: rgba(250,248,246,.8); }
+    .footer-link:hover { color: rgba(250,250,248,.8); }
     .footer-copy {
-      padding-top: 2rem; display: flex; justify-content: space-between;
+      padding-top: 1.75rem; display: flex; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
-      font-size: .68rem; color: rgba(250,248,246,.22);
+      font-size: .62rem; color: rgba(250,250,248,.2); letter-spacing: .05em;
     }
 
-    /* ── RESPONSIVE ───────────────────────────── */
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════ */
     @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero-right { height: 60vw; }
-      .hero-right::before { left: 0; width: 40px; }
-      .hero-left { padding: 8rem 1.5rem 3.5rem; justify-content: flex-start; }
+      .hero { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+      .hero-left { padding: 9rem 1.5rem 3.5rem; order: 2; }
+      .hero-right { order: 1; height: 55vw; min-height: 280px; }
+      .hero-right::before { width: 0; }
+      .hero-right::after { display: none; }
       .nav-links { display: none; }
+      .nav-phone { display: none; }
       .nav-toggle { display: block; }
       .about-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .about-photo-wrap { max-width: min(75vw, 300px); margin: 0 auto; }
-      .about-photo-accent { display: none; }
-      .prices-grid { grid-template-columns: 1fr; }
-      .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .about-img-wrap { max-width: 280px; margin: 0 auto; }
+      .dienst { grid-template-columns: 1fr; }
+      .dienst-photo { aspect-ratio: 4/3; }
+      .dienst-photo.order-first { order: -1; }
+      .contact { grid-template-columns: 1fr; }
+      .contact-left, .contact-right { padding: 5rem 1.5rem; }
       .frow { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      .hero-right { height: 70vw; }
-      .gallery-img { aspect-ratio: 4/3; }
+      .hero-right { height: 65vw; }
+      .salon-section { height: 60vw; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── NAV ──────────────────────────────────────────────────────────── -->
+<!-- ══ NAV ══════════════════════════════════════════════════════════════ -->
 <nav class="nav" id="mainNav">
-  <div class="wrap nav-row">
+  <div class="wrap nav-inner">
     <a href="#" class="nav-logo">
-      <img src={imgLogo} alt="Haarstudio Anouck logo" />
+      <img src={imgLogo} alt="Haarstudio Anouck" />
       <div>
-        <span class="nav-logo-text">Haarstudio Anouck</span>
-        <span class="nav-logo-sub">Officieel voorstel</span>
+        <span class="nav-logo-name">Haarstudio Anouck</span>
+        <span class="nav-logo-sub">Exclusief voorstel</span>
       </div>
     </a>
 
     <div class="nav-links">
-      <a href="#over"      class="nav-link">Over Anouck</a>
-      <a href="#diensten"  class="nav-link">Diensten</a>
-      <a href="#salon"     class="nav-link">De salon</a>
-      <a href="#contact"   class="nav-link">Contact</a>
-      <a href="#contact"   class="nav-cta" data-track="nav_cta">Afspraak maken</a>
+      <a href="#over"     class="nav-link">Over Anouck</a>
+      <a href="#diensten" class="nav-link">Diensten</a>
+      <a href="#salon"    class="nav-link">De salon</a>
+      <a href="#contact"  class="nav-link">Contact</a>
     </div>
 
-    <button class="nav-toggle" id="navToggle" aria-label="Menu openen">
-      <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"/>
-      </svg>
-    </button>
+    <div class="nav-right">
+      <a href="#contact" class="nav-cta" data-track="nav_cta">Afspraak maken</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu openen">
+        <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </nav>
 
 <div class="nav-overlay" id="navOverlay">
   <button class="nav-overlay-close" id="navOverlayClose" aria-label="Sluiten">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
       <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/>
     </svg>
   </button>
-  <a href="#over"      class="nav-link">Over Anouck</a>
-  <a href="#diensten"  class="nav-link">Diensten</a>
-  <a href="#salon"     class="nav-link">De salon</a>
-  <a href="#contact"   class="nav-link">Contact</a>
-  <a href="#contact"   class="nav-cta">Afspraak maken</a>
+  <a href="#over"     class="nav-link">Over Anouck</a>
+  <a href="#diensten" class="nav-link">Diensten</a>
+  <a href="#salon"    class="nav-link">De salon</a>
+  <a href="#contact"  class="nav-link">Contact</a>
+  <a href="#contact"  class="nav-cta">Afspraak maken</a>
 </div>
 
 
-<!-- ── HERO ──────────────────────────────────────────────────────────── -->
-<section class="hero" id="hero" style="position:relative;">
+<!-- ══ HERO ═════════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
   <div class="hero-left">
-    <div class="hero-eyebrow eyebrow">Haarstudio · Persoonlijk · Vakkundig</div>
+    <span class="lbl lbl-light">Haarstudio · Persoonlijk · Vakkundig</span>
     <h1 class="hero-h1">
-      Haarstudio<br/>
-      <em>Anouck</em>
+      Jouw haar.<br/>
+      Jouw stijl.<br/>
+      <em>Jouw Anouck.</em>
     </h1>
     <p class="hero-sub">
-      Een plek waar jij centraal staat. Knippen, kleuren en styling op maat — in een warme, persoonlijke studio.
+      Een persoonlijke haarstudio waar jij centraal staat. Knippen, kleuren en styling op maat — zonder wachttijden, zonder onbekende gezichten.
     </p>
     <div class="hero-btns">
-      <a href="#contact"  class="btn btn-rose" data-track="hero_cta_afspraak">Afspraak maken</a>
-      <a href="#diensten" class="btn btn-ghost">Bekijk de prijzen</a>
+      <a href="#contact"  class="btn btn-rose" data-track="hero_cta">Afspraak maken</a>
+      <a href="#diensten" class="btn btn-outline">Bekijk prijzen</a>
     </div>
   </div>
 
@@ -591,65 +701,59 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
 
   <div class="hero-scroll" aria-hidden="true">
     <span>scroll</span>
-    <div class="hero-scroll-line"></div>
+    <div class="hero-scroll-bar"></div>
   </div>
 </section>
 
 
-<!-- ── STRIP ─────────────────────────────────────────────────────────── -->
-<div class="strip">
-  <p class="strip-text r">
-    "Jouw haar is mijn passie — ik neem de tijd voor <strong>jou</strong> en jouw wensen,<br/>zodat jij de deur uitgaat met een gevoel dat klopt."
-  </p>
+<!-- ══ MARQUEE STRIP ═════════════════════════════════════════════════════ -->
+<div class="strip" aria-hidden="true">
+  <div class="strip-track">
+    {[...Array(8)].map(() => (
+      <>
+        <span class="strip-item">Knippen<span class="strip-dot"></span></span>
+        <span class="strip-item">Kleuren<span class="strip-dot"></span></span>
+        <span class="strip-item">Folie<span class="strip-dot"></span></span>
+        <span class="strip-item">Styling<span class="strip-dot"></span></span>
+        <span class="strip-item">OliG<span class="strip-dot"></span></span>
+      </>
+    ))}
+  </div>
 </div>
 
 
-<!-- ── OVER ANOUCK ───────────────────────────────────────────────────── -->
+<!-- ══ OVER ANOUCK ══════════════════════════════════════════════════════ -->
 <section class="about" id="over">
   <div class="wrap">
     <div class="about-grid">
 
-      <div class="r about-photo-wrap">
-        <div class="about-photo">
-          <img src={imgSalon} alt="Haarstudio Anouck — de salon" loading="lazy"
-               onerror="this.closest('.about-photo').style.background='var(--rose-bg)'" />
-        </div>
-        <div class="about-photo-accent">
-          <span class="about-photo-accent-n">100%</span>
-          <span class="about-photo-accent-l">Persoonlijke aandacht</span>
+      <div class="r about-img-wrap">
+        <div class="about-img">
+          <img src={imgSalon} alt="Haarstudio Anouck interieur" loading="lazy" />
         </div>
       </div>
 
       <div class="r" style="transition-delay:.15s;">
-        <span class="eyebrow">Over Anouck</span>
-        <h2 class="about-h2">Vakkundig,<br/>warm<br/><em>en persoonlijk</em></h2>
+        <span class="lbl">Over Anouck</span>
+        <h2 class="about-h2">Vakkundig,<br/><em>warm en persoonlijk</em></h2>
         <p class="about-p">
-          Haarstudio Anouck is een intieme, persoonlijke haarstudio waar jij écht de tijd en aandacht krijgt die je verdient. Geen hectische sfeer, geen onbekend gezicht — maar een stylist die jouw haar, jouw wensen en jouw stijl door en door kent.
+          Bij Haarstudio Anouck draait alles om jou. Geen grote salon met vreemde gezichten, maar een intieme studio waar je iedere keer bij dezelfde, betrokken stylist terechtkomt.
         </p>
         <p class="about-p">
-          Van een frisse knipbeurt tot een complete kleurverandering met folietechniek: Anouck werkt nauwkeurig en met passie. Ze werkt met kwalitatieve producten zoals KIS en OliG voor de mooiste resultaten.
+          Anouck werkt nauwkeurig en met passie voor haar vak. Ze luistert naar jouw wensen en geeft eerlijk advies — zodat jij de deur uitloopt met een kapsel dat écht bij je past. Ze werkt met kwalitatieve producten zoals KIS en OliG.
         </p>
 
-        <div class="about-social">
-          <a href="https://www.instagram.com/haarstudio.anouck" target="_blank" rel="noopener"
-             class="social-btn" data-track="instagram">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
+        <div class="about-socials">
+          <a href="https://www.instagram.com/haarstudio.anouck" target="_blank" rel="noopener" class="social-pill" data-track="ig">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             Instagram
           </a>
-          <a href="https://www.tiktok.com/@haarstudio.anouck" target="_blank" rel="noopener"
-             class="social-btn" data-track="tiktok">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.79a4.85 4.85 0 01-1-.1z"/>
-            </svg>
+          <a href="https://www.tiktok.com/@haarstudio.anouck" target="_blank" rel="noopener" class="social-pill" data-track="tt">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.79a4.85 4.85 0 01-1-.1z"/></svg>
             TikTok
           </a>
-          <a href="https://www.facebook.com/p/HaarstudioAnouck-100077905715726/" target="_blank" rel="noopener"
-             class="social-btn" data-track="facebook">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
+          <a href="https://www.facebook.com/p/HaarstudioAnouck-100077905715726/" target="_blank" rel="noopener" class="social-pill" data-track="fb">
+            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             Facebook
           </a>
         </div>
@@ -660,179 +764,161 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
 </section>
 
 
-<!-- ── DIENSTEN & PRIJZEN ─────────────────────────────────────────────── -->
-<section class="prices" id="diensten">
-  <div class="wrap">
-    <div class="prices-header r">
-      <span class="eyebrow" style="color:var(--rose-bg);">Diensten & Tarieven</span>
-      <h2 class="prices-h2">Wat kun je<br/><em>verwachten?</em></h2>
-      <p class="prices-sub">Alle genoemde prijzen zijn vanafprijzen.</p>
-    </div>
+<!-- ══ DIENSTEN ══════════════════════════════════════════════════════════ -->
+<div id="diensten">
 
-    <div class="prices-grid r" style="transition-delay:.1s;">
-
-      <!-- Knip menu -->
-      <div class="price-cat">
-        <div class="price-cat-title">Knip menu</div>
-        <div class="price-item">
-          <span class="price-name">Dames kort</span>
-          <span class="price-val">€ 30,50</span>
-        </div>
-        <div class="price-item">
-          <span class="price-name">Dames half lang</span>
-          <span class="price-val">€ 36,50</span>
-        </div>
-        <div class="price-item">
-          <span class="price-name">Dames lang</span>
-          <span class="price-val">€ 39,50</span>
-        </div>
-        <div class="price-item">
-          <span class="price-name">Heer</span>
-          <span class="price-val">€ 26,00</span>
-        </div>
-        <div class="price-item">
-          <span class="price-name">Kinderen t/m 12 jaar</span>
-          <span class="price-val">€ 23,50</span>
-        </div>
+  <!-- Knippen — donker links, foto rechts -->
+  <div class="dienst">
+    <div class="dienst-content dark r">
+      <span class="lbl lbl-light">Knip menu</span>
+      <h2 class="dienst-h2">Knippen<br/><em>op maat</em></h2>
+      <ul class="price-list">
+        <li><span class="price-name">Dames kort</span><span class="price-amt">€ 30,50</span></li>
+        <li><span class="price-name">Dames half lang</span><span class="price-amt">€ 36,50</span></li>
+        <li><span class="price-name">Dames lang</span><span class="price-amt">€ 39,50</span></li>
+        <li><span class="price-name">Heer</span><span class="price-amt">€ 26,00</span></li>
+        <li><span class="price-name">Kinderen t/m 12 jaar</span><span class="price-amt">€ 23,50</span></li>
+      </ul>
+      <span class="dienst-note">* Alle prijzen zijn vanaf prijzen</span>
+      <div style="margin-top:2rem;">
+        <a href="#contact" class="btn btn-rose" data-track="knip_cta">Afspraak inplannen</a>
       </div>
-
-      <!-- Folie menu + Extra's -->
-      <div style="display:flex; flex-direction:column; gap:1.5rem;">
-        <div class="price-cat">
-          <div class="price-cat-title">Folie menu</div>
-          <div class="price-item">
-            <span class="price-name">Face framing folie</span>
-            <span class="price-val">€ 72,50</span>
-          </div>
-          <div class="price-item">
-            <span class="price-name">Scalp folie</span>
-            <span class="price-val">€ 105,50</span>
-          </div>
-          <div class="price-item">
-            <span class="price-name">Full head folie</span>
-            <span class="price-val">€ 120,00</span>
-          </div>
-        </div>
-
-        <div class="price-cat">
-          <div class="price-cat-title">Extra's</div>
-          <div class="price-item">
-            <span class="price-name">Toner</span>
-            <span class="price-val">€ 25,00</span>
-          </div>
-          <div class="price-item">
-            <span class="price-name">OliG toevoeging</span>
-            <span class="price-val">€ 10,00</span>
-          </div>
-        </div>
-      </div>
-
-      <p class="price-note"><em>* Alle bovenstaande prijzen zijn vanaf prijzen. De definitieve prijs wordt bepaald na overleg.</em></p>
     </div>
+    <div class="dienst-photo">
+      <img src={imgPortrait} alt="Knippen bij Haarstudio Anouck" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- Kleuren — foto links, licht rechts -->
+  <div class="dienst">
+    <div class="dienst-photo order-first">
+      <img src={imgSalon} alt="Salon Haarstudio Anouck" loading="lazy" />
+    </div>
+    <div class="dienst-content light r">
+      <span class="lbl">Folie menu & Extra's</span>
+      <h2 class="dienst-h2">Kleuren<br/><em>& styling</em></h2>
+      <ul class="price-list">
+        <li><span class="price-name">Face framing folie</span><span class="price-amt">€ 72,50</span></li>
+        <li><span class="price-name">Scalp folie</span><span class="price-amt">€ 105,50</span></li>
+        <li><span class="price-name">Full head folie</span><span class="price-amt">€ 120,00</span></li>
+        <li><span class="price-name">Toner</span><span class="price-amt">€ 25,00</span></li>
+        <li><span class="price-name">OliG toevoeging</span><span class="price-amt">€ 10,00</span></li>
+      </ul>
+      <span class="dienst-note">* Alle prijzen zijn vanaf prijzen</span>
+      <div style="margin-top:2rem;">
+        <a href="#contact" class="btn btn-dark" data-track="kleur_cta">Afspraak inplannen</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══ SALON FULLBLEED ═══════════════════════════════════════════════════ -->
+<section class="salon-section" id="salon">
+  <img src={imgSalon} alt="De studio van Haarstudio Anouck" loading="lazy" />
+  <div class="salon-overlay r">
+    <h2>Een plek<br/><em>die voelt als thuis</em></h2>
   </div>
 </section>
 
 
-<!-- ── SALON FOTO ─────────────────────────────────────────────────────── -->
-<section class="gallery" id="salon">
-  <div class="wrap">
-    <div class="r">
-      <span class="eyebrow">De studio</span>
-      <h2 class="gallery-h2">Een plek waar jij<br/><em>je thuis voelt</em></h2>
+<!-- ══ INSTAGRAM CTA ═════════════════════════════════════════════════════ -->
+<section class="ig-strip">
+  <div class="ig-strip-inner r">
+    <div class="ig-icon">
+      <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
     </div>
-    <div class="gallery-img r" style="transition-delay:.1s;">
-      <img src={imgSalon} alt="Interieur Haarstudio Anouck" loading="lazy"
-           onerror="this.closest('.gallery-img').style.background='var(--rose-bg)'" />
-    </div>
+    <h2 class="ig-h2">Volg het resultaat<br/>op Instagram</h2>
+    <p class="ig-p">Benieuwd naar de transformaties? Bekijk de nieuwste kapsels, kleuringen en behind-the-scenes op het Instagram-profiel van Haarstudio Anouck.</p>
+    <a href="https://www.instagram.com/haarstudio.anouck" target="_blank" rel="noopener"
+       class="btn btn-dark" style="display:inline-flex; margin:0 auto;" data-track="ig_strip">
+      @haarstudio.anouck
+    </a>
   </div>
 </section>
 
 
-<!-- ── CONTACT ────────────────────────────────────────────────────────── -->
+<!-- ══ CONTACT ═══════════════════════════════════════════════════════════ -->
 <section class="contact" id="contact">
-  <div class="wrap">
-    <div class="contact-grid">
+  <div class="contact-left r">
+    <span class="lbl lbl-light">Afspraak maken</span>
+    <h2 class="contact-h2">Klaar voor<br/><em>jouw nieuwe look?</em></h2>
+    <p class="contact-p">
+      Vul het formulier in en Anouck neemt zo snel mogelijk contact op om een moment in te plannen dat past.
+    </p>
+    <div class="cinfo">
+      <div class="cinfo-item">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <a href="https://www.instagram.com/haarstudio.anouck" target="_blank" rel="noopener">@haarstudio.anouck op Instagram</a>
+      </div>
+      <div class="cinfo-item">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.77 1.52V6.79a4.85 4.85 0 01-1-.1z"/></svg>
+        <a href="https://www.tiktok.com/@haarstudio.anouck" target="_blank" rel="noopener">@haarstudio.anouck op TikTok</a>
+      </div>
+      <div class="cinfo-item">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+        <span>Knippen · Kleuren · Folietechniek · Styling</span>
+      </div>
+    </div>
+  </div>
 
-      <div class="r">
-        <span class="eyebrow">Contact</span>
-        <h2 class="contact-h2">Afspraak<br/><em>maken?</em></h2>
-        <p class="contact-p">
-          Vul het formulier in en Anouck neemt zo snel mogelijk contact met je op om een afspraak in te plannen die past.
-        </p>
-        <div class="cinfo">
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <a href="https://www.instagram.com/haarstudio.anouck" target="_blank" rel="noopener">@haarstudio.anouck op Instagram</a>
-          </div>
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <a href="https://www.tiktok.com/@haarstudio.anouck" target="_blank" rel="noopener">@haarstudio.anouck op TikTok</a>
-          </div>
-          <div class="cinfo-item">
-            <div class="cinfo-dot"></div>
-            <span>Knippen · Kleuren · Folietechniek · Styling</span>
-          </div>
+  <div class="contact-right r d1">
+    <p class="form-h3">Stuur een bericht</p>
+    <p class="form-sub">Anouck neemt zo snel mogelijk contact op.</p>
+
+    <form class="form" id="bookForm">
+      <div class="frow">
+        <div class="field">
+          <label>Naam</label>
+          <input type="text" placeholder="Jouw naam" required />
+        </div>
+        <div class="field">
+          <label>Telefoonnummer</label>
+          <input type="tel" placeholder="06 12 34 56 78" />
         </div>
       </div>
-
-      <div class="r" style="transition-delay:.12s;">
-        <form class="form" id="bookForm">
-          <div class="frow">
-            <div class="field">
-              <label>Naam</label>
-              <input type="text" placeholder="Jouw naam" required />
-            </div>
-            <div class="field">
-              <label>Telefoonnummer</label>
-              <input type="tel" placeholder="06 12 34 56 78" />
-            </div>
-          </div>
-          <div class="field">
-            <label>E-mailadres</label>
-            <input type="email" placeholder="jou@email.nl" required />
-          </div>
-          <div class="frow">
-            <div class="field">
-              <label>Gewenste dienst</label>
-              <select>
-                <option value="">Kies een dienst...</option>
-                <option>Knippen (dames)</option>
-                <option>Knippen (heer)</option>
-                <option>Knippen (kind)</option>
-                <option>Face framing folie</option>
-                <option>Scalp folie</option>
-                <option>Full head folie</option>
-                <option>Toner</option>
-                <option>Anders / combinatie</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Gewenste datum</label>
-              <input type="text" placeholder="bijv. komende week" />
-            </div>
-          </div>
-          <div class="field">
-            <label>Bericht (optioneel)</label>
-            <textarea placeholder="Vertel meer over jouw wensen of stel een vraag..."></textarea>
-          </div>
-          <button type="submit" class="form-submit" data-track="form_submit">
-            Afspraak aanvragen →
-          </button>
-        </form>
-
-        <div class="form-success" id="bookSuccess">
-          <div class="form-success-icon">✓</div>
-          <h3>Aanvraag ontvangen!</h3>
-          <p>Anouck neemt zo snel mogelijk contact op om jouw afspraak in te plannen.</p>
+      <div class="field">
+        <label>E-mailadres</label>
+        <input type="email" placeholder="jou@email.nl" required />
+      </div>
+      <div class="frow">
+        <div class="field">
+          <label>Gewenste dienst</label>
+          <select>
+            <option value="">Kies een dienst...</option>
+            <option>Knippen (dames)</option>
+            <option>Knippen (heer)</option>
+            <option>Knippen (kind)</option>
+            <option>Face framing folie</option>
+            <option>Scalp folie</option>
+            <option>Full head folie</option>
+            <option>Toner</option>
+            <option>Anders / combinatie</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Gewenste datum</label>
+          <input type="text" placeholder="bijv. komende week" />
         </div>
       </div>
+      <div class="field">
+        <label>Bericht (optioneel)</label>
+        <textarea placeholder="Vertel meer over jouw wensen..."></textarea>
+      </div>
+      <button type="submit" class="form-btn" data-track="form_submit">Verstuur aanvraag →</button>
+    </form>
 
+    <div class="form-success" id="bookSuccess">
+      <div class="form-success-check">✓</div>
+      <h3>Ontvangen!</h3>
+      <p>Anouck neemt zo snel mogelijk contact op om jouw afspraak in te plannen.</p>
     </div>
   </div>
 </section>
 
 
-<!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+<!-- ══ FOOTER ════════════════════════════════════════════════════════════ -->
 <footer class="footer">
   <div class="wrap">
     <div class="footer-row">
@@ -847,6 +933,7 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
         <a href="#contact"  class="footer-link">Contact</a>
         <a href="https://www.instagram.com/haarstudio.anouck" class="footer-link" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.tiktok.com/@haarstudio.anouck"   class="footer-link" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://www.facebook.com/p/HaarstudioAnouck-100077905715726/" class="footer-link" target="_blank" rel="noopener">Facebook</a>
       </div>
     </div>
     <div class="footer-copy">
@@ -866,35 +953,26 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
   const navOverlay   = document.getElementById('navOverlay')!;
   const overlayClose = document.getElementById('navOverlayClose')!;
 
-  function openMenu() {
-    navOverlay.classList.add('on');
-    document.body.style.overflow = 'hidden';
-    navToggle.setAttribute('aria-label', 'Menu sluiten');
-  }
-  function closeMenu() {
-    navOverlay.classList.remove('on');
-    document.body.style.overflow = '';
-    navToggle.setAttribute('aria-label', 'Menu openen');
-  }
+  const openMenu  = () => { navOverlay.classList.add('on'); document.body.style.overflow = 'hidden'; };
+  const closeMenu = () => { navOverlay.classList.remove('on'); document.body.style.overflow = ''; };
 
-  navToggle.addEventListener('click', () => {
-    navOverlay.classList.contains('on') ? closeMenu() : openMenu();
-  });
+  navToggle.addEventListener('click', () => navOverlay.classList.contains('on') ? closeMenu() : openMenu());
   overlayClose.addEventListener('click', closeMenu);
-  navOverlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+  navOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 
   window.addEventListener('scroll', () => {
     nav.classList.toggle('s', window.scrollY > 60);
   }, { passive: true });
 
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
-  }, { threshold: 0.08 });
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); }),
+    { threshold: 0.07 }
+  );
   document.querySelectorAll('.r').forEach(el => obs.observe(el));
 
   document.getElementById('bookForm')?.addEventListener('submit', async e => {
     e.preventDefault();
-    const btn = (e.currentTarget as HTMLFormElement).querySelector<HTMLButtonElement>('.form-submit')!;
+    const btn = (e.currentTarget as HTMLFormElement).querySelector<HTMLButtonElement>('.form-btn')!;
     btn.textContent = 'Versturen...';
     btn.disabled = true;
     await new Promise(r => setTimeout(r, 700));
