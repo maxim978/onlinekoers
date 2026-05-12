@@ -418,15 +418,72 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
     .step-content.active { display: block; }
 
     /* ── RESPONSIVE ─────────────────────────── */
-    @media (max-width: 640px) {
-      .step2-layout { grid-template-columns: 1fr; }
-      .frow { grid-template-columns: 1fr; }
-      .stepper .step-label { display: none; }
-      .stepper .step-item { flex: none; }
-      .stepper .step-line { flex: 1; }
+
+    /* Tablet (≤768px) */
+    @media (max-width: 768px) {
+      .page { padding: 2rem 1rem 4rem; }
+      .step2-layout { grid-template-columns: 1fr; gap: 1rem; }
       .slots-grid { grid-template-columns: repeat(4, 1fr); }
-      .summary-bar { flex-direction: column; align-items: flex-start; }
-      .summary-price { margin-left: 0; }
+      .summary-bar { flex-wrap: wrap; gap: .75rem; }
+      .summary-price { margin-left: 0; width: 100%; font-size: 1.6rem; }
+      .form-body { padding: 1.25rem; }
+    }
+
+    /* Mobile (≤480px) */
+    @media (max-width: 480px) {
+      /* Topbar */
+      .topbar { padding: 0 1rem; height: 56px; }
+      .topbar-logo-name { font-size: .82rem; }
+      .topbar-back-txt { display: none; }
+
+      /* Page header */
+      .page { padding: 1.5rem .875rem 3.5rem; }
+      .page-title { font-size: 1.75rem; }
+      .page-sub { font-size: .82rem; margin-bottom: 1.75rem; }
+
+      /* Stepper: circles only, no labels */
+      .stepper { margin-bottom: 2rem; }
+      .step-label { display: none; }
+      .step-item { flex: none; }
+      .step-line { flex: 1; margin: 0 .5rem; }
+      .step-circle { width: 30px; height: 30px; font-size: .78rem; }
+
+      /* Services */
+      .cat-header { padding: .75rem 1rem .4rem; font-size: .68rem; }
+      .service-row { padding: .9rem 1rem; gap: .75rem; }
+      .service-name { font-size: .88rem; }
+      .service-dur  { font-size: .65rem; }
+      .service-price { font-size: 1.1rem; }
+
+      /* Calendar */
+      .cal-panel { padding: 1rem; }
+      .cal-nav { margin-bottom: 1rem; }
+      .cal-nav-btn { width: 32px; height: 32px; }
+      .cal-month-label { font-size: .9rem; }
+      .cal-dow { font-size: .52rem; }
+      .cal-day { font-size: .75rem; border-radius: 3px; }
+      .cal-day .avail-dot { width: 4px; height: 4px; }
+
+      /* Time slots */
+      .slots-panel { padding: 1rem; }
+      .slots-date-label { font-size: .88rem; margin-bottom: 1rem; }
+      .slots-grid { grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+      .slot-btn { padding: .55rem .35rem; font-size: .75rem; }
+
+      /* Step 3 */
+      .summary-bar { padding: 1rem; gap: .5rem; }
+      .summary-chip { font-size: .7rem; }
+      .summary-price { font-size: 1.4rem; }
+      .form-body { padding: 1rem; }
+      .frow { grid-template-columns: 1fr; }
+
+      /* Buttons */
+      .btn-row { gap: .75rem; }
+      .btn { font-size: .75rem; padding: .8rem 1.4rem; }
+
+      /* Success */
+      .success-screen { padding: 2.5rem 1rem; }
+      .success-summary { padding: 1.25rem 1.5rem; }
     }
   </style>
 </head>
@@ -442,7 +499,7 @@ const imgLogo = '/images/haarstudio-anouck/logo.jpg';
     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
       <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
     </svg>
-    Terug naar website
+    <span class="topbar-back-txt">Terug naar website</span>
   </a>
 </div>
 

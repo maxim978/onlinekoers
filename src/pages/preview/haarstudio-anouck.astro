@@ -273,24 +273,24 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
     ══════════════════════════════════════════ */
     .strip {
       background: var(--rose);
-      padding: 2.5rem 0;
+      padding: 1rem 0;
       overflow: hidden;
       position: relative;
     }
     .strip-track {
-      display: flex; gap: 3rem; white-space: nowrap;
+      display: flex; gap: 2rem; white-space: nowrap;
       animation: marquee 18s linear infinite;
     }
     @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
     .strip-item {
-      display: inline-flex; align-items: center; gap: 3rem;
+      display: inline-flex; align-items: center; gap: 2rem;
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.5rem; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase;
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase;
       color: var(--white); flex-shrink: 0;
     }
     .strip-dot {
-      width: 6px; height: 6px; border-radius: 50%;
+      width: 5px; height: 5px; border-radius: 50%;
       background: rgba(255,255,255,.5); flex-shrink: 0;
     }
 
@@ -607,28 +607,108 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
     /* ══════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════ */
+
+    /* ── Tablet (≤960px) ──────────────────── */
     @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-      .hero-left { padding: 9rem 1.5rem 3.5rem; order: 2; }
-      .hero-right { order: 1; height: 55vw; min-height: 280px; }
-      .hero-right::before { width: 0; }
-      .hero-right::after { display: none; }
-      .nav-links { display: none; }
-      .nav-phone { display: none; }
+      /* Nav */
+      .nav-inner { grid-template-columns: 1fr auto; }
+      .nav-links  { display: none; }
+      .nav-phone  { display: none; }
       .nav-toggle { display: block; }
-      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .about-img-wrap { max-width: 280px; margin: 0 auto; }
+
+      /* Hero */
+      .hero { grid-template-columns: 1fr; height: auto; min-height: 100svh; }
+      .hero-left  { padding: 8rem 1.75rem 3rem; order: 2; }
+      .hero-right { order: 1; height: 52vw; min-height: 260px; }
+      .hero-right::before { width: 0; }
+      .hero-right::after  { display: none; }
+      .hero-scroll { display: none; }
+
+      /* About */
+      .about { padding: 5rem 0; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-img-wrap { max-width: 300px; margin: 0 auto; }
+
+      /* Diensten */
       .dienst { grid-template-columns: 1fr; }
-      .dienst-photo { aspect-ratio: 4/3; }
+      .dienst-content { padding: 3.5rem 1.75rem; }
+      .dienst-photo { aspect-ratio: 16/9; min-height: 220px; }
       .dienst-photo.order-first { order: -1; }
+
+      /* Salon */
+      .salon-section { height: 55vw; }
+      .salon-overlay { padding: 2.5rem 1.75rem; }
+
+      /* Instagram strip */
+      .ig-strip { padding: 4rem 0; }
+
+      /* Contact */
       .contact { grid-template-columns: 1fr; }
-      .contact-left, .contact-right { padding: 5rem 1.5rem; }
+      .contact-left  { padding: 4rem 1.75rem; }
+      .contact-right { padding: 4rem 1.75rem; }
       .frow { grid-template-columns: 1fr; }
+
+      /* Gallery */
+      .gallery { padding: 5rem 0; }
+
+      /* Footer */
+      .footer-row { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+      .footer-links { gap: 1.25rem; }
     }
 
+    /* ── Mobile (≤600px) ──────────────────── */
     @media (max-width: 600px) {
-      .hero-right { height: 65vw; }
-      .salon-section { height: 60vw; }
+      /* Nav */
+      .nav-inner { padding: 0 1rem; }
+      .nav-logo-sub { display: none; }
+
+      /* Hero */
+      .hero-right { height: 62vw; }
+      .hero-left  { padding: 7rem 1.25rem 2.5rem; }
+      .hero-sub   { font-size: .88rem; }
+
+      /* Strip */
+      .strip-item { font-size: .82rem; gap: 1.5rem; }
+      .strip-track { gap: 1.5rem; }
+
+      /* About */
+      .about { padding: 3.5rem 0; }
+      .about-grid { gap: 2rem; }
+      .about-img-wrap { max-width: 100%; }
+      .about-img-wrap::before,
+      .about-img-wrap::after { display: none; }
+      .about-p { font-size: .92rem; }
+      .about-socials { gap: .5rem; }
+      .social-pill { font-size: .6rem; padding: .55rem .9rem; }
+
+      /* Diensten */
+      .dienst-content { padding: 2.5rem 1.25rem; }
+      .dienst-h2 { font-size: clamp(2.2rem,8vw,3.5rem); }
+      .price-list li { padding: .65rem 0; }
+      .price-name { font-size: .85rem; }
+
+      /* Salon */
+      .salon-section { height: 65vw; }
+      .salon-overlay h2 { font-size: clamp(1.8rem, 7vw, 3rem); }
+
+      /* Instagram */
+      .ig-strip { padding: 3rem 0; }
+      .ig-h2 { font-size: clamp(1.6rem, 7vw, 2.8rem); }
+
+      /* Contact */
+      .contact-left, .contact-right { padding: 3rem 1.25rem; }
+      .contact-h2 { font-size: clamp(2.2rem, 8vw, 3.2rem); }
+      .cinfo-item { font-size: .82rem; }
+
+      /* Gallery */
+      .gallery { padding: 3.5rem 0; }
+      .gallery-h2 { font-size: clamp(1.8rem, 7vw, 3rem); }
+      .gallery-img { aspect-ratio: 3/2; }
+
+      /* Footer */
+      .footer { padding: 2.5rem 0 1.5rem; }
+      .footer-links { flex-wrap: wrap; gap: 1rem; }
+      .footer-copy { flex-direction: column; gap: .4rem; }
     }
   </style>
 </head>
@@ -687,7 +767,7 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
       <em>Jouw Anouck.</em>
     </h1>
     <p class="hero-sub">
-      Een persoonlijke haarstudio waar jij centraal staat. Knippen, kleuren en styling op maat — zonder wachttijden, zonder onbekende gezichten.
+      Een persoonlijke haarstudio waar jij centraal staat. Knippen, kleuren en styling op maat, zonder wachttijden en zonder onbekende gezichten.
     </p>
     <div class="hero-btns">
       <a href="/preview/haarstudio-anouck-afspraak" class="btn btn-rose" data-track="hero_cta">Afspraak maken</a>
@@ -740,7 +820,7 @@ const imgLogo     = '/images/haarstudio-anouck/logo.jpg';
           Bij Haarstudio Anouck draait alles om jou. Geen grote salon met vreemde gezichten, maar een intieme studio waar je iedere keer bij dezelfde, betrokken stylist terechtkomt.
         </p>
         <p class="about-p">
-          Anouck werkt nauwkeurig en met passie voor haar vak. Ze luistert naar jouw wensen en geeft eerlijk advies — zodat jij de deur uitloopt met een kapsel dat écht bij je past. Ze werkt met kwalitatieve producten zoals KIS en OliG.
+          Anouck werkt nauwkeurig en met passie voor haar vak. Ze luistert naar jouw wensen en geeft eerlijk advies, zodat jij de deur uitloopt met een kapsel dat écht bij je past. Ze werkt met kwalitatieve producten zoals KIS en OliG.
         </p>
 
         <div class="about-socials">
